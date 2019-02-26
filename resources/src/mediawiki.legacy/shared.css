@@ -745,18 +745,17 @@ sub {
 
 .infobox {
 	clear: right;
+	display: table;
 	float: right;
 	margin-bottom: .5em;
 	margin-left: 1em;
 	padding: .2em;
 	position: relative;
-	width: 250px;
-	display: table;
 	table-layout: fixed;
+	width: 250px;
 }
 
 #infoboxinternal.infoboxtable {
 	table-layout: fixed;
 	width: 250px;
-
 }
