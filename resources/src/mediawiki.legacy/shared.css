@@ -742,3 +742,21 @@ sup,
 sub {
 	line-height: 1;
 }
+
+.infobox {
+	clear: right;
+	float: right;
+	margin-bottom: .5em;
+	margin-left: 1em;
+	padding: .2em;
+	position: relative;
+	width: 250px;
+	display: table;
+	table-layout: fixed;
+}
+
+#infoboxinternal.infoboxtable {
+	table-layout: fixed;
+	width: 250px;
+
+}
