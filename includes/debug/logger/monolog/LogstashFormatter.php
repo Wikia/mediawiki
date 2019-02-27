@@ -2,93 +2,108 @@
 
 namespace MediaWiki\Logger\Monolog;
 
-// modified for Wikia logstash setup
+/**
+ * LogstashFormatter squashes the base message array and the context and extras subarrays into one.
+ * This can result in unfortunately named context fields overwriting other data (T145133).
+ * This class modifies the standard LogstashFormatter to rename such fields and flag the message.
+ * Also changes exception JSON-ification which is done poorly by the standard class.
+ *
+ * Compatible with Monolog 1.x only.
+ *
+ * @since 1.29
+ */
 class LogstashFormatter extends \Monolog\Formatter\LogstashFormatter {
-	const APPNAME = 'mediawiki';
+	/** @var array Keys which should not be used in log context */
+	protected $reservedKeys = [
+		// from LogstashFormatter
+		'message', 'channel', 'level', 'type',
+		// from WebProcessor
+		'url', 'ip', 'http_method', 'server', 'referrer',
+		// from WikiProcessor
+		'host', 'wiki', 'reqId', 'mwversion',
+		// from config magic
+		'normalized_message',
+	];
 
 	/**
-	 * @param string $appname
-	 */
-	public function __construct($appname = self::APPNAME) {
-		parent::__construct($appname);
-	}
-
-	protected function formatV0(array $record) {
-		$message = array(
-			'appname' => $this->applicationName,
-			'@timestamp' => $record['datetime'],
-			'@message' => $record['message'],
-		);
-
-		if (!empty($record['extra'])) {
-			$message['@fields'] = $record['extra'];
-		}
-
-		if (!empty($record['context'])) {
-			if (!empty($record['context']['exception'])) {
-				$message['@exception'] = $record['context']['exception'];
-				unset($record['context']['exception']);
-			}
-
-			if (!empty($record['context']['@root'])) {
-				$message = array_merge($record['context']['@root'], $message);
-				unset($record['context']['@root']);
-			}
-
-			$message['@context'] = $record['context'];
-		}
-
-		// SUS-5266 | explicitly add severity to MediaWiki logs
-		// as those coming from containers do not have them set
-		$message['severity'] = strtolower( $record['level_name'] );
-
-		return $message;
-	}
-
-	/**
-	 * Remove the $IP-prefix (/usr/wikia/slot1/NNN/src) to make backtrace entries a bit smaller
-	 *
-	 * @see SUS-2974
-	 * @param string $path
-	 * @return string
-	 */
-	public static function normalizePath( string $path ) : string {
-		global $IP;
-		return str_replace( $IP, '', $path );
-	}
-
-	/**
-	 * @param Exception}Throwable $e
+	 * Prevent key conflicts
+	 * @param array $record
 	 * @return array
 	 */
-	public function normalizeException($e) {
-		if (!$e instanceof Exception && !$e instanceof \Throwable) {
-			throw new \InvalidArgumentException('Exception/Throwable expected, got '.gettype($e).' / '.get_class($e));
+	protected function formatV0( array $record ) {
+		if ( $this->contextPrefix ) {
+			return parent::formatV0( $record );
 		}
 
-		$data = array(
-			'class' => get_class($e),
+		$context = !empty( $record['context'] ) ? $record['context'] : [];
+		$record['context'] = [];
+		$formatted = parent::formatV0( $record );
+
+		$formatted['@fields'] = $this->fixKeyConflicts( $formatted['@fields'], $context );
+		return $formatted;
+	}
+
+	/**
+	 * Prevent key conflicts
+	 * @param array $record
+	 * @return array
+	 */
+	protected function formatV1( array $record ) {
+		if ( $this->contextPrefix ) {
+			return parent::formatV1( $record );
+		}
+
+		$context = !empty( $record['context'] ) ? $record['context'] : [];
+		$record['context'] = [];
+		$formatted = parent::formatV1( $record );
+
+		$formatted = $this->fixKeyConflicts( $formatted, $context );
+		return $formatted;
+	}
+
+	/**
+	 * Check whether some context field would overwrite another message key. If so, rename
+	 * and flag.
+	 * @param array $fields Fields to be sent to logstash
+	 * @param array $context Copy of the original $record['context']
+	 * @return array Updated version of $fields
+	 */
+	protected function fixKeyConflicts( array $fields, array $context ) {
+		foreach ( $context as $key => $val ) {
+			if (
+				in_array( $key, $this->reservedKeys, true ) &&
+				isset( $fields[$key] ) && $fields[$key] !== $val
+			) {
+				$fields['logstash_formatter_key_conflict'][] = $key;
+				$key = 'c_' . $key;
+			}
+			$fields[$key] = $val;
+		}
+		return $fields;
+	}
+
+	/**
+	 * Use a more user-friendly trace format than NormalizerFormatter
+	 * @param \Exception|\Throwable $e
+	 * @return array
+	 */
+	protected function normalizeException( $e ) {
+		if ( !$e instanceof \Exception && !$e instanceof \Throwable ) {
+			throw new \InvalidArgumentException( 'Exception/Throwable expected, got '
+				. gettype( $e ) . ' / ' . get_class( $e ) );
+		}
+
+		$data = [
+			'class' => get_class( $e ),
 			'message' => $e->getMessage(),
 			'code' => $e->getCode(),
-			'file' => self::normalizePath( $e->getFile() ).':'.$e->getLine(),
-		);
+			'file' => $e->getFile() . ':' . $e->getLine(),
+			'trace' => \MWExceptionHandler::getRedactedTraceAsString( $e ),
+		];
 
-		$trace = $e->getTrace();
-		foreach ($trace as $frame) {
-			if (isset($frame['file'])) {
-				$data['trace'][] = self::normalizePath( $frame['file'] ).':'.$frame['line'];
-			} else {
-				// prevent huge json blobs from preventing message parsing (because of split message) and flooding file logs
-				if (isset($frame['args'])) {
-					unset($frame['args']);
-				}
-
-				$data['trace'][] = json_encode($frame);
-			}
-		}
-
-		if ($previous = $e->getPrevious()) {
-			$data['previous'] = $this->normalizeException($previous);
+		$previous = $e->getPrevious();
+		if ( $previous ) {
+			$data['previous'] = $this->normalizeException( $previous );
 		}
 
 		return $data;
