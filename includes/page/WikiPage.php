@@ -2116,6 +2116,11 @@ class WikiPage implements Page, IDBAccessObject {
 	 *     some update might directly add child updates to DeferredUpdates).
 	 *   - transactionTicket: a transaction ticket from LBFactory::getEmptyTransactionTicket(),
 	 *     only when defer is false (default: null)
+	 *   - known-revision-output: a combined canonical ParserOutput for the revision, perhaps
+	 *     from some cache. The caller is responsible for ensuring that the ParserOutput indeed
+	 *     matched the $rev and $options. This mechanism is intended as a temporary stop-gap,
+	 *     for the time until caches have been changed to store RenderedRevision states instead
+	 *     of ParserOutput objects. (default: null) (since 1.33)
 	 * @since 1.32
 	 */
 	public function doSecondaryDataUpdates( array $options = [] ) {

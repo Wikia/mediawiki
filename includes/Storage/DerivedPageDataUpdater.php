@@ -1067,6 +1067,11 @@ class DerivedPageDataUpdater implements IDBAccessObject {
 	 *    See DataUpdate::getCauseAction(). (default 'unknown')
 	 *  - causeAgent: name of the user who caused the update. See DataUpdate::getCauseAgent().
 	 *    (string, default 'unknown')
+	 *  - known-revision-output: a combined canonical ParserOutput for the revision, perhaps
+	 *    from some cache. The caller is responsible for ensuring that the ParserOutput indeed
+	 *    matched the $rev and $options. This mechanism is intended as a temporary stop-gap,
+	 *    for the time until caches have been changed to store RenderedRevision states instead
+	 *    of ParserOutput objects. (default: null) (since 1.33)
 	 */
 	public function prepareUpdate( RevisionRecord $revision, array $options = [] ) {
 		Assert::parameter(
@@ -1214,14 +1219,17 @@ class DerivedPageDataUpdater implements IDBAccessObject {
 		if ( $this->renderedRevision ) {
 			$this->renderedRevision->updateRevision( $revision );
 		} else {
-
 			// NOTE: we want a canonical rendering, so don't pass $this->user or ParserOptions
 			// NOTE: the revision is either new or current, so we can bypass audience checks.
 			$this->renderedRevision = $this->revisionRenderer->getRenderedRevision(
 				$this->revision,
 				null,
 				null,
-				[ 'use-master' => $this->useMaster(), 'audience' => RevisionRecord::RAW ]
+				[
+					'use-master' => $this->useMaster(),
+					'audience' => RevisionRecord::RAW,
+					'known-revision-output' => $options['known-revision-output'] ?? null
+				]
 			);
 
 			// XXX: Since we presumably are dealing with the current revision,
