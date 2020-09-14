@@ -140,7 +140,7 @@ Controller.prototype.initialize = function ( filterStructure, namespaceStructure
 				validate: $.isNumeric,
 				range: {
 					min: 0, // The server normalizes negative numbers to 0 results
-					max: 1000
+					max: 5000 // PLATFORM-5089 increase limit for Special:RecentChanges
 				},
 				sortFunc: function ( a, b ) { return Number( a.name ) - Number( b.name ); },
 				default: mw.user.options.get( this.limitPreferenceName, displayConfig.limitDefault ),
