@@ -1229,12 +1229,11 @@ class WANObjectCache implements IExpiringStore, LoggerAwareInterface {
 			$procCache = false;
 			$value = false;
 		}
-
+		$asOf = null;
 		if ( $value === false ) {
 			// Fetch the value over the network
 			if ( isset( $opts['version'] ) ) {
 				$version = $opts['version'];
-				$asOf = null;
 				$cur = $this->doGetWithSetCallback(
 					$key,
 					$ttl,
@@ -1272,11 +1271,13 @@ class WANObjectCache implements IExpiringStore, LoggerAwareInterface {
 						$ttl,
 						$callback,
 						// Regenerate value if not newer than $key
-						[ 'version' => null, 'minAsOf' => $asOf ] + $opts
+						[ 'version' => null, 'minAsOf' => $asOf ] + $opts,
+						$asOf,
+						$cbParams
 					);
 				}
 			} else {
-				$value = $this->doGetWithSetCallback( $key, $ttl, $callback, $opts );
+				$value = $this->doGetWithSetCallback( $key, $ttl, $callback, $opts, $asOf, $cbParams );
 			}
 
 			// Update the process cache if enabled
@@ -1298,10 +1299,11 @@ class WANObjectCache implements IExpiringStore, LoggerAwareInterface {
 	 * @param callable $callback
 	 * @param array $opts Options map for getWithSetCallback()
 	 * @param float|null &$asOf Cache generation timestamp of returned value [returned]
+	 * @param array $cbParams Custom field/value map to pass to the callback (since 1.35)
 	 * @return mixed
 	 * @note Callable type hints are not used to avoid class-autoloading
 	 */
-	protected function doGetWithSetCallback( $key, $ttl, $callback, array $opts, &$asOf = null, array $cbParams ) {
+	protected function doGetWithSetCallback( $key, $ttl, $callback, array $opts, &$asOf, array $cbParams ) {
 		$lowTTL = $opts['lowTTL'] ?? min( self::LOW_TTL, $ttl );
 		$lockTSE = $opts['lockTSE'] ?? self::TSE_NONE;
 		$staleTTL = $opts['staleTTL'] ?? self::STALE_TTL_NONE;
