@@ -1206,13 +1206,16 @@ class WANObjectCache implements IExpiringStore, LoggerAwareInterface {
 	 *      most sense for values that are moderately to highly expensive to regenerate and easy
 	 *      to query for dependency timestamps. The use of "pcTTL" reduces timestamp queries.
 	 *      Default: null.
+	 * @param array $cbParams Custom field/value map to pass to the callback (since 1.35)
 	 * @return mixed Value found or written to the key
 	 * @note Options added in 1.28: version, busyValue, hotTTR, ageNew, pcGroup, minAsOf
 	 * @note Options added in 1.31: staleTTL, graceTTL
 	 * @note Options added in 1.33: touchedCallback
 	 * @note Callable type hints are not used to avoid class-autoloading
 	 */
-	final public function getWithSetCallback( $key, $ttl, $callback, array $opts = [] ) {
+	final public function getWithSetCallback(
+		$key, $ttl, $callback, array $opts = [], array $cbParams = []
+	) {
 		$pcTTL = $opts['pcTTL'] ?? self::TTL_UNCACHEABLE;
 
 		// Try the process cache if enabled and the cache callback is not within a cache callback.
@@ -1255,7 +1258,8 @@ class WANObjectCache implements IExpiringStore, LoggerAwareInterface {
 						];
 					},
 					$opts,
-					$asOf
+					$asOf,
+					$cbParams
 				);
 				if ( $cur[self::VFLD_VERSION] === $version ) {
 					// Value created or existed before with version; use it
@@ -1297,7 +1301,7 @@ class WANObjectCache implements IExpiringStore, LoggerAwareInterface {
 	 * @return mixed
 	 * @note Callable type hints are not used to avoid class-autoloading
 	 */
-	protected function doGetWithSetCallback( $key, $ttl, $callback, array $opts, &$asOf = null ) {
+	protected function doGetWithSetCallback( $key, $ttl, $callback, array $opts, &$asOf = null, array $cbParams ) {
 		$lowTTL = $opts['lowTTL'] ?? min( self::LOW_TTL, $ttl );
 		$lockTSE = $opts['lockTSE'] ?? self::TSE_NONE;
 		$staleTTL = $opts['staleTTL'] ?? self::STALE_TTL_NONE;
@@ -1337,7 +1341,7 @@ class WANObjectCache implements IExpiringStore, LoggerAwareInterface {
 				$this->stats->increment( "wanobjectcache.$kClass.hit.good" );
 
 				return $value;
-			} elseif ( $this->scheduleAsyncRefresh( $key, $ttl, $callback, $opts ) ) {
+			} elseif ( $this->scheduleAsyncRefresh( $key, $ttl, $callback, $opts, $cbParams ) ) {
 				$this->stats->increment( "wanobjectcache.$kClass.hit.refresh" );
 
 				return $value;
@@ -1411,7 +1415,7 @@ class WANObjectCache implements IExpiringStore, LoggerAwareInterface {
 		$setOpts = [];
 		++$this->callbackDepth;
 		try {
-			$value = call_user_func_array( $callback, [ $curValue, &$ttl, &$setOpts, $asOf ] );
+			$value = call_user_func_array( $callback, [ $curValue, &$ttl, &$setOpts, $asOf, $cbParams ] );
 		} finally {
 			--$this->callbackDepth;
 		}
@@ -1658,15 +1662,17 @@ class WANObjectCache implements IExpiringStore, LoggerAwareInterface {
 		);
 		$this->warmupKeyMisses = 0;
 
-		// Wrap $callback to match the getWithSetCallback() format while passing $id to $callback
-		$id = null; // current entity ID
-		$func = function ( $oldValue, &$ttl, &$setOpts, $oldAsOf ) use ( $callback, &$id ) {
-			return $callback( $id, $oldValue, $ttl, $setOpts, $oldAsOf );
+		// The required callback signature includes $id as the first argument for convenience
+		// to distinguish different items. To reuse the code in getWithSetCallback(), wrap the
+		// callback with a proxy callback that has the standard getWithSetCallback() signature.
+		// This is defined only once per batch to avoid closure creation overhead.
+		$func = function ( $oldValue, &$ttl, &$setOpts, $oldAsOf, $params ) use ( $callback, &$id ) {
+			return $callback( $params['id'], $oldValue, $ttl, $setOpts, $oldAsOf, $params );
 		};
 
 		$values = [];
 		foreach ( $keyedIds as $key => $id ) { // preserve order
-			$values[$key] = $this->getWithSetCallback( $key, $ttl, $func, $opts );
+			$values[$key] = $this->getWithSetCallback( $key, $ttl, $func, $opts, [ 'id' => $id ] );
 		}
 
 		$this->warmupCache = [];
@@ -1772,11 +1778,14 @@ class WANObjectCache implements IExpiringStore, LoggerAwareInterface {
 		$newTTLsById = array_fill_keys( $idsRegen, $ttl );
 		$newValsById = $idsRegen ? $callback( $idsRegen, $newTTLsById, $newSetOpts ) : [];
 
-		// Wrap $callback to match the getWithSetCallback() format while passing $id to $callback
-		$id = null; // current entity ID
-		$func = function ( $oldValue, &$ttl, &$setOpts, $oldAsOf )
+		// The required callback signature includes $id as the first argument for convenience
+		// to distinguish different items. To reuse the code in getWithSetCallback(), wrap the
+		// callback with a proxy callback that has the standard getWithSetCallback() signature.
+		// This is defined only once per batch to avoid closure creation overhead.
+		$func = function ( $oldValue, &$ttl, &$setOpts, $oldAsOf, $params )
 			use ( $callback, &$id, $newValsById, $newTTLsById, $newSetOpts )
 		{
+			$id = $params['id'];
 			if ( array_key_exists( $id, $newValsById ) ) {
 				// Value was already regerated as expected, so use the value in $newValsById
 				$newValue = $newValsById[$id];
@@ -1796,7 +1805,7 @@ class WANObjectCache implements IExpiringStore, LoggerAwareInterface {
 		// Run the cache-aside logic using warmupCache instead of persistent cache queries
 		$values = [];
 		foreach ( $idsByValueKey as $key => $id ) { // preserve order
-			$values[$key] = $this->getWithSetCallback( $key, $ttl, $func, $opts );
+			$values[$key] = $this->getWithSetCallback($key, $ttl, $func, $opts, ['id' => $id] );
 		}
 
 		$this->warmupCache = [];
@@ -2109,16 +2118,16 @@ class WANObjectCache implements IExpiringStore, LoggerAwareInterface {
 	 * @param array $opts
 	 * @return bool Success
 	 */
-	private function scheduleAsyncRefresh( $key, $ttl, $callback, $opts ) {
+	private function scheduleAsyncRefresh( $key, $ttl, $callback, $opts, array $cbParams ) {
 		if ( !$this->asyncHandler ) {
 			return false;
 		}
 		// Update the cache value later, such during post-send of an HTTP request
 		$func = $this->asyncHandler;
-		$func( function () use ( $key, $ttl, $callback, $opts ) {
+		$func( function () use ( $key, $ttl, $callback, $opts, $cbParams ) {
 			$asOf = null; // unused
 			$opts['minAsOf'] = INF; // force a refresh
-			$this->doGetWithSetCallback( $key, $ttl, $callback, $opts, $asOf );
+			$this->doGetWithSetCallback($key, $ttl, $callback, $opts, $asOf, $cbParams);
 		} );
 
 		return true;
