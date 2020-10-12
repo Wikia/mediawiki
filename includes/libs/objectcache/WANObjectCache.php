@@ -2118,6 +2118,7 @@ class WANObjectCache implements IExpiringStore, LoggerAwareInterface {
 	 * @param int $ttl
 	 * @param callable $callback
 	 * @param array $opts
+	 * @param array $cbParams Custom field/value map to pass to the callback (since 1.35)
 	 * @return bool Success
 	 */
 	private function scheduleAsyncRefresh( $key, $ttl, $callback, $opts, array $cbParams ) {
