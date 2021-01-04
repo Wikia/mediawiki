@@ -662,7 +662,8 @@ class WikiPage implements Page, IDBAccessObject {
 						wfWarn( "Page $title exists but has no (visible) revisions!" );
 						return $this->mTitle->getContentModel();
 					}
-				}
+				},
+				[ 'pcTTL' => $cache::TTL_PROC_LONG ]
 			);
 		}
 
