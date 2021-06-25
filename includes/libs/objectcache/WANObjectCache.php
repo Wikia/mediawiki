@@ -1658,14 +1658,17 @@ class WANObjectCache implements IExpiringStore, LoggerAwareInterface {
 		);
 		$this->warmupKeyMisses = 0;
 
-		// Wrap $callback to match the getWithSetCallback() format while passing $id to $callback
-		$id = null; // current entity ID
-		$func = function ( $oldValue, &$ttl, &$setOpts, $oldAsOf ) use ( $callback, &$id ) {
-			return $callback( $id, $oldValue, $ttl, $setOpts, $oldAsOf );
-		};
-
 		$values = [];
 		foreach ( $keyedIds as $key => $id ) { // preserve order
+			// Wrap $callback to match the getWithSetCallback() format while passing $id to $callback
+
+			// Fandom change: Use a new callback instance for each key/ID pair to avoid cache
+			// pollution from preemptive refresh logic as observed in T235188.
+			// This is a 1.33 specific fix and can be ignored for future upgrades (PLATFORM-6134)
+			$func = static function ( $oldValue, &$ttl, &$setOpts, $oldAsOf )
+			use ( $callback, $id ) {
+				return $callback( $id, $oldValue, $ttl, $setOpts, $oldAsOf );
+			};
 			$values[$key] = $this->getWithSetCallback( $key, $ttl, $func, $opts );
 		}
 
@@ -1772,30 +1775,34 @@ class WANObjectCache implements IExpiringStore, LoggerAwareInterface {
 		$newTTLsById = array_fill_keys( $idsRegen, $ttl );
 		$newValsById = $idsRegen ? $callback( $idsRegen, $newTTLsById, $newSetOpts ) : [];
 
-		// Wrap $callback to match the getWithSetCallback() format while passing $id to $callback
-		$id = null; // current entity ID
-		$func = function ( $oldValue, &$ttl, &$setOpts, $oldAsOf )
-			use ( $callback, &$id, $newValsById, $newTTLsById, $newSetOpts )
-		{
-			if ( array_key_exists( $id, $newValsById ) ) {
-				// Value was already regerated as expected, so use the value in $newValsById
-				$newValue = $newValsById[$id];
-				$ttl = $newTTLsById[$id];
-				$setOpts = $newSetOpts;
-			} else {
-				// Pre-emptive/popularity refresh and version mismatch cases are not detected
-				// above and thus $newValsById has no entry. Run $callback on this single entity.
-				$ttls = [ $id => $ttl ];
-				$newValue = $callback( [ $id ], $ttls, $setOpts )[$id];
-				$ttl = $ttls[$id];
-			}
-
-			return $newValue;
-		};
-
 		// Run the cache-aside logic using warmupCache instead of persistent cache queries
 		$values = [];
 		foreach ( $idsByValueKey as $key => $id ) { // preserve order
+
+			// Wrap $callback to match the getWithSetCallback() format while passing $id to $callback
+
+			// Fandom change: Use a new callback instance for each key/ID pair to avoid cache
+			// pollution from preemptive refresh logic as observed in T235188.
+			// This is a 1.33 specific fix and can be ignored for future upgrades (PLATFORM-6134)
+			$func = static function ( $oldValue, &$ttl, &$setOpts, $oldAsOf )
+			use ( $callback, $id, $newValsById, $newTTLsById, $newSetOpts )
+			{
+				if ( array_key_exists( $id, $newValsById ) ) {
+					// Value was already regerated as expected, so use the value in $newValsById
+					$newValue = $newValsById[$id];
+					$ttl = $newTTLsById[$id];
+					$setOpts = $newSetOpts;
+				} else {
+					// Pre-emptive/popularity refresh and version mismatch cases are not detected
+					// above and thus $newValsById has no entry. Run $callback on this single entity.
+					$ttls = [ $id => $ttl ];
+					$newValue = $callback( [ $id ], $ttls, $setOpts )[$id];
+					$ttl = $ttls[$id];
+				}
+
+				return $newValue;
+			};
+
 			$values[$key] = $this->getWithSetCallback( $key, $ttl, $func, $opts );
 		}
 
