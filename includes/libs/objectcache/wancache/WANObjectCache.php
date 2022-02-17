@@ -348,9 +348,12 @@ class WANObjectCache implements
 			// https://github.com/twitter/twemproxy/blob/v0.4.1/notes/recommendation.md#hash-tags
 			// https://github.com/Netflix/dynomite/blob/v0.7.0/notes/recommendation.md#hash-tags
 			$this->coalesceScheme = self::SCHEME_HASH_TAG;
-		} else {
+		} elseif ( ( $params['coalesceScheme'] ?? '' ) === 'hash_stop' ) {
 			// https://github.com/facebook/mcrouter/wiki/Key-syntax
 			$this->coalesceScheme = self::SCHEME_HASH_STOP;
+		} else {
+			// Fandom change - support legacy non-coalesced keys for 1.33 migration
+			$this->coalesceScheme = 0;
 		}
 
 		$this->keyHighQps = $params['keyHighQps'] ?? 100;
@@ -1810,9 +1813,12 @@ class WANObjectCache implements
 		if ( $this->coalesceScheme === self::SCHEME_HASH_STOP ) {
 			// Key style: "WANCache:<base key>|#|<character>"
 			$sisterKey = 'WANCache:' . $baseKey . '|#|' . $typeChar;
-		} else {
+		} elseif ( $this->coalesceScheme === self::SCHEME_HASH_TAG ) {
 			// Key style: "WANCache:{<base key>}:<character>"
 			$sisterKey = 'WANCache:{' . $baseKey . '}:' . $typeChar;
+		} else {
+			// Fandom change: 1.33 migration B/C - support legacy uncoalesced sister key format
+			$sisterKey = 'WANCache:' . $typeChar . ':' . $baseKey;
 		}
 
 		if ( $route !== null ) {
@@ -1835,6 +1841,10 @@ class WANObjectCache implements
 		} elseif ( substr( $sisterKey, -3 ) === '}:v' ) {
 			// Key style: "WANCache:{<base key>}:<character>"
 			$collection = substr( $sisterKey, 10, strcspn( $sisterKey, ':}', 10 ) );
+		} elseif ( substr( $sisterKey, 0, 11 ) === 'WANCache:v:') {
+			// Fandom change: support legacy non-coalesced key style
+			// "WANCache:<character>:<base key>"
+			$collection = substr( $sisterKey, 11, strcspn( $sisterKey, ':', 11 ) );
 		} else {
 			$collection = 'internal';
 		}
