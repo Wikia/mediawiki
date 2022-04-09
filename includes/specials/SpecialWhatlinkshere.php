@@ -55,8 +55,8 @@ class SpecialWhatLinksHere extends IncludableSpecialPage {
 		$opts->add( 'target', '' );
 		$opts->add( 'namespace', '', FormOptions::INTNULL );
 		$opts->add( 'limit', $this->getConfig()->get( 'QueryPageDefaultLimit' ) );
-		$opts->add( 'from', 0 );
-		$opts->add( 'back', 0 );
+		$opts->add( 'offset', 0 );
+		$opts->add( 'dir', 'next' );
 		$opts->add( 'hideredirs', false );
 		$opts->add( 'hidetrans', false );
 		$opts->add( 'hidelinks', false );
@@ -93,8 +93,8 @@ class SpecialWhatLinksHere extends IncludableSpecialPage {
 			0,
 			$this->target,
 			$opts->getValue( 'limit' ),
-			$opts->getValue( 'from' ),
-			$opts->getValue( 'back' )
+			$opts->getValue( 'offset' ),
+			$opts->getValue( 'dir' )
 		);
 	}
 
@@ -102,10 +102,10 @@ class SpecialWhatLinksHere extends IncludableSpecialPage {
 	 * @param int $level Recursion level
 	 * @param Title $target Target title
 	 * @param int $limit Number of entries to display
-	 * @param int $from Display from this article ID (default: 0)
-	 * @param int $back Display from this article ID at backwards scrolling (default: 0)
+	 * @param int $offset Display from this article ID (default: 0)
+	 * @param string $dir 'next' or 'prev'
 	 */
-	function showIndirectLinks( $level, $target, $limit, $from = 0, $back = 0 ) {
+	function showIndirectLinks( $level, $target, $limit, $offset = 0, $dir = 'next' ) {
 		$out = $this->getOutput();
 		$dbr = wfGetDB( DB_REPLICA );
 
@@ -138,11 +138,19 @@ class SpecialWhatLinksHere extends IncludableSpecialPage {
 			$conds['imagelinks'][] = "il_from_namespace $nsComparison";
 		}
 
-		if ( $from ) {
-			$conds['templatelinks'][] = "tl_from >= $from";
-			$conds['pagelinks'][] = "pl_from >= $from";
-			$conds['imagelinks'][] = "il_from >= $from";
+		if ( $offset ) {
+			if ( $dir === 'prev' ) {
+				$conds['templatelinks'][] = "tl_from < $offset";
+				$conds['pagelinks'][] = "pl_from < $offset";
+				$conds['imagelinks'][] = "il_from < $offset";
+			} else {
+				$conds['templatelinks'][] = "tl_from > $offset";
+				$conds['pagelinks'][] = "pl_from > $offset";
+				$conds['imagelinks'][] = "il_from > $offset";
+			}
 		}
+
+		$sortDirection = $dir === 'prev' ? ' DESC ' : ' ASC ';
 
 		if ( $hideredirs ) {
 			$conds['pagelinks']['rd_from'] = null;
@@ -151,7 +159,7 @@ class SpecialWhatLinksHere extends IncludableSpecialPage {
 		}
 
 		$queryFunc = function ( IDatabase $dbr, $table, $fromCol ) use (
-			$conds, $target, $limit
+			$conds, $target, $limit, $sortDirection
 		) {
 			// Read an extra row as an at-end check
 			$queryLimit = $limit + 1;
@@ -168,7 +176,7 @@ class SpecialWhatLinksHere extends IncludableSpecialPage {
 				$conds[$table],
 				__CLASS__ . '::showIndirectLinks',
 				// Force JOIN order per T106682 to avoid large filesorts
-				[ 'ORDER BY' => $fromCol, 'LIMIT' => 2 * $queryLimit, 'STRAIGHT_JOIN' ],
+				[ 'ORDER BY' => $fromCol . $sortDirection, 'LIMIT' => 2 * $queryLimit, 'STRAIGHT_JOIN' ],
 				[
 					'page' => [ 'JOIN', "$fromCol = page_id" ],
 					'redirect' => [ 'LEFT JOIN', $on ]
@@ -179,7 +187,7 @@ class SpecialWhatLinksHere extends IncludableSpecialPage {
 				[ 'page_id', 'page_namespace', 'page_title', 'rd_from', 'page_is_redirect' ],
 				[],
 				__CLASS__ . '::showIndirectLinks',
-				[ 'ORDER BY' => 'page_id', 'LIMIT' => $queryLimit ],
+				[ 'ORDER BY' => 'page_id' . $sortDirection, 'LIMIT' => $queryLimit ],
 				[ 'page' => [ 'JOIN', "$fromCol = page_id" ] ]
 			);
 		};
@@ -258,18 +266,31 @@ class SpecialWhatLinksHere extends IncludableSpecialPage {
 		$numRows = count( $rows );
 
 		// Work out the start and end IDs, for prev/next links
-		if ( $numRows > $limit ) {
-			// More rows available after these ones
-			// Get the ID from the last row in the result set
-			$nextId = $rows[$limit]->page_id;
-			// Remove undisplayed rows
-			$rows = array_slice( $rows, 0, $limit );
+		$nextId = false;
+		$prevId = false;
+		if ( $dir === 'prev' ) {
+			if ( $numRows > $limit ) {
+				// More rows available after these ones
+				// Get the nextId from the last row in the result set
+				$nextId = $rows[$limit]->page_id;
+				// Remove undisplayed rows, for dir='prev' we need to discard first record after sorting
+				$rows = array_slice( $rows, 1, $limit );
+				// Get the prevId from the first displayed row
+				$prevId = $rows[0]->page_id;
+			} else {
+				// Get the nextId from the last displayed row
+				$nextId = $rows[$numRows - 1]->page_id;
+			}
 		} else {
-			// No more rows after
-			$nextId = false;
+			// If offset is not set disable prev link
+			$prevId = $offset ? $rows[0]->page_id : false;
+			if ( $numRows > $limit ) {
+				// Get the nextId from the last displayed row
+				$nextId = $rows[$limit - 1]->page_id;
+				// Remove undisplayed rows
+				$rows = array_slice( $rows, 0, $limit );
+			}
 		}
-		$prevId = $from;
-
 		// use LinkBatch to make sure, that all required data (associated with Titles)
 		// is loaded in one query
 		$lb = new LinkBatch();
@@ -456,11 +477,11 @@ class SpecialWhatLinksHere extends IncludableSpecialPage {
 		unset( $changed['target'] ); // Already in the request title
 
 		if ( $prevId != 0 ) {
-			$overrides = [ 'from' => $this->opts->getValue( 'back' ) ];
+			$overrides = [ 'dir' => 'prev', 'offset' => $prevId ];
 			$prev = $this->makeSelfLink( $prev, array_merge( $changed, $overrides ) );
 		}
 		if ( $nextId != 0 ) {
-			$overrides = [ 'from' => $nextId, 'back' => $prevId ];
+			$overrides = [ 'dir' => 'next', 'offset' => $nextId ];
 			$next = $this->makeSelfLink( $next, array_merge( $changed, $overrides ) );
 		}
 
@@ -480,8 +501,6 @@ class SpecialWhatLinksHere extends IncludableSpecialPage {
 	function whatlinkshereForm() {
 		// We get nicer value from the title object
 		$this->opts->consumeValue( 'target' );
-		// Reset these for new requests
-		$this->opts->consumeValues( [ 'back', 'from' ] );
 
 		$target = $this->target ? $this->target->getPrefixedText() : '';
 		$namespace = $this->opts->consumeValue( 'namespace' );
