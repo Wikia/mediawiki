@@ -97,7 +97,9 @@ class Parser {
 	# RegExp to make image URLs (embeds IPv6 part of EXT_LINK_ADDR)
 	// phpcs:ignore Generic.Files.LineLength
 	const EXT_IMAGE_REGEX = '/^(http:\/\/|https:\/\/)((?:\\[(?i:[0-9a-f:.]+)\\])?[^][<>"\\x00-\\x20\\x7F\p{Zs}\x{FFFD}]+)
-		\\/([A-Za-z0-9_.,~%\\-+&;#*?!=()@\\x80-\\xFF]+)\\.((?i)gif|png|jpg|jpeg)$/Sxu';
+		\\/((([A-Za-z0-9_.,~%\\-+&;#*?!=()@\\x80-\\xFF]+)\\.((?i)gif|png|jpg|jpeg|webp|ico|svg))|
+		([0-9a-fA-F]{8}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{12})(\\/|\\?|$))
+		((?:\[(?i:[0-9a-f:.]+)\])?[^][<>"\x00-\x20\x7F\p{Zs}\x{FFFD}]+)?$/Sxu';
 
 	# Regular expression for a non-newline space
 	const SPACE_NOT_NL = '(?:\t|&nbsp;|&\#0*160;|&\#[Xx]0*[Aa]0;|\p{Zs})';
@@ -2129,24 +2131,17 @@ class Parser {
 			$imagematch = false;
 		}
 
-		// Fandom change - start (@author ttomalak)
-		// allow fandom image links PLATFORM-4871
-		$allowed = Hooks::isRegistered( 'ParserAllowExternalImage' )
-				   && Hooks::run( 'ParserAllowExternalImage', [ $url ] );
-
 		if ( $this->mOptions->getAllowExternalImages()
-			 || $allowed
-			 || ( $imagesexception && $imagematch )
+			|| ( $imagesexception && $imagematch )
 		) {
-			if ( preg_match( self::EXT_IMAGE_REGEX, $url ) || $allowed ) {
+			if ( preg_match( self::EXT_IMAGE_REGEX, $url ) ) {
 				# Image found
 				$text = Linker::makeExternalImage( $url );
 			}
 		}
 		if ( !$text && $this->mOptions->getEnableImageWhitelist()
-			 && ( preg_match( self::EXT_IMAGE_REGEX, $url ) || $allowed )
+			&& preg_match( self::EXT_IMAGE_REGEX, $url )
 		) {
-			// Fandom change - end
 			$whitelist = explode(
 				"\n",
 				wfMessage( 'external_image_whitelist' )->inContentLanguage()->text()
