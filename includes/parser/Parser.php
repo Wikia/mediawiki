@@ -2130,21 +2130,21 @@ class Parser {
 		}
 
 		// Fandom change - start (@author ttomalak)
-		// allow fandom image links PLATFORM-4871
-		$allowed = Hooks::isRegistered( 'ParserAllowExternalImage' )
-				   && Hooks::run( 'ParserAllowExternalImage', [ $url ] );
+		// allow fandom image links PLATFORM-4871 & PLATFORM-4908
+		$matchExternalImageUrl = $this->siteConfig->has( 'ParserExternalImageUrlRegex' ) ?
+			preg_match( $this->siteConfig->get( 'ParserExternalImageUrlRegex' ), $url ) :
+			false;
 
 		if ( $this->mOptions->getAllowExternalImages()
-			 || $allowed
-			 || ( $imagesexception && $imagematch )
+			|| ( $imagesexception && $imagematch )
 		) {
-			if ( preg_match( self::EXT_IMAGE_REGEX, $url ) || $allowed ) {
+			if ( $matchExternalImageUrl || preg_match( self::EXT_IMAGE_REGEX, $url ) ) {
 				# Image found
 				$text = Linker::makeExternalImage( $url );
 			}
 		}
 		if ( !$text && $this->mOptions->getEnableImageWhitelist()
-			 && ( preg_match( self::EXT_IMAGE_REGEX, $url ) || $allowed )
+			&& ( $matchExternalImageUrl || preg_match( self::EXT_IMAGE_REGEX, $url ) )
 		) {
 			// Fandom change - end
 			$whitelist = explode(
