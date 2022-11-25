@@ -5709,13 +5709,9 @@ class Parser {
 
 		if ( !$node ) {
 			# Not found
-			if ( $mode === 'get' ) {
-				if( $newText ) {
-					return $newText;
-				} else {
-				# According to CATS-3534 Tabber component can causing problem with section editing
-					return $text;
-				}
+			# According to CATS-3534 Tabber component can causing problem with section editing
+			if ( $mode === 'get' && $newText) {
+				return $newText;
 			} else {
 				return $text;
 			}
