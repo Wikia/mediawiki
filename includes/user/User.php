@@ -886,6 +886,7 @@ class User implements Authority, UserIdentity, UserEmailContact {
 
 		if ( !$row ) {
 			// No user. Create it?
+			// @phan-suppress-next-line PhanImpossibleCondition
 			if ( !$options['create'] ) {
 				// No.
 				return null;
@@ -902,6 +903,7 @@ class User implements Authority, UserIdentity, UserEmailContact {
 
 		if ( !$user->isSystemUser() ) {
 			// User exists. Steal it?
+			// @phan-suppress-next-line PhanRedundantCondition
 			if ( !$options['steal'] ) {
 				return null;
 			}
