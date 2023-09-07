@@ -1455,6 +1455,12 @@ $wgForceDeferredUpdatesPreSend = null;
 $wgMultiShardSiteStats = null;
 
 /**
+ * Config variable stub for the CacheLazyAttributes setting, for use by phpdoc and IDEs.
+ * @see MediaWiki\MainConfigSchema::CacheLazyAttributes
+ */
+$wgCacheLazyAttributes = null;
+
+/**
  * Config variable stub for the CacheDirectory setting, for use by phpdoc and IDEs.
  * @see MediaWiki\MainConfigSchema::CacheDirectory
  */

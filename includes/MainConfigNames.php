@@ -1470,6 +1470,12 @@ class MainConfigNames {
 	public const MultiShardSiteStats = 'MultiShardSiteStats';
 
 	/**
+	 * Name constant for the CacheLazyAttributes setting, for use with Config::get()
+	 * @see MainConfigSchema::CacheLazyAttributes
+	 */
+	public const CacheLazyAttributes = 'CacheLazyAttributes';
+
+	/**
 	 * Name constant for the CacheDirectory setting, for use with Config::get()
 	 * @see MainConfigSchema::CacheDirectory
 	 */
