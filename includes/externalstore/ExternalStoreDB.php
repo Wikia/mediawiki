@@ -317,7 +317,7 @@ class ExternalStoreDB extends ExternalStoreMedium {
 			[ 'blob_id' => $id ],
 			__METHOD__
 		);
-		if ( $ret === false ) {
+		if ( $ret === false && !$this->isReadOnly( $cluster ) ) {
 			// Try the primary DB
 			$this->logger->warning( __METHOD__ . ": primary DB fallback on $cacheID" );
 			$scope = $this->lbFactory->getTransactionProfiler()->silenceForScope();
