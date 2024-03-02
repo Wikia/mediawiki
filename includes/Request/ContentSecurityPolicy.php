@@ -272,6 +272,7 @@ class ContentSecurityPolicy {
 			$directives[] = 'object-src ' . implode( ' ', $objectSrc );
 		}
 		if ( $reportUri ) {
+			$directives[] = 'report-to ' . $reportUri;
 			$directives[] = 'report-uri ' . $reportUri;
 		}
 
