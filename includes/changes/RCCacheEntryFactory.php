@@ -24,7 +24,6 @@ use MediaWiki\Permissions\Authority;
 use MediaWiki\Revision\RevisionRecord;
 
 class RCCacheEntryFactory {
-
 	/** @var IContextSource */
 	private $context;
 
@@ -35,6 +34,17 @@ class RCCacheEntryFactory {
 	 * @var LinkRenderer
 	 */
 	private $linkRenderer;
+
+
+	/**
+	 * Fandom change - start (@author ttomalak) - PLATFORM-8338
+	 * Initialize cache to store processed user links
+	 * @var MapCacheLRU
+	 */
+	private MapCacheLRU $userLinks;
+	/** @var MapCacheLRU */
+	private MapCacheLRU $userTalkLinks;
+	/** Fandom change - end */
 
 	/**
 	 * @param IContextSource $context
@@ -47,6 +57,13 @@ class RCCacheEntryFactory {
 		$this->context = $context;
 		$this->messages = $messages;
 		$this->linkRenderer = $linkRenderer;
+		/**
+		 * Fandom change - start (@author ttomalak) - PLATFORM-8338
+		 * Initialize cache to store processed user links
+		 */
+		$this->userLinks = new MapCacheLRU( 50 );
+		$this->userTalkLinks = new MapCacheLRU( 50 );
+		/** Fandom change - end */
 	}
 
 	/**
@@ -82,18 +99,29 @@ class RCCacheEntryFactory {
 		$cacheEntry->userlink = $this->getUserLink( $cacheEntry );
 
 		if ( !ChangesList::isDeleted( $cacheEntry, RevisionRecord::DELETED_USER ) ) {
-			$cacheEntry->usertalklink = Linker::userToolLinks(
-				$cacheEntry->mAttribs['rc_user'],
+			/**
+			 * Fandom change - start (@author ttomalak) - PLATFORM-8338
+			 * userToolLinks requires a lot of parser work to process multiple links that are
+			 * rendered there, like contrib page, user talk, message wall etc. Often, active
+			 * users will appear multiple times on same run of RecentChanges, and therefore it is
+			 * unnecessary to process it for each RC record separately.
+			 */
+			$cacheEntry->usertalklink = $this->userTalkLinks->getWithSetCallback(
 				$cacheEntry->mAttribs['rc_user_text'],
-				// Should the contributions link be red if the user has no edits (using default)
-				false,
-				// Customisation flags (using default 0)
-				0,
-				// User edit count (using default )
-				null,
-				// do not wrap the message in parentheses
-				false
+				fn() => Linker::userToolLinks(
+					$cacheEntry->mAttribs['rc_user'],
+					$cacheEntry->mAttribs['rc_user_text'],
+					// Should the contributions link be red if the user has no edits (using default)
+					false,
+					// Customisation flags (using default 0)
+					0,
+					// User edit count (using default )
+					null,
+					// do not wrap the message in parentheses
+					false
+				)
 			);
+			/** Fandom change - end */
 		}
 
 		return $cacheEntry;
@@ -289,11 +317,21 @@ class RCCacheEntryFactory {
 			$userLink = ' <span class="' . $deletedClass . '">' .
 				$this->context->msg( 'rev-deleted-user' )->escaped() . '</span>';
 		} else {
-			$userLink = Linker::userLink(
-				$cacheEntry->mAttribs['rc_user'],
+			/**
+			 * Fandom change - start (@author ttomalak) - PLATFORM-8338
+			 * UserLink requires parser to render which when run on thousands of records can add
+			 * up to significant amount of processing time.
+			 * @see RCCacheEntryFactory::newFromRecentChange
+			 */
+			$userLink = $this->userLinks->getWithSetCallback(
 				$cacheEntry->mAttribs['rc_user_text'],
-				ExternalUserNames::getLocal( $cacheEntry->mAttribs['rc_user_text'] )
+				fn() => Linker::userLink(
+					$cacheEntry->mAttribs['rc_user'],
+					$cacheEntry->mAttribs['rc_user_text'],
+					ExternalUserNames::getLocal( $cacheEntry->mAttribs['rc_user_text'] )
+				)
 			);
+			/** Fandom change - end */
 		}
 
 		return $userLink;

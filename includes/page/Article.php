@@ -488,6 +488,13 @@ class Article implements Page {
 		];
 		# Allow extensions to vary parser options used for article rendering
 		Hooks::runner()->onArticleParserOptions( $this, $parserOptions );
+
+		/**
+		 * Fandom change - start (@author miwaniszczuk) - UGC-4161
+		 * Make EditSectionLink Hook run for pages without restrictions and for users with edit permission
+		 */
+		$restrictionStore = MediaWikiServices::getInstance()->getRestrictionStore();
+
 		# Render printable version, use printable version cache
 		if ( $outputPage->isPrintable() ) {
 			$parserOptions->setIsPrintable( true );
@@ -498,10 +505,12 @@ class Article implements Page {
 				)
 			);
 		} elseif ( $this->viewIsRenderAction || !$this->isCurrent() ||
-			!$authority->probablyCan( 'edit', $this->getTitle() )
+			( !empty( $restrictionStore->getRestrictions( $this->getTitle(), 'edit' ) ) &&
+				!$authority->probablyCan( 'edit', $this->getTitle() ) )
 		) {
 			$poOptions['enableSectionEditLinks'] = false;
 		}
+		// Fandom change - end
 
 		# Try client and file cache
 		if ( $oldid === 0 && $this->mPage->checkTouched() ) {

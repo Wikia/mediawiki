@@ -55,6 +55,7 @@ class DatabaseFactory {
 	 *   - flags : Optional bit field of DBO_* constants that define connection, protocol,
 	 *      buffering, and transaction behavior. It is STRONGLY adviced to leave the DBO_DEFAULT
 	 *      flag in place UNLESS this this database simply acts as a key/value store.
+	 *   - ssl : Whether to use TLS connections.
 	 *   - driver: Optional name of a specific DB client driver. For MySQL, there is only the
 	 *      'mysqli' driver; the old one 'mysql' has been removed.
 	 *   - variables: Optional map of session variables to set after connecting. This can be
@@ -63,6 +64,8 @@ class DatabaseFactory {
 	 *   - lbInfo: Optional map of field/values for the managing load balancer instance.
 	 *      The "master" and "replica" fields are used to flag the replication role of this
 	 *      database server and whether methods like getLag() should actually issue queries.
+	 *   - connectTimeout: Optional timeout, in seconds, for connection attempts.
+	 *   - receiveTimeout: Optional timeout, in seconds, for receiving query results.
 	 *   - topologicalPrimaryConnRef: lazy-connecting IDatabase handle to the most authoritative
 	 *      primary database server for the cluster that this database belongs to. This handle is
 	 *      used for replication status purposes. This is generally managed by LoadBalancer.

@@ -74,6 +74,14 @@ class ChangesList extends ContextSource {
 	protected $filterGroups;
 
 	/**
+	 * Fandom change - start (@author ttomalak) - PLATFORM-8338
+	 * Initialize cache to store processed tags
+	 * @var MapCacheLRU
+	 */
+	protected $tagsCache;
+	/** Fandom change - end */
+
+	/**
 	 * @param IContextSource $context
 	 * @param ChangesListFilterGroup[] $filterGroups Array of ChangesListFilterGroup objects (currently optional)
 	 */
@@ -86,6 +94,13 @@ class ChangesList extends ContextSource {
 		$services = MediaWikiServices::getInstance();
 		$this->linkRenderer = $services->getLinkRenderer();
 		$this->commentFormatter = $services->getRowCommentFormatter();
+
+		/**
+		 * Fandom change - start (@author ttomalak) - PLATFORM-8338
+		 * Initialize cache to store processed tags
+		 */
+		$this->tagsCache = new MapCacheLRU( 50 );
+		/** Fandom change - end */
 	}
 
 	/**
@@ -877,11 +892,22 @@ class ChangesList extends ContextSource {
 			return;
 		}
 
-		list( $tagSummary, $newClasses ) = ChangeTags::formatSummaryRow(
+		/**
+		 * Fandom change - start (@author ttomalak) - PLATFORM-8338
+		 * Tags are repeated for most of the records, so during single eg. RecentChanges we
+		 * should cache those that were already processed as doing that for each record takes
+		 * significant amount of time.
+		 */
+		[ $tagSummary, $newClasses ] = $this->tagsCache->getWithSetCallback(
 			$rc->mAttribs['ts_tags'],
-			'changeslist',
-			$this->getContext()
+			fn() => ChangeTags::formatSummaryRow(
+				$rc->mAttribs['ts_tags'],
+				'changeslist',
+				$this->getContext()
+			)
 		);
+		/** Fandom change - end  */
+
 		$classes = array_merge( $classes, $newClasses );
 		$s .= ' ' . $tagSummary;
 	}
