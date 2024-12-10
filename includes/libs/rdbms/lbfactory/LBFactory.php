@@ -264,7 +264,7 @@ abstract class LBFactory implements ILBFactory {
 	 *
 	 * @return Generator|ILoadBalancerForOwner[]
 	 */
-	abstract protected function getLBsForOwner();
+	abstract public function getLBsForOwner();
 
 	public function flushReplicaSnapshots( $fname = __METHOD__ ) {
 		if ( $this->trxRoundId !== false && $this->trxRoundId !== $fname ) {
