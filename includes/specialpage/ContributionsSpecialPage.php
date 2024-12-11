@@ -556,7 +556,7 @@ class ContributionsSpecialPage extends IncludableSpecialPage {
 	 * @param User $target Target user object
 	 * @return array
 	 */
-	protected function getUserLinks(
+	public function getUserLinks(
 		SpecialPage $sp,
 		User $target
 	) {
