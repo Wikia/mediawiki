@@ -126,6 +126,15 @@ class SpecialDeletedContributions extends ContributionsSpecialPage {
 	}
 
 	/**
+	* Fandom change - start (@author dpaluch)
+	*
+	* Change method from protected to public
+	* which will allow to use this function in 
+ 	* extensions/fandom/UserProfileActivity/src/SpecialUserProfileActivity.php
+	*
+	* PLATFORM-10036
+	*/
+	/**
 	 * @inheritDoc
 	 */
 	public function getUserLinks(
@@ -150,7 +159,8 @@ class SpecialDeletedContributions extends ContributionsSpecialPage {
 
 		return $tools;
 	}
-
+	/** Fandom change - end */
+	
 	/** @inheritDoc */
 	protected function getResultsPageTitleMessageKey( UserIdentity $target ) {
 		// The following messages are generated here:
