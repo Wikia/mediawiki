@@ -128,7 +128,7 @@ class SpecialDeletedContributions extends ContributionsSpecialPage {
 	/**
 	 * @inheritDoc
 	 */
-	protected function getUserLinks(
+	public function getUserLinks(
 		SpecialPage $sp,
 		User $target
 	) {
