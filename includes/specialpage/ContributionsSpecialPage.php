@@ -548,6 +548,16 @@ class ContributionsSpecialPage extends IncludableSpecialPage {
 		return $subHeadingsHtml;
 	}
 
+
+	/**
+	* Fandom change - start (@author dpaluch)
+	*
+	* Change method from protected to public
+	* which will allow to use this function in 
+ 	* extensions/fandom/UserProfileActivity/src/SpecialUserProfileActivity.php
+	*
+	* PLATFORM-10036
+	*/
 	/**
 	 * Links to different places.
 	 *
@@ -677,7 +687,8 @@ class ContributionsSpecialPage extends IncludableSpecialPage {
 
 		return $tools;
 	}
-
+	/** Fandom change - end */
+	
 	/**
 	 * Get the target field for the form
 	 *
