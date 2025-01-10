@@ -74,8 +74,13 @@ class MigrateRevisionCommentTemp extends LoggedUpdateMaintenance {
 		$lowId = -1;
 		$highId = $batchSize;
 		while ( true ) {
+			// `coalesce` covers case when some row is missing in revision_comment_temp.
+			// Original script used `join` which skipped revision row when `revision_comment_temp` was null.
+			//
+			// Not sure whether we should try to fix the data first
+			// RevisionSelectQueryBuilder::joinComment suggest that all revisions should have rev_comment_id set
 			$query = "UPDATE revision
-				SET rev_comment_id = (SELECT revcomment_comment_id FROM revision_comment_temp WHERE rev_id=revcomment_rev)
+				SET rev_comment_id = COALESCE((SELECT revcomment_comment_id FROM revision_comment_temp WHERE rev_id=revcomment_rev), rev_comment_id)
 				WHERE rev_id > $lowId AND rev_id <= $highId";
 			$dbw->query( $query, __METHOD__ );
 			$affected = $dbw->affectedRows();
