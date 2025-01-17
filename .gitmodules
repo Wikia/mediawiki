@@ -44,8 +44,8 @@
 	branch = REL1_43
 [submodule "extensions/Interwiki"]
 	path = extensions/Interwiki
-	url = https://gerrit.wikimedia.org/r/mediawiki/extensions/Interwiki
-	branch = REL1_43
+	url = https://github.com/Wikia/mediawiki-extensions-Interwiki.git
+	branch = UGC-6188-REL1_43-Fandom
 [submodule "extensions/Linter"]
 	path = extensions/Linter
 	url = https://gerrit.wikimedia.org/r/mediawiki/extensions/Linter
