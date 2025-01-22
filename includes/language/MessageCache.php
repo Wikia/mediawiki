@@ -1356,14 +1356,15 @@ class MessageCache implements LoggerAwareInterface {
 			);
 		} else {
 			// Message page either does not exist or does not override a software message
-			if ( !$this->isMainCacheable( $title, $code ) ) {
+			$hash = $this->cache->getField( $code, 'HASH' );
+			if ( !$this->isMainCacheable( $title, $code ) && $hash !== null ) {
 				// Message page does not override any software-defined message. A custom
 				// message might be defined to have content or settings specific to the wiki.
 				// Load the message page, utilizing the individual message cache as needed.
 				$entry = $this->loadCachedMessagePageEntry(
 					$title,
 					$code,
-					$this->cache->getField( $code, 'HASH' )
+					$hash
 				);
 			}
 			if ( $entry === null || substr( $entry, 0, 1 ) !== ' ' ) {
