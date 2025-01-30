@@ -538,12 +538,14 @@ const util = {
 
 	/**
 	 * Add content to the subtitle of the skin.
+	 * Fandom changed - make this work with our skin
 	 *
 	 * @param {HTMLElement|string} nodeOrHTMLString
 	 * @return {boolean} Whether the subtitle was updated
 	 */
 	addSubtitle: function ( nodeOrHTMLString ) {
-		const subtitle = document.getElementById( 'mw-content-subtitle' );
+		const subtitle = document.querySelector( '.page-header__page-subtitle, .page-header__subtitle' ) ||
+			document.getElementById( 'mw-content-subtitle' );
 		if ( !subtitle ) {
 			return false;
 		}
