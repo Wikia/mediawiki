@@ -4387,6 +4387,10 @@ class Parser {
 			$headingId = ( $h instanceof Element && DOMUtils::isHeading( $h ) ) ?
 				DOMCompat::getAttribute( $h, 'id' ) : null;
 
+			// Fandom change - start - allow removing <noscript> tags (PLATFORM-10759)
+			$this->hookContainer->run( 'ParserSafeHeadlineDom', [ $headlineDom ] );
+			// Fandom change - end
+
 			$this->cleanUpTocLine( $headlineDom );
 
 			// Serialize back to HTML
