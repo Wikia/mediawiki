@@ -926,6 +926,10 @@ class UserGroupManager {
 			foreach ( $this->clearCacheCallbacks as $callback ) {
 				$callback( $user );
 			}
+
+			// Fandom change - hook
+			$this->hookContainer->run( 'FandomUserGroupsChanged', [ $user, $group ] );
+
 			return true;
 		}
 		return false;
@@ -1013,6 +1017,10 @@ class UserGroupManager {
 		foreach ( $this->clearCacheCallbacks as $callback ) {
 			$callback( $user );
 		}
+
+		// Fandom change - hook
+		$this->hookContainer->run( 'FandomUserGroupsChanged', [ $user, $group ] );
+
 		return true;
 	}
 
