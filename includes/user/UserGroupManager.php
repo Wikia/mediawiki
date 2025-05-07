@@ -23,10 +23,8 @@ namespace MediaWiki\User;
 use InvalidArgumentException;
 use LogicException;
 use MediaWiki\Config\ServiceOptions;
-use MediaWiki\Deferred\DeferredUpdates;
 use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\HookContainer\HookRunner;
-use MediaWiki\JobQueue\JobQueueGroup;
 use MediaWiki\Logging\ManualLogEntry;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Parser\Sanitizer;
@@ -35,15 +33,10 @@ use MediaWiki\Permissions\GroupPermissionsLookup;
 use MediaWiki\User\TempUser\TempUserConfig;
 use MediaWiki\WikiMap\WikiMap;
 use Psr\Log\LoggerInterface;
-use UserGroupExpiryJob;
 use Wikimedia\Assert\Assert;
 use Wikimedia\IPUtils;
-use Wikimedia\Rdbms\IConnectionProvider;
 use Wikimedia\Rdbms\IDBAccessObject;
-use Wikimedia\Rdbms\ILBFactory;
-use Wikimedia\Rdbms\IReadableDatabase;
 use Wikimedia\Rdbms\ReadOnlyMode;
-use Wikimedia\Rdbms\SelectQueryBuilder;
 
 /**
  * Manage user group memberships.
@@ -83,13 +76,11 @@ class UserGroupManager {
 	public const VALID_OPS = [ '&', '|', '^', '!' ];
 
 	private ServiceOptions $options;
-	private IConnectionProvider $dbProvider;
 	private HookContainer $hookContainer;
 	private HookRunner $hookRunner;
 	private ReadOnlyMode $readOnlyMode;
 	private UserEditTracker $userEditTracker;
 	private GroupPermissionsLookup $groupPermissionsLookup;
-	private JobQueueGroup $jobQueueGroup;
 	private LoggerInterface $logger;
 	private TempUserConfig $tempUserConfig;
 
@@ -148,15 +139,15 @@ class UserGroupManager {
 	 * an ongoing condition check.
 	 */
 	private $recursionMap = [];
+	private UserGroupStore $store;
 
 	/**
 	 * @param ServiceOptions $options
 	 * @param ReadOnlyMode $readOnlyMode
-	 * @param ILBFactory $lbFactory
+	 * @param UserGroupStore $userGroupStore
 	 * @param HookContainer $hookContainer
 	 * @param UserEditTracker $userEditTracker
 	 * @param GroupPermissionsLookup $groupPermissionsLookup
-	 * @param JobQueueGroup $jobQueueGroup
 	 * @param LoggerInterface $logger
 	 * @param TempUserConfig $tempUserConfig
 	 * @param callable[] $clearCacheCallbacks
@@ -165,11 +156,10 @@ class UserGroupManager {
 	public function __construct(
 		ServiceOptions $options,
 		ReadOnlyMode $readOnlyMode,
-		ILBFactory $lbFactory,
+		UserGroupStore $userGroupStore,
 		HookContainer $hookContainer,
 		UserEditTracker $userEditTracker,
 		GroupPermissionsLookup $groupPermissionsLookup,
-		JobQueueGroup $jobQueueGroup,
 		LoggerInterface $logger,
 		TempUserConfig $tempUserConfig,
 		array $clearCacheCallbacks = [],
@@ -177,17 +167,16 @@ class UserGroupManager {
 	) {
 		$options->assertRequiredOptions( self::CONSTRUCTOR_OPTIONS );
 		$this->options = $options;
-		$this->dbProvider = $lbFactory;
 		$this->hookContainer = $hookContainer;
 		$this->hookRunner = new HookRunner( $hookContainer );
 		$this->userEditTracker = $userEditTracker;
 		$this->groupPermissionsLookup = $groupPermissionsLookup;
-		$this->jobQueueGroup = $jobQueueGroup;
 		$this->logger = $logger;
 		$this->tempUserConfig = $tempUserConfig;
 		$this->readOnlyMode = $readOnlyMode;
 		$this->clearCacheCallbacks = $clearCacheCallbacks;
 		$this->wikiId = $wikiId;
+		$this->store = $userGroupStore;
 	}
 
 	/**
@@ -227,14 +216,7 @@ class UserGroupManager {
 	 * @return UserGroupMembership
 	 */
 	public function newGroupMembershipFromRow( \stdClass $row ): UserGroupMembership {
-		return new UserGroupMembership(
-			(int)$row->ug_user,
-			$row->ug_group,
-			$row->ug_expiry === null ? null : wfTimestamp(
-				TS_MW,
-				$row->ug_expiry
-			)
-		);
+		return $this->store->newGroupMembershipFromRow( $row );
 	}
 
 	/**
@@ -379,16 +361,7 @@ class UserGroupManager {
 			return [];
 		}
 
-		$res = $this->getDBConnectionRefForQueryFlags( $queryFlags )->newSelectQueryBuilder()
-			->select( 'ufg_group' )
-			->from( 'user_former_groups' )
-			->where( [ 'ufg_user' => $user->getId( $this->wikiId ) ] )
-			->caller( __METHOD__ )
-			->fetchResultSet();
-		$formerGroups = [];
-		foreach ( $res as $row ) {
-			$formerGroups[] = $row->ufg_group;
-		}
+		$formerGroups = $this->store->getFormerGroups( $user, $queryFlags );
 		$this->setCache( $userKey, self::CACHE_FORMER, $formerGroups, $queryFlags );
 
 		return $this->userGroupCache[$userKey][self::CACHE_FORMER];
@@ -794,24 +767,27 @@ class UserGroupManager {
 			return [];
 		}
 
-		$queryBuilder = $this->newQueryBuilder( $this->getDBConnectionRefForQueryFlags( $queryFlags ) );
-		$res = $queryBuilder
-			->where( [ 'ug_user' => $user->getId( $this->wikiId ) ] )
-			->caller( __METHOD__ )
-			->fetchResultSet();
-
-		$ugms = [];
-		foreach ( $res as $row ) {
-			$ugm = $this->newGroupMembershipFromRow( $row );
-			if ( !$ugm->isExpired() ) {
-				$ugms[$ugm->getGroup()] = $ugm;
-			}
-		}
+		$ugms = $this->store->getGroupMemberships( $user, $queryFlags );
 		ksort( $ugms );
 
 		$this->setCache( $userKey, self::CACHE_MEMBERSHIP, $ugms, $queryFlags );
 
 		return $ugms;
+	}
+
+	/**
+	 * Loads and returns UserGroupMembership objects for all the groups users currently
+	 * belong to.
+	 *
+	 * @param array $userIds the user ids to search for
+	 * @param int $queryFlags
+	 * @return UserGroupMembership[][] Associative array of (user id => (group name => UserGroupMembership object))
+	 */
+	public function getUserGroupMembershipsFromUserIds(
+		array $userIds,
+		int $queryFlags = IDBAccessObject::READ_NORMAL
+	): array {
+		return $this->store->getGroupMembershipsFromUserIds( $userIds, $queryFlags );
 	}
 
 	/**
@@ -868,61 +844,9 @@ class UserGroupManager {
 		}
 
 		$oldUgms = $this->getUserGroupMemberships( $user, IDBAccessObject::READ_LATEST );
-		$dbw = $this->dbProvider->getPrimaryDatabase( $this->wikiId );
+		$changed = $this->store->addGroup( $user, $group, $expiry, $allowUpdate );
 
-		$dbw->startAtomic( __METHOD__ );
-		$dbw->newInsertQueryBuilder()
-			->insertInto( 'user_groups' )
-			->ignore()
-			->row( [
-				'ug_user' => $user->getId( $this->wikiId ),
-				'ug_group' => $group,
-				'ug_expiry' => $expiry ? $dbw->timestamp( $expiry ) : null,
-			] )
-			->caller( __METHOD__ )->execute();
-
-		$affected = $dbw->affectedRows();
-		if ( !$affected ) {
-			// Conflicting row already exists; it should be overridden if it is either expired
-			// or if $allowUpdate is true and the current row is different than the loaded row.
-			$conds = [
-				'ug_user' => $user->getId( $this->wikiId ),
-				'ug_group' => $group
-			];
-			if ( $allowUpdate ) {
-				// Update the current row if its expiry does not match that of the loaded row
-				$conds[] = $expiry
-					? $dbw->expr( 'ug_expiry', '=', null )
-						->or( 'ug_expiry', '!=', $dbw->timestamp( $expiry ) )
-					: $dbw->expr( 'ug_expiry', '!=', null );
-			} else {
-				// Update the current row if it is expired
-				$conds[] = $dbw->expr( 'ug_expiry', '<', $dbw->timestamp() );
-			}
-			$dbw->newUpdateQueryBuilder()
-				->update( 'user_groups' )
-				->set( [ 'ug_expiry' => $expiry ? $dbw->timestamp( $expiry ) : null ] )
-				->where( $conds )
-				->caller( __METHOD__ )->execute();
-			$affected = $dbw->affectedRows();
-		}
-		$dbw->endAtomic( __METHOD__ );
-
-		// Purge old, expired memberships from the DB
-		DeferredUpdates::addCallableUpdate( function ( $fname ) {
-			$dbr = $this->dbProvider->getReplicaDatabase( $this->wikiId );
-			$hasExpiredRow = (bool)$dbr->newSelectQueryBuilder()
-				->select( '1' )
-				->from( 'user_groups' )
-				->where( [ $dbr->expr( 'ug_expiry', '<', $dbr->timestamp() ) ] )
-				->caller( $fname )
-				->fetchField();
-			if ( $hasExpiredRow ) {
-				$this->jobQueueGroup->push( new UserGroupExpiryJob( [] ) );
-			}
-		} );
-
-		if ( $affected > 0 ) {
+		if ( $changed ) {
 			$oldUgms[$group] = new UserGroupMembership( $user->getId( $this->wikiId ), $group, $expiry );
 			if ( !$oldUgms[$group]->isExpired() ) {
 				$this->setCache(
@@ -998,21 +922,9 @@ class UserGroupManager {
 
 		$oldUgms = $this->getUserGroupMemberships( $user, IDBAccessObject::READ_LATEST );
 		$oldFormerGroups = $this->getUserFormerGroups( $user, IDBAccessObject::READ_LATEST );
-		$dbw = $this->dbProvider->getPrimaryDatabase( $this->wikiId );
-		$dbw->newDeleteQueryBuilder()
-			->deleteFrom( 'user_groups' )
-			->where( [ 'ug_user' => $user->getId( $this->wikiId ), 'ug_group' => $group ] )
-			->caller( __METHOD__ )->execute();
-
-		if ( !$dbw->affectedRows() ) {
+		if ( !$this->store->removeGroup( $user, $group ) ) {
 			return false;
 		}
-		// Remember that the user was in this group
-		$dbw->newInsertQueryBuilder()
-			->insertInto( 'user_former_groups' )
-			->ignore()
-			->row( [ 'ufg_user' => $user->getId( $this->wikiId ), 'ufg_group' => $group ] )
-			->caller( __METHOD__ )->execute();
 
 		unset( $oldUgms[$group] );
 		$userKey = $this->getCacheKey( $user );
@@ -1027,23 +939,6 @@ class UserGroupManager {
 	}
 
 	/**
-	 * Return the query builder to build upon and query
-	 *
-	 * @param IReadableDatabase $db
-	 * @return SelectQueryBuilder
-	 * @internal
-	 */
-	public function newQueryBuilder( IReadableDatabase $db ): SelectQueryBuilder {
-		return $db->newSelectQueryBuilder()
-			->select( [
-				'ug_user',
-				'ug_group',
-				'ug_expiry',
-			] )
-			->from( 'user_groups' );
-	}
-
-	/**
 	 * Purge expired memberships from the user_groups table
 	 * @internal
 	 * @note this could be slow and is intended for use in a background job
@@ -1055,54 +950,8 @@ class UserGroupManager {
 			return false;
 		}
 
-		$ticket = $this->dbProvider->getEmptyTransactionTicket( __METHOD__ );
-		$dbw = $this->dbProvider->getPrimaryDatabase( $this->wikiId );
+		$purgedRows = $this->store->purgeExpired();
 
-		$lockKey = "{$dbw->getDomainID()}:UserGroupManager:purge"; // per-wiki
-		$scopedLock = $dbw->getScopedLockAndFlush( $lockKey, __METHOD__, 0 );
-		if ( !$scopedLock ) {
-			return false; // already running
-		}
-
-		$now = time();
-		$purgedRows = 0;
-		do {
-			$dbw->startAtomic( __METHOD__ );
-			$res = $this->newQueryBuilder( $dbw )
-				->where( [ $dbw->expr( 'ug_expiry', '<', $dbw->timestamp( $now ) ) ] )
-				->forUpdate()
-				->limit( 100 )
-				->caller( __METHOD__ )
-				->fetchResultSet();
-
-			if ( $res->numRows() > 0 ) {
-				$insertData = []; // array of users/groups to insert to user_former_groups
-				$deleteCond = []; // array for deleting the rows that are to be moved around
-				foreach ( $res as $row ) {
-					$insertData[] = [ 'ufg_user' => $row->ug_user, 'ufg_group' => $row->ug_group ];
-					$deleteCond[] = $dbw
-						->expr( 'ug_user', '=', $row->ug_user )
-						->and( 'ug_group', '=', $row->ug_group );
-				}
-				// Delete the rows we're about to move
-				$dbw->newDeleteQueryBuilder()
-					->deleteFrom( 'user_groups' )
-					->where( $dbw->orExpr( $deleteCond ) )
-					->caller( __METHOD__ )->execute();
-				// Push the groups to user_former_groups
-				$dbw->newInsertQueryBuilder()
-					->insertInto( 'user_former_groups' )
-					->ignore()
-					->rows( $insertData )
-					->caller( __METHOD__ )->execute();
-				// Count how many rows were purged
-				$purgedRows += $res->numRows();
-			}
-
-			$dbw->endAtomic( __METHOD__ );
-
-			$this->dbProvider->commitAndWaitForReplication( __METHOD__, $ticket );
-		} while ( $res->numRows() > 0 );
 		return $purgedRows;
 	}
 
@@ -1238,17 +1087,6 @@ class UserGroupManager {
 		$userKey = $this->getCacheKey( $user );
 		unset( $this->userGroupCache[$userKey][$cacheKind] );
 		unset( $this->queryFlagsUsedForCaching[$userKey][$cacheKind] );
-	}
-
-	/**
-	 * @param int $recency a bit field composed of IDBAccessObject::READ_XXX flags
-	 * @return IReadableDatabase
-	 */
-	private function getDBConnectionRefForQueryFlags( int $recency ): IReadableDatabase {
-		if ( ( IDBAccessObject::READ_LATEST & $recency ) == IDBAccessObject::READ_LATEST ) {
-			return $this->dbProvider->getPrimaryDatabase( $this->wikiId );
-		}
-		return $this->dbProvider->getReplicaDatabase( $this->wikiId );
 	}
 
 	/**

@@ -105,11 +105,14 @@ class UserGroupManagerFactory {
 			$this->instances[$key] = new UserGroupManager(
 				$this->options,
 				$this->readOnlyMode,
-				$this->dbLoadBalancerFactory,
+				new UserGroupStore(
+					$this->dbLoadBalancerFactory,
+					$this->jobQueueGroupFactory->makeJobQueueGroup( $wikiId ),
+					$wikiId
+				),
 				$this->hookContainer,
 				$this->userEditTracker,
 				$this->groupPermissionLookup,
-				$this->jobQueueGroupFactory->makeJobQueueGroup( $wikiId ),
 				$this->logger,
 				$this->tempUserConfig,
 				$this->clearCacheCallbacks,
