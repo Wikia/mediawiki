@@ -329,17 +329,11 @@ class UsersPager extends AlphabeticPager {
 		}
 
 		// Lookup groups for all the users
-		$queryBuilder = $this->userGroupManager->newQueryBuilder( $this->getDatabase() );
-		$groupRes = $queryBuilder->where( [ 'ug_user' => $userIds ] )
-			->caller( __METHOD__ )
-			->fetchResultSet();
-		$cache = [];
+		$cache = $this->userGroupManager->getUserGroupMembershipsFromUserIds( $userIds );
 		$groups = [];
-		foreach ( $groupRes as $row ) {
-			$ugm = $this->userGroupManager->newGroupMembershipFromRow( $row );
-			if ( !$ugm->isExpired() ) {
-				$cache[$row->ug_user][$row->ug_group] = $ugm;
-				$groups[$row->ug_group] = true;
+		foreach ( $cache as $userGroups ) {
+			foreach ( $userGroups as $group => $ugm ) {
+				$groups[$group] = true;
 			}
 		}
 

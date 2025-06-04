@@ -36,6 +36,7 @@ use MediaWiki\User\TempUser\RealTempUserConfig;
 use MediaWiki\User\User;
 use MediaWiki\User\UserEditTracker;
 use MediaWiki\User\UserGroupManager;
+use MediaWiki\User\UserGroupStore;
 use MediaWiki\User\UserIdentity;
 use MediaWiki\User\UserIdentityValue;
 use MediaWiki\Utils\MWTimestamp;
@@ -95,11 +96,13 @@ class UserGroupManagerTest extends MediaWikiIntegrationTestCase {
 				$services->getMainConfig()
 			),
 			$services->getReadOnlyMode(),
-			$services->getDBLoadBalancerFactory(),
+			new UserGroupStore(
+				$services->getDBLoadBalancerFactory(),
+				$services->getJobQueueGroup()
+			),
 			$services->getHookContainer(),
 			$userEditTrackerOverride ?? $services->getUserEditTracker(),
 			$services->getGroupPermissionsLookup(),
-			$services->getJobQueueGroup(),
 			new TestLogger(),
 			new RealTempUserConfig( [
 				'enabled' => true,
