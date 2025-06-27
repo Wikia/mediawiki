@@ -1072,18 +1072,7 @@ class LocalFile extends File {
 	 * @return string|Blob
 	 */
 	public function getMetadataForDb( IReadableDatabase $db ) {
-		$this->load( self::LOAD_ALL );
-		if ( !$this->metadataArray && !$this->metadataBlobs ) {
-			$s = '';
-		} elseif ( $this->repo->isJsonMetadataEnabled() ) {
-			$s = $this->getJsonMetadata();
-		} else {
-			$s = serialize( $this->getMetadataArray() );
-		}
-		if ( !is_string( $s ) ) {
-			throw new RuntimeException( 'Could not serialize image metadata value for DB' );
-		}
-		return $db->encodeBlob( $s );
+		return ""; // SPLAT-124: remove metadata
 	}
 
 	/**
