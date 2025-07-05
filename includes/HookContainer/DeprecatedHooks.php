@@ -42,10 +42,10 @@ class DeprecatedHooks {
 		'EditPageBeforeEditToolbar' => [ 'deprecatedVersion' => '1.36' ],
 		'EmailUser' => [ 'deprecatedVersion' => '1.41', 'silent' => true ],
 		'EmailUserPermissionsErrors' => [ 'deprecatedVersion' => '1.41' ],
-		'InterwikiLoadPrefix' => [ 'deprecatedVersion' => '1.36' ],
+		'InterwikiLoadPrefix' => [ 'deprecatedVersion' => '1.36', 'silent' => true ], // remove 'silent' after upgrading to v1.44+
 		'LocalFile::getHistory' => [ 'deprecatedVersion' => '1.37' ],
 		'MagicWordwgVariableIDs' => [ 'deprecatedVersion' => '1.35', 'silent' => true ],
-		'MessageCache::get' => [ 'deprecatedVersion' => '1.41' ],
+		'MessageCache::get' => [ 'deprecatedVersion' => '1.41', 'silent' => true ], // remove 'silent' after https://fandom.atlassian.net/browse/PLATFORM-10292
 		'OutputPageMakeCategoryLinks' => [ 'deprecatedVersion' => '1.43' ],
 		'PageContentSave' => [ 'deprecatedVersion' => '1.35', 'silent' => true ],
 		'PrefixSearchBackend' => [ 'deprecatedVersion' => '1.27' ],
