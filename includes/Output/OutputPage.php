@@ -3715,7 +3715,8 @@ class OutputPage extends ContextSource {
 				RL\Module::GROUP_USER => []
 			];
 			$exemptStates = [];
-			$moduleStyles = $this->getModuleStyles( /*filter*/ true );
+			// $moduleStyles = $this->getModuleStyles( /*filter*/ true );
+			$moduleStyles = [];
 
 			// Preload getTitleInfo for isKnownEmpty calls below and in RL\ClientHtml
 			// Separate user-specific batch for improved cache-hit ratio.
