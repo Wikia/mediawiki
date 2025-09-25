@@ -3355,6 +3355,7 @@ class ParserOutput extends CacheTime implements ContentMetadataCollector {
 		$this->setRawText( $s );
 	}
 
+	// Fandom-start - fixes for DPL (PLATFORM-11206)
 	public function &__get( $name ) {
 		if ( property_exists( get_called_class(), $name ) ) {
 			// Direct access to a public property, deprecated.
@@ -3370,6 +3371,7 @@ class ParserOutput extends CacheTime implements ContentMetadataCollector {
 			return $this->$name;
 		}
 	}
+	// Fandom-end
 
 	public function __set( $name, $value ) {
 		if ( property_exists( get_called_class(), $name ) ) {
