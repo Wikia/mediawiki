@@ -391,8 +391,7 @@ abstract class Skin extends ContextSource {
 			// This is as @min-width-breakpoint-desktop-wide usually tends to optimize
 			// for larger screens with max-widths and margins.
 			// The initial-scale SHOULD NOT be set here as defining it will impact zoom
-			// on mobile devices. To allow font-size adjustment in iOS devices (see T311795)
-			// we will define a zoom in JavaScript on certain devices (see resources/src/mediawiki.page.ready/ready.js)
+			// on mobile devices.
 			$out->addMeta(
 				'viewport',
 				'width=1120'
