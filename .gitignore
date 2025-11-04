@@ -1,6 +1,6 @@
 # Repository management
 .svn
-
+.costam
 # git-deploy status file:
 /.deploy
 
