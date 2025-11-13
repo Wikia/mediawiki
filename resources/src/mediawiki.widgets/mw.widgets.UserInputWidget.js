@@ -19,6 +19,9 @@
 	 * @param {number} [config.limit=10] Number of results to show
 	 * @param {boolean} [config.excludenamed] Whether to exclude named users or not
 	 * @param {boolean} [config.excludetemp] Whether to exclude temporary users or not
+	 * Fandom-start: - added witheditsonly parameter
+	 * @param {boolean} [config.witheditsonly] Whether to include only users with edits
+	 * Fandom-end
 	 * @param {mw.Api} [config.api] API object to use, creates a default mw.Api instance if not specified
 	 */
 	mw.widgets.UserInputWidget = function MwWidgetsUserInputWidget( config ) {
@@ -35,6 +38,9 @@
 		this.limit = config.limit || 10;
 		this.excludeNamed = config.excludenamed || false;
 		this.excludeTemp = config.excludetemp || false;
+		// Fandom-start
+		this.witheditsonly = config.witheditsonly || false;
+		// Fandom-end
 		this.api = config.api || new mw.Api();
 
 		// Initialization
@@ -86,7 +92,10 @@
 			auprefix: this.value,
 			aulimit: this.limit,
 			auexcludenamed: this.excludeNamed,
-			auexcludetemp: this.excludeTemp
+			auexcludetemp: this.excludeTemp,
+			// Fandom-start
+			auwitheditsonly: this.witheditsonly
+			// Fandom-end
 		} );
 	};
 
