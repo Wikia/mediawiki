@@ -2,6 +2,7 @@
 
 namespace Wikimedia\WRStats;
 
+use Fandom\Includes\Logging\Loggable;
 use Wikimedia\ObjectCache\BagOStuff;
 
 /**
@@ -11,6 +12,7 @@ use Wikimedia\ObjectCache\BagOStuff;
  * @since 1.39
  */
 class BagOStuffStatsStore implements StatsStore {
+	use Loggable;
 	/** @var BagOStuff */
 	private $cache;
 
@@ -37,6 +39,7 @@ class BagOStuffStatsStore implements StatsStore {
 
 	public function incr( array $values, $ttl ) {
 		foreach ( $values as $key => $value ) {
+			$this->error( 'key:' . $key . ' incr by ' . $value . ' ttl:' . $ttl );
 			$this->cache->incrWithInit(
 				$key,
 				$ttl,
@@ -48,10 +51,12 @@ class BagOStuffStatsStore implements StatsStore {
 	}
 
 	public function delete( array $keys ) {
+		$this->error( 'Deleting keys: ' . implode( ', ', $keys ) );
 		$this->cache->deleteMulti( $keys, BagOStuff::WRITE_BACKGROUND );
 	}
 
 	public function query( array $keys ) {
+		$this->error( 'Querying keys: ' . implode( ', ', $keys ) );
 		return $this->cache->getMulti( $keys );
 	}
 }
