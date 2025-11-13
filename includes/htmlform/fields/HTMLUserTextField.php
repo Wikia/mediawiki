@@ -21,6 +21,9 @@ use Wikimedia\IPUtils;
  * 'iprangelimits' - Specifies the valid IP ranges for IPv4 and IPv6 in an array.
  * 'excludenamed' - Whether to exclude named users or not.
  * 'excludetemp' - Whether to exclude temporary users or not.
+ * // Fandom-start
+ * 'witheditsonly' - Whether to only suggest users with edits.
+ * // Fandom-end
  *
  * @stable to extend
  * @since 1.26
@@ -43,6 +46,9 @@ class HTMLUserTextField extends HTMLTextField {
 				],
 				'excludenamed' => false,
 				'excludetemp' => false,
+				// Fandom-start
+				'witheditsonly' => false,
+				// Fandom-end
 			]
 		);
 
@@ -73,7 +79,10 @@ class HTMLUserTextField extends HTMLTextField {
 			// check if the user account type matches the account type filter
 			$excludeNamed = $this->mParams['excludenamed'] ?? null;
 			$excludeTemp = $this->mParams['excludetemp'] ?? null;
-			if ( ( $excludeTemp && $user->isTemp() ) || ( $excludeNamed && $user->isNamed() ) ) {
+			// Fandom-start
+			$withEditsOnly = $this->mParams['witheditsonly'] ?? null;
+			if ( ( $excludeTemp && $user->isTemp() ) || ( $excludeNamed && $user->isNamed() ) || ( $withEditsOnly && !$user->getEditCount() ) ) {
+				// Fandom-end
 				return $this->msg( 'htmlform-user-not-valid', $user->getName() );
 			}
 		} else {
@@ -153,6 +162,11 @@ class HTMLUserTextField extends HTMLTextField {
 		if ( isset( $this->mParams['excludetemp'] ) ) {
 			$params['excludetemp'] = $this->mParams['excludetemp'];
 		}
+		// Fandom-start
+		if ( isset( $this->mParams['witheditsonly'] ) ) {
+			$params['witheditsonly'] = $this->mParams['witheditsonly'];
+		}
+		// Fandom-end
 
 		return new UserInputWidget( $params );
 	}
