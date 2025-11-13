@@ -17,6 +17,11 @@ class UserInputWidget extends TextInputWidget {
 	/** @var bool */
 	protected $excludeTemp;
 
+	// Fandom-start
+	/** @var bool */
+	protected $withEditsOnly;
+	// Fandom-end
+
 	/**
 	 * @param array $config Configuration options
 	 */
@@ -30,6 +35,12 @@ class UserInputWidget extends TextInputWidget {
 		if ( isset( $config['excludetemp'] ) ) {
 			$this->excludeTemp = $config['excludetemp'];
 		}
+
+		// Fandom-start
+		if ( isset( $config['witheditsonly'] ) ) {
+			$this->withEditsOnly = $config['witheditsonly'];
+		}
+		// Fandom-end
 
 		// Initialization
 		$this->addClasses( [ 'mw-widget-userInputWidget' ] );
@@ -49,6 +60,12 @@ class UserInputWidget extends TextInputWidget {
 		if ( $this->excludeTemp !== null ) {
 			$config['excludetemp'] = $this->excludeTemp;
 		}
+
+		// Fandom-start
+		if ( $this->withEditsOnly !== null ) {
+			$config['witheditsonly'] = $this->withEditsOnly;
+		}
+		// Fandom-end
 
 		return parent::getConfig( $config );
 	}
