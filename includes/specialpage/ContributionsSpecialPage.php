@@ -702,6 +702,9 @@ class ContributionsSpecialPage extends IncludableSpecialPage {
 			'iprange' => true,
 			'external' => true,
 			'required' => true,
+			// Fandom-start
+			'witheditsonly' => true,
+			// Fandom-end
 		];
 	}
 
