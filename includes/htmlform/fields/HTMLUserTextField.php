@@ -79,10 +79,7 @@ class HTMLUserTextField extends HTMLTextField {
 			// check if the user account type matches the account type filter
 			$excludeNamed = $this->mParams['excludenamed'] ?? null;
 			$excludeTemp = $this->mParams['excludetemp'] ?? null;
-			// Fandom-start
-			$withEditsOnly = $this->mParams['witheditsonly'] ?? null;
-			if ( ( $excludeTemp && $user->isTemp() ) || ( $excludeNamed && $user->isNamed() ) || ( $withEditsOnly && !$user->getEditCount() ) ) {
-				// Fandom-end
+			if ( ( $excludeTemp && $user->isTemp() ) || ( $excludeNamed && $user->isNamed() ) ) {
 				return $this->msg( 'htmlform-user-not-valid', $user->getName() );
 			}
 		} else {
