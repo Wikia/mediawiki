@@ -51,7 +51,7 @@ class Dump7ZipOutput extends DumpPipeOutput {
 	 */
 	private function setup7zCommand( $file ) {
 		$command = "7za a -bd ";
-		$command .= "-si" . Shell::escape( basename( $file ) ) . ' ';
+		$command .= "-si" . Shell::escape( preg_replace( '/\\.7z$/', '', basename( $file ) ) ) . ' ';
 		$command .= "-mx=" . Shell::escape( (string)$this->compressionLevel ) . ' ';
 		$command .= Shell::escape( $file );
 		// Suppress annoying useless crap from p7zip
