@@ -7,9 +7,7 @@
 			"Katunchik",
 			"Megakott",
 			"Okras",
-			"Vlad5250",
-			"Cabadeck",
-			"Yurina Tatiana"
+			"Vlad5250"
 		]
 	},
 	"rest-prefix-mismatch": "Запрашиваемый путь ($1) не найден внутри базового пути REST API ($2)",

@@ -889,7 +889,6 @@ class DefaultPreferencesFactory implements PreferencesFactory {
 					'type' => 'toggle',
 					'section' => 'personal/email',
 					'label-message' => 'email-allow-new-users-label',
-					'help-message' => 'prefs-help-email-allow-new-users',
 					'disabled' => $disableEmailPrefs,
 					'disable-if' => [ '!==', 'disablemail', '1' ],
 				];

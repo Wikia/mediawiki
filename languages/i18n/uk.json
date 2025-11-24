@@ -98,8 +98,7 @@
 			"Чорний Кіт",
 			"아라",
 			"Mike.Khoroshun",
-			"Hypers",
-			"METROKOP228 UA"
+			"Hypers"
 		]
 	},
 	"sunday": "неділя",
@@ -674,8 +673,8 @@
 	"watchthis": "Спостерігати за цією сторінкою",
 	"savearticle": "Зберегти сторінку",
 	"savechanges": "Зберегти зміни",
-	"publishpage": "Опублікувати сторінку",
-	"publishchanges": "Опублікувати зміни",
+	"publishpage": "Зберегти сторінку",
+	"publishchanges": "Зберегти зміни",
 	"savearticle-start": "Зберегти сторінку...",
 	"savechanges-start": "Зберегти зміни...",
 	"publishpage-start": "Опублікувати сторінку...",
@@ -3641,7 +3640,7 @@
 	"protectpage": "Захист сторінки",
 	"specialprotectpage-page": "Цільова сторінка",
 	"specialprotectpage-submit": "Перейти до сторінки",
-	"purge": "Очистити кеш сторінки",
+	"purge": "Очистити",
 	"specialpurge-page": "Цільова сторінка",
 	"specialpurge-submit": "Перейти на сторінку",
 	"namespaceinfo": "Інформація про простір назв",

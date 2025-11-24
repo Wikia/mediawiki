@@ -299,9 +299,6 @@ class PageContentHelper {
 			$restrictions[] = 'userhidden';
 		}
 
-		$publicUser = $revision->getUser();
-		$publicComment = $revision->getComment();
-
 		return [
 			'title' => $title->getPrefixedDBkey(),
 			'page_id' => $page->getId(),
@@ -315,9 +312,9 @@ class PageContentHelper {
 
 			'namespace' => $page->getNamespace(),
 			'user_id' => $revision->getUser( RevisionRecord::RAW )->getId(),
-			'user_text' => $publicUser ? $publicUser->getName() : null,
-			'comment' => $publicComment ? $publicComment->text : null,
+			'user_text' => $revision->getUser( RevisionRecord::FOR_PUBLIC )->getName(),
 			'timestamp' => wfTimestampOrNull( TS_ISO_8601, $revision->getTimestamp() ),
+			'comment' => $revision->getComment()->text,
 			'tags' => $tags,
 			'restrictions' => $restrictions,
 			'page_language' => $title->getPageLanguage()->getCode(),

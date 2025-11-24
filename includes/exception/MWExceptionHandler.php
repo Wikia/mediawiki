@@ -260,8 +260,7 @@ class MWExceptionHandler {
 		$line = null
 	) {
 		// E_STRICT is deprecated since PHP 8.4 (T375707).
-		// phpcs:ignore Generic.PHP.NoSilencedErrors.Discouraged
-		if ( defined( 'E_STRICT' ) && $level == @constant( 'E_STRICT' ) ) {
+		if ( defined( 'E_STRICT' ) && $level == constant( 'E_STRICT' ) ) {
 			$level = E_USER_NOTICE;
 		}
 

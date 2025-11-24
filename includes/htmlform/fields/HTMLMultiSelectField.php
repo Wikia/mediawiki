@@ -230,13 +230,10 @@ class HTMLMultiSelectField extends HTMLFormField implements HTMLNestedFilterable
 
 			$widget = new \OOUI\CheckboxMultiselectInputWidget( $attr );
 			if ( $sectionLabel ) {
-				if ( $this->mOptionsLabelsNotFromMessage ) {
-					// @phan-suppress-next-line SecurityCheck-XSS Can't track conditional escaping via a property
-					$sectionLabel = new \OOUI\HtmlSnippet( $sectionLabel );
-				}
 				$out[] = new \OOUI\FieldsetLayout( [
 					'items' => [ $widget ],
-					'label' => $sectionLabel,
+					// @phan-suppress-next-line SecurityCheck-XSS Key is html, taint cannot track that
+					'label' => new \OOUI\HtmlSnippet( $sectionLabel ),
 				] );
 			} else {
 				$out[] = $widget;

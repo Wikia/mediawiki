@@ -90,12 +90,12 @@ class HeaderCallback {
 	 * @since 1.29
 	 */
 	public static function warnIfHeadersSent() {
-		if ( !self::$messageSent && headers_sent( $filename, $line ) ) {
+		if ( headers_sent() && !self::$messageSent ) {
 			self::$messageSent = true;
 			\MediaWiki\Debug\MWDebug::warning( 'Headers already sent, should send headers earlier than ' .
 				wfGetCaller( 3 ) );
 			$logger = \MediaWiki\Logger\LoggerFactory::getInstance( 'headers-sent' );
-			$logger->error( 'Warning: headers were already sent (output started at ' . $filename . ':' . $line . ')', [
+			$logger->error( 'Warning: headers were already sent from the location below', [
 				'exception' => self::$headersSentException,
 				'detection-trace' => new RuntimeException( 'Detected here' ),
 			] );

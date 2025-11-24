@@ -415,11 +415,6 @@ class LinkFilterTest extends MediaWikiLangTestCase {
 				'mailto:@wiki',
 				'mailto:wiki@'
 			],
-			[
-				// mailtos are handled special
-				'mailto:wiki',
-				'mailto:wiki'
-			],
 
 			// file URL cases per T30627...
 			[

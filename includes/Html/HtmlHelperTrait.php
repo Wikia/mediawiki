@@ -3,7 +3,6 @@
 namespace MediaWiki\Html;
 
 use Wikimedia\Assert\Assert;
-use Wikimedia\RemexHtml\Serializer\HtmlFormatter;
 use Wikimedia\RemexHtml\Serializer\SerializerNode;
 
 /**
@@ -24,9 +23,6 @@ trait HtmlHelperTrait {
 		parent::__construct( $options );
 		$this->shouldModifyCallback = $shouldModifyCallback;
 		$this->modifyCallback = $modifyCallback;
-		// Escape U+0338 (T387130)
-		'@phan-var HtmlFormatter $this';
-		$this->textEscapes["\u{0338}"] = '&#x338;';
 	}
 
 	public function element( SerializerNode $parent, SerializerNode $node, $contents ) {

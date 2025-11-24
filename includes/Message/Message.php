@@ -34,7 +34,6 @@ use MediaWiki\Page\PageReference;
 use MediaWiki\Page\PageReferenceValue;
 use MediaWiki\Parser\Parser;
 use MediaWiki\Parser\ParserOutput;
-use MediaWiki\Parser\Sanitizer;
 use MediaWiki\StubObject\StubUserLang;
 use MediaWiki\Title\Title;
 use RuntimeException;
@@ -1043,7 +1042,7 @@ class Message implements Stringable, MessageSpecifier, Serializable {
 			// '⧼' is used instead of '<' to side-step any
 			// double-escaping issues.
 			// (Keep synchronised with mw.Message#toString in JS.)
-			return '⧼' . Sanitizer::escapeCombiningChar( htmlspecialchars( $this->key ) ) . '⧽';
+			return '⧼' . htmlspecialchars( $this->key ) . '⧽';
 		}
 
 		if ( in_array( $this->getLanguage()->getCode(), [ 'qqx', 'x-xss' ] ) ) {
@@ -1079,7 +1078,6 @@ class Message implements Stringable, MessageSpecifier, Serializable {
 		} elseif ( $format === self::FORMAT_ESCAPED ) {
 			$string = $this->transformText( $string );
 			$string = htmlspecialchars( $string, ENT_QUOTES, 'UTF-8', false );
-			$string = Sanitizer::escapeCombiningChar( $string );
 		}
 
 		# Raw parameter replacement
@@ -1593,7 +1591,7 @@ class Message implements Stringable, MessageSpecifier, Serializable {
 			case self::FORMAT_BLOCK_PARSE:
 			case self::FORMAT_ESCAPED:
 			default:
-				return Sanitizer::escapeCombiningChar( htmlspecialchars( $plaintext, ENT_QUOTES ) );
+				return htmlspecialchars( $plaintext, ENT_QUOTES );
 		}
 	}
 

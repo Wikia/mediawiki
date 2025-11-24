@@ -21,6 +21,9 @@
 
 namespace MediaWiki\Installer;
 
+use HtmlArmor;
+use MediaWiki\Message\Message;
+
 class WebInstallerComplete extends WebInstallerPage {
 
 	public function execute() {
@@ -33,14 +36,19 @@ class WebInstallerComplete extends WebInstallerPage {
 		$location = $this->parent->getLocalSettingsLocation();
 		$msg = 'config-install-done';
 		if ( $location !== false ) {
-			$msg = 'config-install-done-path';
+			// config-install-done-path
+			$msg .= '-path';
 		}
-		$this->parent->showSuccess( $msg,
-			$lsUrl,
-			$this->getVar( 'wgServer' ) .
-				$this->getVar( 'wgScriptPath' ) . '/index.php',
-			"[$lsUrl " . wfMessage( 'config-download-localsettings' )->plain() . ']',
-			$location ?: ''
+		$this->addHTML(
+			$this->parent->getInfoBox(
+				new HtmlArmor( wfMessage( $msg,
+					$lsUrl,
+					$this->getVar( 'wgServer' ) .
+						$this->getVar( 'wgScriptPath' ) . '/index.php',
+					Message::rawParam( $this->parent->makeDownloadLinkHtml() ),
+					$location ?: ''
+				)->parse() ), 'tick-32.png'
+			)
 		);
 		$this->addHTML( $this->parent->getInfoBox(
 			wfMessage( 'config-extension-link' )->plain() ) );
