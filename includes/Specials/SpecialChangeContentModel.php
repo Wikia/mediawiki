@@ -8,6 +8,7 @@ use MediaWiki\Content\ContentHandler;
 use MediaWiki\Content\IContentHandlerFactory;
 use MediaWiki\EditPage\SpamChecker;
 use MediaWiki\Exception\ErrorPageError;
+use MediaWiki\Exception\PermissionsError;
 use MediaWiki\Html\Html;
 use MediaWiki\HTMLForm\HTMLForm;
 use MediaWiki\Language\RawMessage;
@@ -15,6 +16,7 @@ use MediaWiki\Logging\LogEventsList;
 use MediaWiki\Logging\LogPage;
 use MediaWiki\Page\ContentModelChangeFactory;
 use MediaWiki\Page\WikiPageFactory;
+use MediaWiki\Permissions\PermissionManager;
 use MediaWiki\Revision\RevisionLookup;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Revision\SlotRecord;
@@ -35,9 +37,10 @@ class SpecialChangeContentModel extends FormSpecialPage {
 		private readonly RevisionLookup $revisionLookup,
 		private readonly WikiPageFactory $wikiPageFactory,
 		private readonly SearchEngineFactory $searchEngineFactory,
-		private readonly CollationFactory $collationFactory
+		private readonly CollationFactory $collationFactory,
+		private readonly PermissionManager $permissionManager,
 	) {
-		parent::__construct( 'ChangeContentModel', 'editcontentmodel' );
+		parent::__construct( 'ChangeContentModel' );
 	}
 
 	/** @inheritDoc */
@@ -101,6 +104,20 @@ class SpecialChangeContentModel extends FormSpecialPage {
 
 		if ( $this->title ) {
 			$this->getOutput()->addBacklinkSubtitle( $this->title );
+		}
+	}
+
+	/** @inheritDoc */
+	public function checkPermissions() {
+		$user = $this->getUser();
+		if ( $this->title ) {
+			$perm = $this->title->exists() ? 'editcontentmodel' : 'createwithcontentmodel';
+			$this->permissionManager->throwPermissionErrors( $perm, $user, $this->title );
+		} elseif ( !$this->permissionManager->userHasAnyRight( $user, 'editcontentmodel', 'createwithcontentmodel' ) ) {
+			// The intended use case of this special page is to change the content model of an existing page
+			// nothing stops you from creating a new page with it but that's a hack so display the permission error
+			// for editing an existing page's content model if you can't do either
+			throw new PermissionsError( 'editcontentmodel' );
 		}
 	}
 

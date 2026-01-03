@@ -1092,6 +1092,7 @@ class SpecialPageFactory {
 				'WikiPageFactory',
 				'SearchEngineFactory',
 				'CollationFactory',
+				'PermissionManager',
 			],
 		],
 

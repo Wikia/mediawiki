@@ -23,12 +23,17 @@ class ContentModelChangeConstraintTest extends MediaWikiUnitTestCase {
 	use MockAuthorityTrait;
 	use MockTitleTrait;
 
-	public function testPass() {
+	public static function provideTrueFalse() {
+		return [ [ true ], [ false ] ];
+	}
+
+	/** @dataProvider provideTrueFalse */
+	public function testPass( $exists ) {
 		$newContentModel = 'FooBarBaz';
 
 		$title = $this->getMockBuilder( Title::class )
 			->disableOriginalConstructor()
-			->onlyMethods( [ 'getContentModel', 'setContentModel' ] )
+			->onlyMethods( [ 'getContentModel', 'setContentModel', 'exists' ] )
 			->getMock();
 		$title->expects( $this->once() )
 			->method( 'getContentModel' )
@@ -36,8 +41,12 @@ class ContentModelChangeConstraintTest extends MediaWikiUnitTestCase {
 		$title->expects( $this->once() )
 			->method( 'setContentModel' )
 			->with( $newContentModel );
+		$title->expects( $this->once() )
+			->method( 'exists' )
+			->willReturn( $exists );
 
-		$performer = $this->mockRegisteredAuthorityWithPermissions( [ 'edit', 'editcontentmodel' ] );
+		$perm = $exists ? 'editcontentmodel' : 'createwithcontentmodel';
+		$performer = $this->mockRegisteredAuthorityWithPermissions( [ 'edit', $perm ] );
 		$constraint = new ContentModelChangeConstraint(
 			$performer,
 			$title,
@@ -59,12 +68,13 @@ class ContentModelChangeConstraintTest extends MediaWikiUnitTestCase {
 		$this->assertConstraintPassed( $constraint );
 	}
 
-	public function testFailure() {
+	/** @dataProvider provideTrueFalse */
+	public function testFailure( $exists ) {
 		$newContentModel = 'FooBarBaz';
 
 		$title = $this->getMockBuilder( Title::class )
 			->disableOriginalConstructor()
-			->onlyMethods( [ 'getContentModel', 'setContentModel' ] )
+			->onlyMethods( [ 'getContentModel', 'setContentModel', 'exists' ] )
 			->getMock();
 		$title->expects( $this->once() )
 			->method( 'getContentModel' )
@@ -72,12 +82,17 @@ class ContentModelChangeConstraintTest extends MediaWikiUnitTestCase {
 		$title->expects( $this->once() )
 			->method( 'setContentModel' )
 			->with( $newContentModel );
+		$title->expects( $this->once() )
+			->method( 'exists' )
+			->willReturn( $exists );
+
+		$expectedPerm = $exists ? 'editcontentmodel' : 'createwithcontentmodel';
 
 		$performer = $this->mockRegisteredAuthority( function (
 			string $permission,
 			?PageIdentity $page = null
-		) use ( $title ) {
-			if ( $permission === 'editcontentmodel' ) {
+		) use ( $title, $expectedPerm ) {
+			if ( $permission === $expectedPerm ) {
 				if ( $page ) {
 					$this->assertEquals( $title, $page );
 				}
@@ -106,6 +121,7 @@ class ContentModelChangeConstraintTest extends MediaWikiUnitTestCase {
 	public function testFailure_quick() {
 		$title = $this->makeMockTitle( __METHOD__, [
 			'contentModel' => 'differentStartingContentModel',
+			'exists' => true,
 		] );
 
 		$constraint = new ContentModelChangeConstraint(

@@ -1725,14 +1725,32 @@ class ApiEditPageTest extends ApiTestCase {
 		], null, new User() );
 	}
 
-	public function testProhibitedChangeContentModel() {
-		$name = 'Help:' . ucfirst( __FUNCTION__ );
+	public function testProhibitedChangeContentModelExisting() {
+		$name = $this->getExistingTestPage( 'Help:' . ucfirst( __FUNCTION__ ) );
 
 		$this->expectApiErrorCode( 'cantchangecontentmodel' );
 
 		$this->overrideConfigValue(
 			MainConfigNames::RevokePermissions,
 			[ 'user' => [ 'editcontentmodel' => true ] ]
+		);
+
+		$this->doApiRequestWithToken( [
+			'action' => 'edit',
+			'title' => $name,
+			'text' => 'Some text',
+			'contentmodel' => 'json',
+		] );
+	}
+
+	public function testProhibitedChangeContentModelNonExisting() {
+		$name = 'Help:' . ucfirst( __FUNCTION__ );
+
+		$this->expectApiErrorCode( 'cantchangecontentmodel' );
+
+		$this->overrideConfigValue(
+			MainConfigNames::RevokePermissions,
+			[ 'user' => [ 'createwithcontentmodel' => true ] ]
 		);
 
 		$this->doApiRequestWithToken( [

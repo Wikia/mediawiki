@@ -106,9 +106,10 @@ class ContentModelChange {
 		$titleWithNewContentModel->setContentModel( $this->newModel );
 
 		$status = PermissionStatus::newEmpty();
-		$authorizer( 'editcontentmodel', $this->pageIdentity, $status );
+		$perm = $this->page->exists() ? 'editcontentmodel' : 'createwithcontentmodel';
+		$authorizer( $perm, $this->pageIdentity, $status );
 		$authorizer( 'edit', $this->pageIdentity, $status );
-		$authorizer( 'editcontentmodel', $titleWithNewContentModel, $status );
+		$authorizer( $perm, $titleWithNewContentModel, $status );
 		$authorizer( 'edit', $titleWithNewContentModel, $status );
 
 		return $status;

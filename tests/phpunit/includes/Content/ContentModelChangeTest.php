@@ -313,7 +313,7 @@ class ContentModelChangeTest extends MediaWikiIntegrationTestCase {
 		$limiter->method( 'isLimitable' )->willReturn( true );
 		$limiter->method( 'limit' )
 			->willReturnCallback( function ( $user, $action, $incr ) {
-				if ( $action === 'editcontentmodel' ) {
+				if ( $action === 'createwithcontentmodel' ) {
 					$this->assertSame( 1, $incr );
 					return true;
 				}

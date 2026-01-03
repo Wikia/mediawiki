@@ -5121,7 +5121,7 @@ config-schema:
         mergeStrategy: array_plus_2d
         default:
             '*': { createaccount: true, read: true, edit: true, createpage: true, createtalk: true, viewmyprivateinfo: true, editmyprivateinfo: true, editmyoptions: true }
-            user: { move: true, move-subpages: true, move-rootuserpages: true, move-categorypages: true, movefile: true, read: true, edit: true, createpage: true, createtalk: true, upload: true, reupload: true, reupload-shared: true, minoredit: true, editmyusercss: true, editmyuserjson: true, editmyuserjs: true, editmyuserjsredirect: true, sendemail: true, applychangetags: true, changetags: true, viewmywatchlist: true, editmywatchlist: true }
+            user: { move: true, move-subpages: true, move-rootuserpages: true, move-categorypages: true, movefile: true, read: true, edit: true, createpage: true, createtalk: true, upload: true, reupload: true, reupload-shared: true, minoredit: true, editmyusercss: true, editmyuserjson: true, editmyuserjs: true, editmyuserjsredirect: true, sendemail: true, applychangetags: true, changetags: true, viewmywatchlist: true, editmywatchlist: true, createwithcontentmodel: true }
             autoconfirmed: { autoconfirmed: true, editsemiprotected: true }
             bot: { bot: true, autoconfirmed: true, editsemiprotected: true, nominornewtalk: true, autopatrol: true, suppressredirect: true, apihighlimits: true }
             sysop: { block: true, createaccount: true, delete: true, bigdelete: true, deletedhistory: true, deletedtext: true, undelete: true, editcontentmodel: true, editinterface: true, editsitejson: true, edituserjson: true, import: true, importupload: true, move: true, move-subpages: true, move-rootuserpages: true, move-categorypages: true, patrol: true, autopatrol: true, protect: true, editprotected: true, rollback: true, upload: true, reupload: true, reupload-shared: true, unwatchedpages: true, autoconfirmed: true, editsemiprotected: true, ipblock-exempt: true, blockemail: true, markbotedits: true, apihighlimits: true, browsearchive: true, noratelimit: true, movefile: true, unblockself: true, suppressredirect: true, mergehistory: true, managechangetags: true, deletechangetags: true }
@@ -5783,13 +5783,13 @@ config-schema:
             basic: { autocreateaccount: true, autoconfirmed: true, autopatrol: true, editsemiprotected: true, ipblock-exempt: true, nominornewtalk: true, patrolmarks: true, read: true, unwatchedpages: true }
             highvolume: { bot: true, apihighlimits: true, noratelimit: true, markbotedits: true }
             import: { import: true, importupload: true }
-            editpage: { edit: true, minoredit: true, applychangetags: true, changetags: true, editcontentmodel: true, pagelang: true }
-            editprotected: { edit: true, minoredit: true, applychangetags: true, changetags: true, editcontentmodel: true, editprotected: true }
-            editmycssjs: { edit: true, minoredit: true, applychangetags: true, changetags: true, editcontentmodel: true, editmyusercss: true, editmyuserjson: true, editmyuserjs: true }
+            editpage: { edit: true, minoredit: true, applychangetags: true, changetags: true, editcontentmodel: true, createwithcontentmodel: true, pagelang: true }
+            editprotected: { edit: true, minoredit: true, applychangetags: true, changetags: true, editcontentmodel: true, createwithcontentmodel: true, editprotected: true }
+            editmycssjs: { edit: true, minoredit: true, applychangetags: true, changetags: true, editcontentmodel: true, createwithcontentmodel: true, editmyusercss: true, editmyuserjson: true, editmyuserjs: true }
             editmyoptions: { editmyoptions: true, editmyuserjson: true }
-            editinterface: { edit: true, minoredit: true, applychangetags: true, changetags: true, editcontentmodel: true, editinterface: true, edituserjson: true, editsitejson: true }
-            editsiteconfig: { edit: true, minoredit: true, applychangetags: true, changetags: true, editcontentmodel: true, editinterface: true, edituserjson: true, editsitejson: true, editusercss: true, edituserjs: true, editsitecss: true, editsitejs: true }
-            createeditmovepage: { edit: true, minoredit: true, applychangetags: true, changetags: true, editcontentmodel: true, createpage: true, createtalk: true, delete-redirect: true, move: true, move-rootuserpages: true, move-subpages: true, move-categorypages: true, suppressredirect: true }
+            editinterface: { edit: true, minoredit: true, applychangetags: true, changetags: true, editcontentmodel: true, createwithcontentmodel: true, editinterface: true, edituserjson: true, editsitejson: true }
+            editsiteconfig: { edit: true, minoredit: true, applychangetags: true, changetags: true, editcontentmodel: true, createwithcontentmodel: true, editinterface: true, edituserjson: true, editsitejson: true, editusercss: true, edituserjs: true, editsitecss: true, editsitejs: true }
+            createeditmovepage: { edit: true, minoredit: true, applychangetags: true, changetags: true, editcontentmodel: true, createwithcontentmodel: true, createpage: true, createtalk: true, delete-redirect: true, move: true, move-rootuserpages: true, move-subpages: true, move-categorypages: true, suppressredirect: true }
             uploadfile: { upload: true, reupload-own: true }
             uploadeditmovefile: { upload: true, reupload-own: true, reupload: true, reupload-shared: true, upload_by_url: true, movefile: true, suppressredirect: true }
             patrol: { patrol: true }
@@ -5797,9 +5797,9 @@ config-schema:
             blockusers: { block: true, blockemail: true }
             viewdeleted: { browsearchive: true, deletedhistory: true, deletedtext: true }
             viewrestrictedlogs: { suppressionlog: true }
-            delete: { edit: true, minoredit: true, applychangetags: true, changetags: true, editcontentmodel: true, browsearchive: true, deletedhistory: true, deletedtext: true, delete: true, bigdelete: true, deletelogentry: true, deleterevision: true, undelete: true }
+            delete: { edit: true, minoredit: true, applychangetags: true, changetags: true, editcontentmodel: true, createwithcontentmodel: true, browsearchive: true, deletedhistory: true, deletedtext: true, delete: true, bigdelete: true, deletelogentry: true, deleterevision: true, undelete: true }
             oversight: { suppressrevision: true, viewsuppressed: true }
-            protect: { edit: true, minoredit: true, applychangetags: true, changetags: true, editcontentmodel: true, editprotected: true, protect: true }
+            protect: { edit: true, minoredit: true, applychangetags: true, changetags: true, editcontentmodel: true, createwithcontentmodel: true, editprotected: true, protect: true }
             viewmywatchlist: { viewmywatchlist: true }
             editmywatchlist: { editmywatchlist: true }
             sendemail: { sendemail: true }

@@ -41,8 +41,9 @@ class ContentModelChangeConstraint extends EditConstraint {
 		}
 
 		$status = PermissionStatus::newEmpty();
+		$perm = $this->title->exists() ? 'editcontentmodel' : 'createwithcontentmodel';
 
-		if ( !$this->performer->authorizeWrite( 'editcontentmodel', $this->title, $status ) ) {
+		if ( !$this->performer->authorizeWrite( $perm, $this->title, $status ) ) {
 			return $this->castPermissionStatus( $status );
 		}
 
@@ -51,7 +52,7 @@ class ContentModelChangeConstraint extends EditConstraint {
 		$titleWithNewContentModel = clone $this->title;
 		$titleWithNewContentModel->setContentModel( $this->newContentModel );
 		if (
-			!$this->performer->authorizeWrite( 'editcontentmodel', $titleWithNewContentModel, $status )
+			!$this->performer->authorizeWrite( $perm, $titleWithNewContentModel, $status )
 			|| !$this->performer->authorizeWrite( 'edit', $titleWithNewContentModel, $status )
 		) {
 			return $this->castPermissionStatus( $status );
