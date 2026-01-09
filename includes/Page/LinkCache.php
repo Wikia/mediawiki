@@ -595,8 +595,7 @@ class LinkCache implements LoggerAwareInterface {
 		$linkBatchFactory = MediaWikiServices::getInstance()->getLinkBatchFactory();
 
 		if ( count( $pageObject ) > 0 ) {
-			$linkBatch = $linkBatchFactory->newLinkBatch( array_values( $pageObject ) );
-			$linkBatch->setCaller( $fname );
+			$linkBatch = $linkBatchFactory->newLinkBatch( array_values( $pageObject ) )->setCaller( $fname );
 			$result = $linkBatch->doQuery();
 			$linkBatch->doGenderQuery();
 		}

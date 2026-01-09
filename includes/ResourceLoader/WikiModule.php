@@ -539,7 +539,7 @@ class WikiModule extends Module {
 	}
 
 	private static function makeTitleKey( LinkTarget $title ): string {
-		// Used for keys in titleInfo.
+		// T145673: Map page title to a canonical form to avoid corruption on non-English wikis
 		return "{$title->getNamespace()}:{$title->getDBkey()}";
 	}
 
@@ -561,10 +561,11 @@ class WikiModule extends Module {
 			}
 			$titleInfo = $this->titleInfo[$batchKey];
 		} else {
-			// local wikis
+			// Local wiki, should be a cache-hit in LinkCache from WikiModule::preloadTitleInfo
 			foreach ( $pageNames as $titleText ) {
 				$title = Title::newFromText( $titleText );
 				if ( $title && $title->exists() ) {
+						// See docs in WikiModule::doBatchFetch
 						$titleInfo[self::makeTitleKey( $title )] = [
 							'page_len' => (string)$title->getLength(),
 							'page_latest' => $title->getLatestRevID(),
@@ -615,18 +616,18 @@ class WikiModule extends Module {
 
 		if ( !$linkbatch->isEmpty() ) {
 			$res = $db->newSelectQueryBuilder()
-				// Include page_touched to allow purging if cache is poisoned (T117587, T113916)
 				->select( [ 'page_namespace', 'page_title', 'page_touched', 'page_len', 'page_latest' ] )
 				->from( 'page' )
 				->where( $linkbatch->constructSet( 'page', $db ) )
 				->caller( $fname )->fetchResultSet();
 			foreach ( $res as $row ) {
-				// Avoid including ids or timestamps of revision/page tables so
-				// that versions are not wasted
 				$title = new TitleValue( (int)$row->page_namespace, $row->page_title );
 				$titleInfo[self::makeTitleKey( $title )] = [
+					// Needed by WikiModule::isKnownEmpty
 					'page_len' => $row->page_len,
+					// Each revision forms a new module version hash and invalidate CDN/browser cache
 					'page_latest' => $row->page_latest,
+					// Include page_touched to allow purging if cache is poisoned (T117587, T113916)
 					'page_touched' => ConvertibleTimestamp::convert( TS_MW, $row->page_touched ),
 				];
 			}
@@ -706,12 +707,11 @@ class WikiModule extends Module {
 					$batchKey = implode( '|', $pageNames );
 					$wikiModule->setTitleInfo( $batchKey, $info );
 				}
-				continue;
+			} else {
+				// Local wiki, warm up LinkCache for WikiModule::getTitleInfo
+				$linkCache = MediaWikiServices::getInstance()->getLinkCache();
+				$linkCache->executeBatch( $batch['pages'], __METHOD__ );
 			}
-			// Fetch title info
-			sort( $batch['pages'] );
-			$linkCache = MediaWikiServices::getInstance()->getLinkCache();
-			$linkCache->executeBatch( $batch['pages'], __METHOD__ );
 		}
 	}
 
