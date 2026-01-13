@@ -551,6 +551,8 @@ class Article implements Page {
 		}
 		$poOptions += [ 'includeDebugInfo' => true ];
 
+		echo __FILE__ . ':' . __LINE__ . "<br>";
+
 		try {
 			$continue =
 				$this->generateContentOutput( $authority, $parserOptions, $oldid, $outputPage, $poOptions );
@@ -563,6 +565,7 @@ class Article implements Page {
 			return;
 		}
 
+		echo __FILE__ . ':' . __LINE__ . "<br>";
 		# For the main page, overwrite the <title> element with the con-
 		# tents of 'pagetitle-view-mainpage' instead of the default (if
 		# that's not empty).
@@ -586,9 +589,11 @@ class Article implements Page {
 		$request = $context->getRequest();
 		$cookieKey = EditPage::POST_EDIT_COOKIE_KEY_PREFIX . $this->getRevIdFetched();
 		$postEdit = $request->getCookie( $cookieKey );
+		echo __FILE__ . ':' . __LINE__ . "<br>";
 		if ( $postEdit ) {
 			# Clear the cookie. This also prevents caching of the response.
 			$request->response()->clearCookie( $cookieKey );
+			echo __FILE__ . ':' . __LINE__ . "<br>";
 			$outputPage->addJsConfigVars( 'wgPostEdit', $postEdit );
 			$outputPage->addModules( 'mediawiki.action.view.postEdit' ); // FIXME: test this
 			if ( $this->getContext()->getConfig()->get( MainConfigNames::EnableEditRecovery )
