@@ -179,6 +179,8 @@ class WebResponse {
 			$expire = time() + $cookieExpiration;
 		}
 
+		if (stristr($name, 'PostEditRevision')) { echo __FILE__ . ':' . __LINE__ . "<br>"; }
+
 		if ( $this->disableForPostSend ) {
 			$prefixedName = $options['prefix'] . $name;
 			wfDebugLog( 'cookie', 'ignored post-send cookie {cookie}', 'all', [
@@ -198,6 +200,7 @@ class WebResponse {
 			return;
 		}
 
+		if (stristr($name, 'PostEditRevision')) { echo __FILE__ . ':' . __LINE__ . "<br>"; }
 		$hookRunner = new HookRunner( $services->getHookContainer() );
 		if ( !$hookRunner->onWebResponseSetCookie( $name, $value, $expire, $options ) ) {
 			return;
@@ -233,13 +236,16 @@ class WebResponse {
 			implode( '", "', array_map( 'strval', $setOptions ) ) . '"';
 		$optionsForDeduplication = [ $func, $prefixedName, $value, $setOptions ];
 
+		if (stristr($name, 'PostEditRevision')) { echo __FILE__ . ':' . __LINE__ . "<br>"; }
 		if ( $deleting && !isset( self::$setCookies[$key] ) ) { // isset( null ) is false
 			wfDebugLog( 'cookie', "already deleted $logDesc" );
+			if (stristr($name, 'PostEditRevision')) { echo __FILE__ . ':' . __LINE__ . "<br>"; }
 			return;
 		} elseif ( !$deleting && isset( self::$setCookies[$key] ) &&
 			self::$setCookies[$key] === $optionsForDeduplication
 		) {
 			wfDebugLog( 'cookie', "already set $logDesc" );
+			if (stristr($name, 'PostEditRevision')) { echo __FILE__ . ':' . __LINE__ . "<br>"; }
 			return;
 		}
 
@@ -250,6 +256,7 @@ class WebResponse {
 			setcookie( $prefixedName, $value, $setOptions );
 		}
 		self::$setCookies[$key] = $deleting ? null : $optionsForDeduplication;
+		if (stristr($name, 'PostEditRevision')) { echo __FILE__ . ':' . __LINE__ . "<br>"; }
 	}
 
 	/**
