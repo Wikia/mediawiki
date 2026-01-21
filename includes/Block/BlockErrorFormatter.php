@@ -79,7 +79,7 @@ class BlockErrorFormatter {
 
 		// @phan-suppress-next-line PhanTypeMismatchReturnSuperType
 		return ApiMessage::create(
-			$this->uiContext->msg( $key, $params ),
+			$this->uiContext->msg( $key, ...$params ),
 			$apiHelper->getBlockCode( $block ),
 			[ 'blockinfo' => $apiHelper->getBlockDetails( $block, $this->getLanguage(), $user ) ]
 		);
@@ -111,7 +111,7 @@ class BlockErrorFormatter {
 	 * Get a standard set of block details for building a block error message.
 	 *
 	 * @param Block $block
-	 * @return mixed[]
+	 * @return array<string,mixed>
 	 *  - identifier: Information for looking up the block
 	 *  - targetName: The target, as a string
 	 *  - blockerName: The blocker, as a string
@@ -142,7 +142,7 @@ class BlockErrorFormatter {
 	 * @since 1.35
 	 * @param Block $block
 	 * @param UserIdentity $user
-	 * @return mixed[] See getBlockErrorInfo
+	 * @return array<string,mixed> See getBlockErrorInfo
 	 */
 	private function getFormattedBlockErrorInfo(
 		Block $block,
@@ -245,7 +245,7 @@ class BlockErrorFormatter {
 	 * @param Block $block
 	 * @param UserIdentity $user
 	 * @param string $ip
-	 * @return mixed[] Params used by standard block error messages, in order:
+	 * @return array<int,mixed> Params used by standard block error messages, in order:
 	 *  - blockerLink: Link to the blocker's user page, if any; otherwise same as blockerName
 	 *  - reason: Reason for the block
 	 *  - ip: IP address of the user attempting to perform an action
@@ -264,46 +264,33 @@ class BlockErrorFormatter {
 	) {
 		$info = $this->getFormattedBlockErrorInfo( $block, $user );
 
-		// Add params that are specific to the standard block errors
-		$info['ip'] = $ip;
-		$info['blockerLink'] = $this->formatBlockerLink( $block->getBlocker() );
-
 		// Display the CompositeBlock identifier as a message containing relevant block IDs
 		if ( $block instanceof CompositeBlock ) {
 			$ids = $this->getLanguage()->commaList( array_map(
-				static function ( $id ) {
-					return '#' . $id;
-				},
-				array_filter( $info['identifier'], 'is_int' )
+				static fn ( $id ) => '#' . $id,
+				array_filter( $info['identifier'], is_int( ... ) )
 			) );
 			if ( $ids === '' ) {
-				$idsMsg = $this->uiContext->msg( 'blockedtext-composite-no-ids', [] );
+				$idsMsg = $this->uiContext->msg( 'blockedtext-composite-no-ids' );
 			} else {
-				$idsMsg = $this->uiContext->msg( 'blockedtext-composite-ids', [ $ids ] );
+				$idsMsg = $this->uiContext->msg( 'blockedtext-composite-ids', $ids );
 			}
 			$info['identifier'] = $idsMsg->plain();
 		}
 
 		// Messages expect the params in this order
-		$order = [
-			'blockerLink',
-			'reason',
-			'ip',
-			'blockerName',
-			'identifier',
-			'expiry',
-			'targetName',
-			'timestamp',
-			'talkPageDisabled',
-			'emailDisabled',
+		return [
+			$this->formatBlockerLink( $block->getBlocker() ),
+			$info['reason'],
+			$ip,
+			$info['blockerName'],
+			$info['identifier'],
+			$info['expiry'],
+			$info['targetName'],
+			$info['timestamp'],
+			$info['talkPageDisabled'],
+			$info['emailDisabled'],
 		];
-
-		$params = [];
-		foreach ( $order as $item ) {
-			$params[] = $info[$item];
-		}
-
-		return $params;
 	}
 
 }
