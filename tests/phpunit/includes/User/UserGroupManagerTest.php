@@ -534,6 +534,41 @@ class UserGroupManagerTest extends MediaWikiIntegrationTestCase {
 		$this->assertSame( 1, $calledCount );
 	}
 
+	public function testPurgeExpiredPassesOldAndNewUGMs(): void {
+		$manager = $this->getManager();
+		$user = $this->getTestUser()->getUser();
+
+		$expiryInPast = wfTimestamp( TS::MW, time() - 100500 );
+
+		$manager->addUserToGroup( $user, 'keep' );
+		$manager->addUserToGroup( $user, 'expired', $expiryInPast );
+
+		$hookCalled = false;
+		$this->setTemporaryHook(
+			'UserGroupsChanged',
+			function ( $hookUser, array $add, array $remove, $performer, $reason, array $oldUGMs, array $newUGMs )
+				use ( $user, &$hookCalled )
+			{
+				$this->assertTrue( $hookUser->equals( $user ) );
+				$this->assertSame( [], $add );
+				$this->assertSame( [ 'expired' ], $remove );
+				$this->assertFalse( $performer );
+				$this->assertFalse( $reason );
+
+				$this->assertArrayHasKey( 'keep', $oldUGMs );
+				$this->assertArrayHasKey( 'expired', $oldUGMs );
+
+				$this->assertArrayHasKey( 'keep', $newUGMs );
+				$this->assertArrayNotHasKey( 'expired', $newUGMs );
+
+				$hookCalled = true;
+			}
+		);
+
+		$manager->purgeExpired();
+		$this->assertTrue( $hookCalled );
+	}
+
 	public function testPurgeExpired() {
 		$manager = $this->getManager();
 		$user = $this->getTestUser()->getUser();

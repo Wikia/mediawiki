@@ -105,6 +105,8 @@ class UserGroupManager {
 	 */
 	private array $queryFlagsUsedForCaching = [];
 
+	private bool $expiryPurgeJobQueued = false;
+
 	/**
 	 * @param ServiceOptions $options
 	 * @param ReadOnlyMode $readOnlyMode
@@ -655,15 +657,35 @@ class UserGroupManager {
 		$ugms = [];
 		foreach ( $res as $row ) {
 			$ugm = $this->newGroupMembershipFromRow( $row );
-			if ( !$ugm->isExpired() ) {
-				$ugms[$ugm->getGroup()] = $ugm;
+			if ( $ugm->isExpired() ) {
+				$this->queueUserGroupExpiryJobOnce();
+				continue;
 			}
+			$ugms[$ugm->getGroup()] = $ugm;
 		}
 		ksort( $ugms );
 
 		$this->setCache( $userKey, self::CACHE_MEMBERSHIP, $ugms, $queryFlags );
 
 		return $ugms;
+	}
+
+	/**
+	 * Queue a background job to purge expired user group memberships.
+	 */
+	private function queueUserGroupExpiryJobOnce(): void {
+		if ( $this->expiryPurgeJobQueued ) {
+			return;
+		}
+		if ( $this->readOnlyMode->isReadOnly( $this->wikiId ) ) {
+			// purgeExpired() requires DB writes and cannot run while the wiki is readOnly
+			return;
+		}
+		$this->expiryPurgeJobQueued = true;
+
+		DeferredUpdates::addCallableUpdate( function () {
+			$this->jobQueueGroup->push( new UserGroupExpiryJob( [] ) );
+		} );
 	}
 
 	/**
@@ -919,6 +941,10 @@ class UserGroupManager {
 		$now = time();
 		$purgedRows = 0;
 		do {
+			$expiredMembershipsByUser = [];
+			$oldUGMsByUser = [];
+			$newUGMsByUser = [];
+
 			$dbw->startAtomic( __METHOD__ );
 			$res = $this->newQueryBuilder( $dbw )
 				->where( [ $dbw->expr( 'ug_expiry', '<', $dbw->timestamp( $now ) ) ] )
@@ -937,7 +963,27 @@ class UserGroupManager {
 					$deleteCond[] = $dbw
 						->expr( 'ug_user', '=', $row->ug_user )
 						->and( 'ug_group', '=', $row->ug_group );
+
+					$expiredMembershipsByUser[(int)$row->ug_user][$row->ug_group] = true;
 				}
+				$affectedUserIds = array_keys( $expiredMembershipsByUser );
+
+				$allRows = $this->newQueryBuilder( $dbw )
+					->where( [ 'ug_user' => $affectedUserIds ] )
+					->caller( __METHOD__ )
+					->fetchResultSet();
+
+				foreach ( $allRows as $row ) {
+					$userId = (int)$row->ug_user;
+					$ugm = $this->newGroupMembershipFromRow( $row );
+					$group = $ugm->getGroup();
+
+					$oldUGMsByUser[$userId][$group] = $ugm;
+					if ( !isset( $expiredMembershipsByUser[$userId][$group] ) ) {
+						$newUGMsByUser[$userId][$group] = $ugm;
+					}
+				}
+
 				// Delete the rows we're about to move
 				$dbw->newDeleteQueryBuilder()
 					->deleteFrom( 'user_groups' )
@@ -956,6 +1002,25 @@ class UserGroupManager {
 			$dbw->endAtomic( __METHOD__ );
 
 			$this->connectionProvider->commitAndWaitForReplication( __METHOD__, $ticket );
+
+			// call hooks after commit
+			foreach ( $expiredMembershipsByUser as $userId => $data ) {
+				$user = $this->userFactory->newFromId( $userId );
+
+				$remove = array_keys( $data );
+				$oldUGMs = $oldUGMsByUser[$userId] ?? [];
+				$newUGMs = $newUGMsByUser[$userId] ?? [];
+
+				$this->hookRunner->onUserGroupsChanged(
+					$user,
+					[],
+					$remove,
+					false, // performer: automatic change
+					false, // reason: none
+					$oldUGMs,
+					$newUGMs
+				);
+			}
 		} while ( $res->numRows() > 0 );
 		return $purgedRows;
 	}
