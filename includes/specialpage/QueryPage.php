@@ -164,7 +164,7 @@ abstract class QueryPage extends SpecialPage {
 				[ SpecialUnusedCategories::class, 'Unusedcategories' ],
 				[ SpecialUnusedImages::class, 'Unusedimages' ],
 				[ SpecialWantedCategories::class, 'Wantedcategories' ],
-				[ SpecialWantedFiles::class, 'Wantedfiles' ],
+				[ SpecialWantedFiles::class, 'Wantedfiles', 50000 ],
 				[ SpecialWantedPages::class, 'Wantedpages' ],
 				[ SpecialWantedTemplates::class, 'Wantedtemplates' ],
 				[ SpecialUnwatchedPages::class, 'Unwatchedpages' ],
@@ -700,7 +700,7 @@ abstract class QueryPage extends SpecialPage {
 	 */
 	protected function getMaxResults() {
 		// Max of 10000, unless we store more than 10000 in query cache.
-		return max( $this->getConfig()->get( MainConfigNames::QueryCacheLimit ), 10000 );
+		return max( $this->getConfig()->get( MainConfigNames::QueryCacheLimit ), 50000 );
 	}
 
 	/**
