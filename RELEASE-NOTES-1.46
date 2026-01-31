@@ -1059,6 +1059,8 @@ because of Phabricator reports.
   Use standard CSS transform and animation instead.
 * The usage of the SpecialPage constructor parameter $includable is deprecated
   and emits deprecation warnings.
+  The usage of the SpecialPage property $mIncludable is deprecated and emits
+  deprecation warnings.
   Override the method isIncludable() or extend IncludableSpecialPage instead.
 * Calling ChangeTags::formatSummaryRow and ChangeTags::buildTagFilterSelector
   without specifying a context was unused and got deprecated.

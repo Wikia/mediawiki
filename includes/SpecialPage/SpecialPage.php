@@ -71,7 +71,10 @@ class SpecialPage implements MessageLocalizer {
 	/** @var bool Whether or not this special page is being included from an article */
 	protected $mIncluding;
 
-	/** @var bool Whether the special page can be included in an article */
+	/**
+	 * @var bool Whether the special page can be included in an article
+	 * @deprecated since 1.46, use or override isIncludable() instead.
+	 */
 	protected $mIncludable;
 
 	/**
@@ -245,6 +248,9 @@ class SpecialPage implements MessageLocalizer {
 	 * @return bool
 	 */
 	public function isIncludable() {
+		if ( $this->mIncludable ) {
+			wfDeprecated( __CLASS__ . ' property $mIncludable', '1.46' );
+		}
 		return $this->mIncludable;
 	}
 

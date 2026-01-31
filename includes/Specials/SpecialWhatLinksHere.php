@@ -58,7 +58,10 @@ class SpecialWhatLinksHere extends FormSpecialPage {
 		private readonly LinksMigration $linksMigration
 	) {
 		parent::__construct( 'Whatlinkshere' );
-		$this->mIncludable = true;
+	}
+
+	public function isIncludable(): bool {
+		return true;
 	}
 
 	/**
