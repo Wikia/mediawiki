@@ -1050,6 +1050,9 @@ because of Phabricator reports.
   - UnlistedSpecialPage
 * Less mixin 'mediawiki.mixins.rotation.less' got deprecated.
   Use standard CSS transform and animation instead.
+* The usage of the SpecialPage constructor parameter $includable is deprecated
+  and emits deprecation warnings.
+  Override the method isIncludable() or extend IncludableSpecialPage instead.
 * …
 
 === Other changes in 1.46 ===

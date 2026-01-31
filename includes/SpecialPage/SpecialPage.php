@@ -193,6 +193,7 @@ class SpecialPage implements MessageLocalizer {
 	 * @param callable|bool $function Unused
 	 * @param string $file Unused
 	 * @param bool $includable Whether the page can be included in normal pages
+	 *  Deprecated since 1.46, override the method isIncludable() instead.
 	 */
 	public function __construct(
 		$name = '', $restriction = '', $listed = true,
@@ -200,6 +201,9 @@ class SpecialPage implements MessageLocalizer {
 	) {
 		if ( static::class === self::class ) {
 			wfDeprecated( 'direct instantiation of ' . __CLASS__, '1.46' );
+		}
+		if ( func_num_args() > 5 ) {
+			wfDeprecated( __CLASS__ . ' constructor parameter $includable', '1.46' );
 		}
 		$this->mName = $name;
 		$this->mRestriction = $restriction;

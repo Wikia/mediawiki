@@ -9,6 +9,7 @@ namespace MediaWiki\SpecialPage;
 /**
  * Shortcut to construct an includable special page.
  *
+ * @stable to extend
  * @ingroup SpecialPage
  */
 class IncludableSpecialPage extends SpecialPage {
@@ -27,7 +28,8 @@ class IncludableSpecialPage extends SpecialPage {
 		if ( static::class === self::class ) {
 			wfDeprecated( 'direct instantiation of ' . __CLASS__, '1.46' );
 		}
-		parent::__construct( $name, $restriction, $listed, $function, $file, true );
+		parent::__construct( $name, $restriction, $listed, $function, $file );
+		$this->mIncludable = true;
 	}
 
 	/** @inheritDoc */
