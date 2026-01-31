@@ -12,7 +12,7 @@ use MediaWiki\Html\Html;
 use MediaWiki\HTMLForm\HTMLForm;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Message\Message;
-use MediaWiki\SpecialPage\SpecialPage;
+use MediaWiki\SpecialPage\UnlistedSpecialPage;
 use MediaWiki\Status\Status;
 use MediaWiki\Watchlist\WatchlistLabel;
 use MediaWiki\Watchlist\WatchlistLabelStore;
@@ -27,7 +27,7 @@ use Wikimedia\Codex\Utility\Codex;
  * @ingroup SpecialPage
  * @ingroup Watchlist
  */
-class SpecialWatchlistLabels extends SpecialPage {
+class SpecialWatchlistLabels extends UnlistedSpecialPage {
 
 	private const SUBPAGE_EDIT = 'edit';
 	private const SUBPAGE_DELETE = 'delete';
@@ -52,7 +52,7 @@ class SpecialWatchlistLabels extends SpecialPage {
 		$name = 'WatchlistLabels',
 		$restriction = 'viewmywatchlist',
 	) {
-		parent::__construct( $name, $restriction, false );
+		parent::__construct( $name, $restriction );
 	}
 
 	/** @inheritDoc */

@@ -39,7 +39,12 @@ class SpecialMute extends FormSpecialPage {
 		private readonly UserIdentityLookup $userIdentityLookup,
 		private readonly UserIdentityUtils $userIdentityUtils,
 	) {
-		parent::__construct( self::PAGE_NAME, '', false );
+		parent::__construct( self::PAGE_NAME );
+	}
+
+	/** @inheritDoc */
+	public function isListed() {
+		return false;
 	}
 
 	/**

@@ -1067,6 +1067,9 @@ because of Phabricator reports.
 * The usage of the SpecialPage, IncludableSpecialPage or UnlistedSpecialPage
   constructor with the unused parameters $function or $file now emits
   deprecation warnings.
+* The usage of the SpecialPage constructor parameter $listed is deprecated and
+  emits deprecation warnings.
+  Override the method isListed() or extend UnlistedSpecialPage instead.
 * …
 
 === Other changes in 1.46 ===

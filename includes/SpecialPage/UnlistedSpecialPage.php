@@ -33,7 +33,7 @@ class UnlistedSpecialPage extends SpecialPage {
 		if ( func_num_args() > 2 ) {
 			wfDeprecated( __CLASS__ . ' constructor parameters $function and $file', '1.46' );
 		}
-		parent::__construct( $name, $restriction, false );
+		parent::__construct( $name, $restriction );
 	}
 
 	/** @inheritDoc */
