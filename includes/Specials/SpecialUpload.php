@@ -64,7 +64,7 @@ class SpecialUpload extends SpecialPage {
 		?NamespaceInfo $nsInfo = null,
 		?WatchlistManager $watchlistManager = null,
 	) {
-		parent::__construct( 'Upload', 'upload' );
+		parent::__construct( 'Upload' );
 		// This class is extended and therefor fallback to global state - T265300
 		$services = MediaWikiServices::getInstance();
 		$this->jobQueueGroup = $services->getJobQueueGroup();
@@ -74,6 +74,11 @@ class SpecialUpload extends SpecialPage {
 		$this->nsInfo = $nsInfo ?? $services->getNamespaceInfo();
 		$this->watchlistManager = $watchlistManager ?? $services->getWatchlistManager();
 		$this->log = LoggerFactory::getInstance( 'SpecialUpload' );
+	}
+
+	/** @inheritDoc */
+	public function getRestriction(): string {
+		return 'upload';
 	}
 
 	private function addMessageBoxStyling() {

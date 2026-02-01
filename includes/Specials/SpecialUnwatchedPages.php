@@ -37,9 +37,14 @@ class SpecialUnwatchedPages extends QueryPage {
 		IConnectionProvider $dbProvider,
 		LanguageConverterFactory $languageConverterFactory
 	) {
-		parent::__construct( 'Unwatchedpages', 'unwatchedpages' );
+		parent::__construct( 'Unwatchedpages' );
 		$this->setDatabaseProvider( $dbProvider );
 		$this->languageConverter = $languageConverterFactory->getLanguageConverter( $this->getContentLanguage() );
+	}
+
+	/** @inheritDoc */
+	public function getRestriction(): string {
+		return 'unwatchedpages';
 	}
 
 	/** @inheritDoc */

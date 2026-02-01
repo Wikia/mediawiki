@@ -62,8 +62,7 @@ class SpecialContributions extends ContributionsSpecialPage {
 			$userIdentityLookup,
 			$blockStore,
 			$userGroupAssignmentService,
-			'Contributions',
-			''
+			'Contributions'
 		);
 	}
 

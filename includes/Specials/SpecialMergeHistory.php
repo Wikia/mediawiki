@@ -77,7 +77,12 @@ class SpecialMergeHistory extends SpecialPage {
 		private readonly CommentFormatter $commentFormatter,
 		private readonly ChangeTagsStore $changeTagsStore,
 	) {
-		parent::__construct( 'MergeHistory', 'mergehistory' );
+		parent::__construct( 'MergeHistory' );
+	}
+
+	/** @inheritDoc */
+	public function getRestriction(): string {
+		return 'mergehistory';
 	}
 
 	/** @inheritDoc */

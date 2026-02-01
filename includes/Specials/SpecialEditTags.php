@@ -56,7 +56,12 @@ class SpecialEditTags extends UnlistedSpecialPage {
 		private readonly PermissionManager $permissionManager,
 		private readonly ChangeTagsStore $changeTagsStore,
 	) {
-		parent::__construct( 'EditTags', 'changetags' );
+		parent::__construct( 'EditTags' );
+	}
+
+	/** @inheritDoc */
+	public function getRestriction(): string {
+		return 'changetags';
 	}
 
 	/** @inheritDoc */

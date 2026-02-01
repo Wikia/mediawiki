@@ -82,7 +82,7 @@ class SpecialEditWatchlist extends UnlistedSpecialPage {
 		?WikiPageFactory $wikiPageFactory = null,
 		?WatchlistManager $watchlistManager = null,
 	) {
-		parent::__construct( 'EditWatchlist', 'editmywatchlist' );
+		parent::__construct( 'EditWatchlist' );
 		// This class is extended and therefor fallback to global state - T266065
 		$services = MediaWikiServices::getInstance();
 		$this->watchedItemStore = $watchedItemStore ?? $services->getWatchedItemStore();
@@ -96,6 +96,11 @@ class SpecialEditWatchlist extends UnlistedSpecialPage {
 		$this->pager = $this->getDefaultPager(
 			(bool)$services->getMainConfig()->get( MainConfigNames::WatchlistExpiry )
 		);
+	}
+
+	/** @inheritDoc */
+	public function getRestriction(): string {
+		return 'editmywatchlist';
 	}
 
 	private function getDefaultPager( bool $expiryEnabled ): EditWatchlistPager {

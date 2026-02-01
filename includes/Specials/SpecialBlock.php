@@ -92,7 +92,12 @@ class SpecialBlock extends FormSpecialPage {
 		private readonly NamespaceInfo $namespaceInfo,
 		private readonly WatchlistManager $watchlistManager
 	) {
-		parent::__construct( 'Block', 'block' );
+		parent::__construct( 'Block' );
+	}
+
+	/** @inheritDoc */
+	public function getRestriction(): string {
+		return 'block';
 	}
 
 	public function getDescription(): Message {

@@ -34,7 +34,12 @@ class SpecialPasswordReset extends FormSpecialPage {
 	public function __construct(
 		private readonly PasswordReset $passwordReset,
 	) {
-		parent::__construct( 'PasswordReset', 'editmyprivateinfo' );
+		parent::__construct( 'PasswordReset' );
+	}
+
+	/** @inheritDoc */
+	public function getRestriction(): string {
+		return 'editmyprivateinfo';
 	}
 
 	/** @inheritDoc */

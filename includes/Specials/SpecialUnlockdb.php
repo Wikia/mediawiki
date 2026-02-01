@@ -22,7 +22,12 @@ use MediaWiki\User\User;
 class SpecialUnlockdb extends FormSpecialPage {
 
 	public function __construct() {
-		parent::__construct( 'Unlockdb', 'siteadmin' );
+		parent::__construct( 'Unlockdb' );
+	}
+
+	/** @inheritDoc */
+	public function getRestriction(): string {
+		return 'siteadmin';
 	}
 
 	/** @inheritDoc */

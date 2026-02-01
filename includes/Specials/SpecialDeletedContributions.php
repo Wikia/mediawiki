@@ -63,9 +63,13 @@ class SpecialDeletedContributions extends ContributionsSpecialPage {
 			$userIdentityLookup,
 			$blockStore,
 			$userGroupAssignmentService,
-			'DeletedContributions',
-			'deletedhistory'
+			'DeletedContributions'
 		);
+	}
+
+	/** @inheritDoc */
+	public function getRestriction(): string {
+		return 'deletedhistory';
 	}
 
 	/**

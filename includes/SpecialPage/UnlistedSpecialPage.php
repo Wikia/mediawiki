@@ -23,6 +23,7 @@ class UnlistedSpecialPage extends SpecialPage {
 	 *
 	 * @param string $name
 	 * @param string $restriction
+	 *  Deprecated since 1.46, override the method getRestriction() instead.
 	 * @param bool $function Unused. Deprecated since 1.46.
 	 * @param string $file Unused. Deprecated since 1.46.
 	 */

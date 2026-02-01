@@ -64,8 +64,13 @@ class SpecialUploadStash extends UnlistedSpecialPage {
 		private readonly UrlUtils $urlUtils,
 		private readonly IConnectionProvider $dbProvider,
 	) {
-		parent::__construct( 'UploadStash', 'upload' );
+		parent::__construct( 'UploadStash' );
 		$this->localRepo = $repoGroup->getLocalRepo();
+	}
+
+	/** @inheritDoc */
+	public function getRestriction(): string {
+		return 'upload';
 	}
 
 	/** @inheritDoc */

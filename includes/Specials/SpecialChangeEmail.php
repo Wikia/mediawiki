@@ -31,9 +31,14 @@ class SpecialChangeEmail extends FormSpecialPage {
 	private $status;
 
 	public function __construct( AuthManager $authManager ) {
-		parent::__construct( 'ChangeEmail', 'editmyprivateinfo' );
+		parent::__construct( 'ChangeEmail' );
 
 		$this->setAuthManager( $authManager );
+	}
+
+	/** @inheritDoc */
+	public function getRestriction(): string {
+		return 'editmyprivateinfo';
 	}
 
 	/** @inheritDoc */

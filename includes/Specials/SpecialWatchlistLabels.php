@@ -50,9 +50,13 @@ class SpecialWatchlistLabels extends UnlistedSpecialPage {
 	public function __construct(
 		private WatchlistLabelStore $labelStore,
 		$name = 'WatchlistLabels',
-		$restriction = 'viewmywatchlist',
 	) {
-		parent::__construct( $name, $restriction );
+		parent::__construct( $name );
+	}
+
+	/** @inheritDoc */
+	public function getRestriction(): string {
+		return 'viewmywatchlist';
 	}
 
 	/** @inheritDoc */

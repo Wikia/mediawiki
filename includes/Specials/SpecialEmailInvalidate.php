@@ -25,7 +25,12 @@ class SpecialEmailInvalidate extends UnlistedSpecialPage {
 	public function __construct(
 		private readonly UserFactory $userFactory,
 	) {
-		parent::__construct( 'Invalidateemail', 'editmyprivateinfo' );
+		parent::__construct( 'Invalidateemail' );
+	}
+
+	/** @inheritDoc */
+	public function getRestriction(): string {
+		return 'editmyprivateinfo';
 	}
 
 	/** @inheritDoc */

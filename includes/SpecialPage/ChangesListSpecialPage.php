@@ -66,7 +66,6 @@ abstract class ChangesListSpecialPage extends SpecialPage {
 
 	/**
 	 * @param string $name
-	 * @param string $restriction
 	 * @param UserIdentityUtils $userIdentityUtils
 	 * @param TempUserConfig $tempUserConfig
 	 * @param RecentChangeFactory $recentChangeFactory
@@ -74,13 +73,12 @@ abstract class ChangesListSpecialPage extends SpecialPage {
 	 */
 	public function __construct(
 		$name,
-		$restriction,
 		protected readonly UserIdentityUtils $userIdentityUtils,
 		protected TempUserConfig $tempUserConfig,
 		protected readonly RecentChangeFactory $recentChangeFactory,
 		protected readonly ChangesListQueryFactory $changesListQueryFactory,
 	) {
-		parent::__construct( $name, $restriction );
+		parent::__construct( $name );
 
 		$this->filterGroups = new ChangesListFilterGroupContainer();
 	}

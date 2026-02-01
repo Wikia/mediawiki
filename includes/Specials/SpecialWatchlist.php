@@ -78,7 +78,6 @@ class SpecialWatchlist extends ChangesListSpecialPage {
 	) {
 		parent::__construct(
 			'Watchlist',
-			'viewmywatchlist',
 			$userIdentityUtils,
 			$tempUserConfig,
 			$recentChangeFactory,
@@ -86,6 +85,11 @@ class SpecialWatchlist extends ChangesListSpecialPage {
 		);
 
 		$this->watchlistLabelsForCurrentUser = $watchlistLabelStore->loadAllForUser( $this->getUser() );
+	}
+
+	/** @inheritDoc */
+	public function getRestriction(): string {
+		return 'viewmywatchlist';
 	}
 
 	/** @inheritDoc */

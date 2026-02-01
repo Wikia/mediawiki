@@ -45,7 +45,12 @@ class SpecialUnblock extends SpecialPage {
 		private readonly UserNamePrefixSearch $userNamePrefixSearch,
 		private readonly WatchlistManager $watchlistManager,
 	) {
-		parent::__construct( 'Unblock', 'block' );
+		parent::__construct( 'Unblock' );
+	}
+
+	/** @inheritDoc */
+	public function getRestriction(): string {
+		return 'block';
 	}
 
 	/** @inheritDoc */

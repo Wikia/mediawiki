@@ -38,8 +38,13 @@ class SpecialChangeCredentials extends AuthManagerSpecialPage {
 		AuthManager $authManager,
 		private readonly SessionManager $sessionManager
 	) {
-		parent::__construct( 'ChangeCredentials', 'editmyprivateinfo' );
+		parent::__construct( 'ChangeCredentials' );
 		$this->setAuthManager( $authManager );
+	}
+
+	/** @inheritDoc */
+	public function getRestriction(): string {
+		return 'editmyprivateinfo';
 	}
 
 	/** @inheritDoc */

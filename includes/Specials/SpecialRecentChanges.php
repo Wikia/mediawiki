@@ -57,7 +57,6 @@ class SpecialRecentChanges extends ChangesListSpecialPage {
 
 		parent::__construct(
 			'Recentchanges',
-			'',
 			$userIdentityUtils ?? $services->getUserIdentityUtils(),
 			$tempUserConfig ?? $services->getTempUserConfig(),
 			$recentChangeFactory ?? $services->getRecentChangeFactory(),

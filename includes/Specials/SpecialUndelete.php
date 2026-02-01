@@ -148,8 +148,13 @@ class SpecialUndelete extends SpecialPage {
 		private readonly CommentFormatter $commentFormatter,
 		private readonly WatchlistManager $watchlistManager,
 	) {
-		parent::__construct( 'Undelete', 'deletedhistory' );
+		parent::__construct( 'Undelete' );
 		$this->localRepo = $repoGroup->getLocalRepo();
+	}
+
+	/** @inheritDoc */
+	public function getRestriction(): string {
+		return 'deletedhistory';
 	}
 
 	/** @inheritDoc */

@@ -42,9 +42,14 @@ class SpecialCreateAccount extends LoginSignupSpecialPage {
 		private readonly FormatterFactory $formatterFactory,
 		private readonly UserIdentityUtils $identityUtils,
 	) {
-		parent::__construct( 'CreateAccount', 'createaccount' );
+		parent::__construct( 'CreateAccount' );
 
 		$this->setAuthManager( $authManager );
+	}
+
+	/** @inheritDoc */
+	public function getRestriction(): string {
+		return 'createaccount';
 	}
 
 	/** @inheritDoc */

@@ -41,7 +41,12 @@ class SpecialConfirmEmail extends UnlistedSpecialPage {
 	public function __construct(
 		private readonly UserFactory $userFactory
 	) {
-		parent::__construct( 'Confirmemail', 'editmyprivateinfo' );
+		parent::__construct( 'Confirmemail' );
+	}
+
+	/** @inheritDoc */
+	public function getRestriction(): string {
+		return 'editmyprivateinfo';
 	}
 
 	/** @inheritDoc */

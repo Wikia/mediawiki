@@ -39,9 +39,14 @@ class SpecialRenameUser extends SpecialPage {
 		private readonly RenameUserFactory $renameUserFactory,
 		FormatterFactory $formatterFactory,
 	) {
-		parent::__construct( 'Renameuser', $userFactory->isUserTableShared() ? 'renameuser-global' : 'renameuser' );
+		parent::__construct( 'Renameuser' );
 
 		$this->statusFormatter = $formatterFactory->getStatusFormatter( $this );
+	}
+
+	/** @inheritDoc */
+	public function getRestriction(): string {
+		return $this->userFactory->isUserTableShared() ? 'renameuser-global' : 'renameuser';
 	}
 
 	/** @inheritDoc */

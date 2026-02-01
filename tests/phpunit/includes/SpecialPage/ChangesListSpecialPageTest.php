@@ -74,7 +74,6 @@ class ChangesListSpecialPageTest extends AbstractChangesListSpecialPageTestCase 
 			->setConstructorArgs(
 				[
 					'ChangesListSpecialPage',
-					'',
 					$this->getServiceContainer()->getUserIdentityUtils(),
 					$this->getServiceContainer()->getTempUserConfig(),
 					$this->getServiceContainer()->getRecentChangeFactory(),

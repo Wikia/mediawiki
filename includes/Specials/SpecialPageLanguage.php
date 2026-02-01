@@ -46,7 +46,12 @@ class SpecialPageLanguage extends FormSpecialPage {
 		private readonly IConnectionProvider $dbProvider,
 		private readonly SearchEngineFactory $searchEngineFactory,
 	) {
-		parent::__construct( 'PageLanguage', 'pagelang' );
+		parent::__construct( 'PageLanguage' );
+	}
+
+	/** @inheritDoc */
+	public function getRestriction(): string {
+		return 'pagelang';
 	}
 
 	/** @inheritDoc */

@@ -75,6 +75,7 @@ class ContributionsSpecialPage extends IncludableSpecialPage {
 	 * @param UserGroupAssignmentService $userGroupAssignmentService
 	 * @param string $name
 	 * @param string $restriction
+	 *  Deprecated since 1.46, override the method getRestriction() instead.
 	 */
 	public function __construct(
 		protected readonly PermissionManager $permissionManager,

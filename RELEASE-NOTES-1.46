@@ -1072,6 +1072,8 @@ because of Phabricator reports.
   Override the method isListed() or extend UnlistedSpecialPage instead.
 * Accessing the SpecialPage property $mRestriction is now deprecated. Use
   $this->getRestriction() instead to get the value.
+* The usage of the SpecialPage constructor parameter $restriction is
+  deprecated. Override the method getRestriction() instead.
 * …
 
 === Other changes in 1.46 ===

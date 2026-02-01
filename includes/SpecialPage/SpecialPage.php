@@ -64,6 +64,7 @@ class SpecialPage implements MessageLocalizer {
 
 	/**
 	 * @var string Minimum user level required to access this page, or "" for anyone.
+	 * @deprecated since 1.46, use or override getRestriction() instead.
 	 * Also used to categorise the pages in Special:Specialpages
 	 */
 	private $mRestriction;
@@ -194,7 +195,8 @@ class SpecialPage implements MessageLocalizer {
 	 * @stable to call
 	 *
 	 * @param string $name Name of the special page, as seen in links and URLs
-	 * @param string $restriction User right required, e.g. "block" or "delete"
+	 * @param string $restriction User right required, e.g. "block" or "delete".
+	 *  Deprecated since 1.46, override the method getRestriction() instead.
 	 * @param bool $listed Whether the page is listed in Special:SpecialPages
 	 *  Deprecated since 1.46, override the method isListed() instead.
 	 * @param callable|bool $function Unused. Deprecated since 1.46.
@@ -229,10 +231,10 @@ class SpecialPage implements MessageLocalizer {
 
 	/**
 	 * Get the permission that a user must have to execute this page
-	 * @return string
+	 * @stable to override
 	 */
-	public function getRestriction() {
-		return $this->mRestriction;
+	public function getRestriction(): string {
+		return (string)$this->mRestriction;
 	}
 
 	/**

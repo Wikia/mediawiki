@@ -36,7 +36,12 @@ class SpecialImport extends SpecialPage {
 	public function __construct(
 		private readonly WikiImporterFactory $wikiImporterFactory
 	) {
-		parent::__construct( 'Import', 'import' );
+		parent::__construct( 'Import' );
+	}
+
+	/** @inheritDoc */
+	public function getRestriction(): string {
+		return 'import';
 	}
 
 	/** @inheritDoc */

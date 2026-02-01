@@ -54,9 +54,14 @@ class SpecialBotPasswords extends FormSpecialPage {
 		private readonly GrantsInfo $grantsInfo,
 		private readonly GrantsLocalization $grantsLocalization,
 	) {
-		parent::__construct( 'BotPasswords', 'editmyprivateinfo' );
+		parent::__construct( 'BotPasswords' );
 		$this->logger = LoggerFactory::getInstance( 'authentication' );
 		$this->setAuthManager( $authManager );
+	}
+
+	/** @inheritDoc */
+	public function getRestriction(): string {
+		return 'editmyprivateinfo';
 	}
 
 	/**

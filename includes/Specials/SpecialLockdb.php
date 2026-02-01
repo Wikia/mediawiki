@@ -23,7 +23,12 @@ use MediaWiki\User\User;
 class SpecialLockdb extends FormSpecialPage {
 
 	public function __construct() {
-		parent::__construct( 'Lockdb', 'siteadmin' );
+		parent::__construct( 'Lockdb' );
+	}
+
+	/** @inheritDoc */
+	public function getRestriction(): string {
+		return 'siteadmin';
 	}
 
 	/** @inheritDoc */

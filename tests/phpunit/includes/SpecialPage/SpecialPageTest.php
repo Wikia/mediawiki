@@ -34,7 +34,11 @@ class SpecialPageTest extends MediaWikiIntegrationTestCase {
 	private function newSpecialPage(): SpecialPage {
 		return new class() extends SpecialPage {
 			public function __construct() {
-				parent::__construct( 'Watchlist', 'viewmywatchlist' );
+				parent::__construct( 'Watchlist' );
+			}
+
+			public function getRestriction(): string {
+				return 'viewmywatchlist';
 			}
 		};
 	}
