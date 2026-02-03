@@ -1241,7 +1241,7 @@ class Article implements Page {
 			if ( $this->getHookRunner()->onArticleViewRedirect( $this ) ) {
 				$redir = $this->linkRenderer->makeKnownLink(
 					$this->mRedirectedFrom,
-					$context->msg('redirectedfrom-another-page')->escaped(),
+					null,
 					[],
 					[ 'redirect' => 'no' ]
 				);
