@@ -193,8 +193,8 @@ class SpecialPage implements MessageLocalizer {
 	 * @param string $name Name of the special page, as seen in links and URLs
 	 * @param string $restriction User right required, e.g. "block" or "delete"
 	 * @param bool $listed Whether the page is listed in Special:SpecialPages
-	 * @param callable|bool $function Unused
-	 * @param string $file Unused
+	 * @param callable|bool $function Unused. Deprecated since 1.46.
+	 * @param string $file Unused. Deprecated since 1.46.
 	 * @param bool $includable Whether the page can be included in normal pages
 	 *  Deprecated since 1.46, override the method isIncludable() instead.
 	 */
@@ -205,8 +205,8 @@ class SpecialPage implements MessageLocalizer {
 		if ( static::class === self::class ) {
 			wfDeprecated( 'direct instantiation of ' . __CLASS__, '1.46' );
 		}
-		if ( func_num_args() > 5 ) {
-			wfDeprecated( __CLASS__ . ' constructor parameter $includable', '1.46' );
+		if ( func_num_args() > 3 ) {
+			wfDeprecated( __CLASS__ . ' constructor parameters $function, $file and $includable', '1.46' );
 		}
 		$this->mName = $name;
 		$this->mRestriction = $restriction;

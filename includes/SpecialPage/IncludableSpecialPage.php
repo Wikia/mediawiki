@@ -19,8 +19,8 @@ class IncludableSpecialPage extends SpecialPage {
 	 * @param string $name
 	 * @param string $restriction
 	 * @param bool $listed
-	 * @param callable|bool $function Unused
-	 * @param string $file Unused
+	 * @param callable|bool $function Unused. Deprecated since 1.46.
+	 * @param string $file Unused. Deprecated since 1.46.
 	 */
 	public function __construct(
 		$name, $restriction = '', $listed = true, $function = false, $file = 'default'
@@ -28,7 +28,10 @@ class IncludableSpecialPage extends SpecialPage {
 		if ( static::class === self::class ) {
 			wfDeprecated( 'direct instantiation of ' . __CLASS__, '1.46' );
 		}
-		parent::__construct( $name, $restriction, $listed, $function, $file );
+		if ( func_num_args() > 3 ) {
+			wfDeprecated( __CLASS__ . ' constructor parameters $function and $file', '1.46' );
+		}
+		parent::__construct( $name, $restriction, $listed );
 		$this->mIncludable = true;
 	}
 
