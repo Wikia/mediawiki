@@ -11,6 +11,7 @@ use MediaWiki\Auth\AuthManager;
 use MediaWiki\Config\Config;
 use MediaWiki\Context\IContextSource;
 use MediaWiki\Context\RequestContext;
+use MediaWiki\Debug\DeprecationHelper;
 use MediaWiki\Exception\ErrorPageError;
 use MediaWiki\Exception\PermissionsError;
 use MediaWiki\Exception\ReadOnlyError;
@@ -49,6 +50,8 @@ use Wikimedia\Message\MessageSpecifier;
  * @ingroup SpecialPage
  */
 class SpecialPage implements MessageLocalizer {
+	use DeprecationHelper;
+
 	/**
 	 * @var string The canonical name of this special page
 	 * Also used as the message key for the default <h1> heading,
@@ -63,7 +66,7 @@ class SpecialPage implements MessageLocalizer {
 	 * @var string Minimum user level required to access this page, or "" for anyone.
 	 * Also used to categorise the pages in Special:Specialpages
 	 */
-	protected $mRestriction;
+	private $mRestriction;
 
 	/** @var bool Listed in Special:Specialpages? */
 	private $mListed;
@@ -211,6 +214,7 @@ class SpecialPage implements MessageLocalizer {
 		}
 		$this->mName = $name;
 		$this->mRestriction = $restriction;
+		$this->deprecatePublicProperty( 'mRestriction', '1.46', __CLASS__ );
 		$this->mListed = $listed;
 		$this->mIncludable = $includable;
 	}
@@ -335,14 +339,14 @@ class SpecialPage implements MessageLocalizer {
 	 */
 	public function isRestricted() {
 		// DWIM: If anons can do something, then it is not restricted
-		return $this->mRestriction != '' && !MediaWikiServices::getInstance()
+		return $this->getRestriction() != '' && !MediaWikiServices::getInstance()
 			->getGroupPermissionsLookup()
-			->groupHasPermission( '*', $this->mRestriction );
+			->groupHasPermission( '*', $this->getRestriction() );
 	}
 
 	/**
 	 * Checks if the given user (identified by an object) can execute this
-	 * special page (as defined by $mRestriction).  Can be overridden by sub-
+	 * special page (as defined by getRestriction).  Can be overridden by sub-
 	 * classes with more complicated permissions schemes.
 	 *
 	 * @stable to override
@@ -352,7 +356,7 @@ class SpecialPage implements MessageLocalizer {
 	public function userCanExecute( User $user ) {
 		return MediaWikiServices::getInstance()
 			->getPermissionManager()
-			->userHasRight( $user, $this->mRestriction );
+			->userHasRight( $user, $this->getRestriction() );
 	}
 
 	/**
@@ -385,7 +389,7 @@ class SpecialPage implements MessageLocalizer {
 	 * @return never
 	 */
 	protected function displayRestrictionError() {
-		throw new PermissionsError( $this->mRestriction );
+		throw new PermissionsError( $this->getRestriction() );
 	}
 
 	/**
