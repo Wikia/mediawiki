@@ -1724,7 +1724,7 @@ class SpecialPageFactory {
 	 * successful or false if there was no such special page, or a title object
 	 * if it was a redirect.
 	 *
-	 * Also saves the current $wgTitle, $wgOut, $wgRequest, $wgUser and $wgLang
+	 * Also saves the current $wgTitle, $wgOut, $wgRequest and $wgLang
 	 * variables so that the special page will get the context it'd expect on a
 	 * normal request, and then restores them to their previous values after.
 	 *
@@ -1736,8 +1736,8 @@ class SpecialPageFactory {
 	public function capturePath(
 		PageReference $page, IContextSource $context, ?LinkRenderer $linkRenderer = null
 	) {
-		// phpcs:ignore MediaWiki.Usage.DeprecatedGlobalVariables.Deprecated$wgUser,MediaWiki.Usage.DeprecatedGlobalVariables.Deprecated$wgTitle
-		global $wgTitle, $wgOut, $wgRequest, $wgUser, $wgLang;
+		// phpcs:ignore MediaWiki.Usage.DeprecatedGlobalVariables.Deprecated$wgTitle
+		global $wgTitle, $wgOut, $wgRequest, $wgLang;
 		$main = RequestContext::getMain();
 
 		// Save current globals and main context
@@ -1745,7 +1745,6 @@ class SpecialPageFactory {
 			'title' => $wgTitle,
 			'output' => $wgOut,
 			'request' => $wgRequest,
-			'user' => $wgUser,
 			'language' => $wgLang,
 		];
 		$ctx = [
@@ -1766,7 +1765,6 @@ class SpecialPageFactory {
 		$wgTitle = $title;
 		$wgOut = $context->getOutput();
 		$wgRequest = $context->getRequest();
-		$wgUser = $context->getUser();
 		$wgLang = $context->getLanguage();
 		// FIXME: Once reasonably certain that no SpecialPage subclasses
 		// rely on direct RequestContext::getMain instead of their local
@@ -1786,7 +1784,6 @@ class SpecialPageFactory {
 			$wgTitle = $glob['title'];
 			$wgOut = $glob['output'];
 			$wgRequest = $glob['request'];
-			$wgUser = $glob['user'];
 			$wgLang = $glob['language'];
 			// phpcs:ignore Generic.PHP.NoSilencedErrors.Discouraged
 			@$main->setTitle( $ctx['title'] );

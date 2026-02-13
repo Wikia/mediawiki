@@ -35,7 +35,6 @@ use MediaWiki\Session\SessionManager;
 use MediaWiki\Session\SessionManagerInterface;
 use MediaWiki\SpecialPage\SpecialPage;
 use MediaWiki\Status\Status;
-use MediaWiki\StubObject\StubGlobalUser;
 use MediaWiki\User\BotPasswordStore;
 use MediaWiki\User\Options\UserOptionsManager;
 use MediaWiki\User\TempUser\TempUserCreator;
@@ -997,7 +996,6 @@ class AuthManager implements LoggerAwareInterface {
 		$context = RequestContext::getMain();
 		$user = $context->getRequest()->getSession()->getUser();
 
-		StubGlobalUser::setUser( $user );
 		$context->setUser( $user );
 
 		// phpcs:ignore MediaWiki.Usage.ExtendClassUsage.FunctionVarUsage

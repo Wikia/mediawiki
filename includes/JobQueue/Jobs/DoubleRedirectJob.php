@@ -198,11 +198,6 @@ class DoubleRedirectJob extends Job {
 			return false;
 		}
 
-		// Save it
-		// phpcs:ignore MediaWiki.Usage.DeprecatedGlobalVariables.Deprecated$wgUser
-		global $wgUser;
-		$oldUser = $wgUser;
-		$wgUser = $user;
 		$article = $this->wikiPageFactory->newFromTitle( $this->title );
 
 		// Messages: double-redirect-fixed-move, double-redirect-fixed-maintenance
@@ -212,7 +207,6 @@ class DoubleRedirectJob extends Job {
 		// Avoid RC flood, and use minor to avoid email notifs
 		$flags = EDIT_UPDATE | EDIT_SUPPRESS_RC | EDIT_INTERNAL | EDIT_MINOR;
 		$article->doUserEditContent( $newContent, $user, $reason, $flags );
-		$wgUser = $oldUser;
 
 		return true;
 	}

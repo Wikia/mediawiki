@@ -117,7 +117,7 @@ use Wikimedia\StringUtils\StringUtils;
  * - Parser::getPreloadText()
  *     removes <noinclude> sections and <includeonly> tags
  *
- * @warning $wgUser or $wgTitle or $wgRequest or $wgLang. Keep them away!
+ * @warning $wgTitle or $wgRequest or $wgLang. Keep them away!
  *
  * @par Settings:
  * $wgNamespacesWithSubpages

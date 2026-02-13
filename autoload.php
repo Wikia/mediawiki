@@ -3531,7 +3531,6 @@ $wgAutoloadLocalClasses = [
 	'MediaWiki\\Storage\\RevisionSlotsUpdate' => __DIR__ . '/includes/Storage/RevisionSlotsUpdate.php',
 	'MediaWiki\\Storage\\SqlBlobStore' => __DIR__ . '/includes/Storage/SqlBlobStore.php',
 	'MediaWiki\\StubObject\\DeprecatedGlobal' => __DIR__ . '/includes/StubObject/DeprecatedGlobal.php',
-	'MediaWiki\\StubObject\\StubGlobalUser' => __DIR__ . '/includes/StubObject/StubGlobalUser.php',
 	'MediaWiki\\StubObject\\StubObject' => __DIR__ . '/includes/StubObject/StubObject.php',
 	'MediaWiki\\StubObject\\StubUserLang' => __DIR__ . '/includes/StubObject/StubUserLang.php',
 	'MediaWiki\\Telemetry\\MediaWikiPropagator' => __DIR__ . '/includes/Telemetry/MediaWikiPropagator.php',

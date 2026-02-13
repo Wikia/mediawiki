@@ -348,12 +348,14 @@ class User implements Stringable, Authority, UserIdentity, UserEmailContact {
 	/**
 	 * Test if it's safe to load this User object.
 	 *
-	 * You should typically check this before using $wgUser or
-	 * RequestContext::getUser in a method that might be called before the
-	 * system has been fully initialized. If the object is unsafe, you should
-	 * use an anonymous user:
+	 * You should typically check this before using RequestContext::getUser in a method
+	 * that might be called before the system has been fully initialized.
+	 * If the object is unsafe, you should use an anonymous user:
 	 * \code
-	 * $user = $wgUser->isSafeToLoad() ? $wgUser : new User;
+	 * $user = RequestContext::getUser();
+	 * if (!$user->isSafeToLoad()) {
+	 *     $user = new User;
+	 * }
 	 * \endcode
 	 *
 	 * @since 1.27

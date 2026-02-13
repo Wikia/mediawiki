@@ -8,7 +8,6 @@
 use MediaWiki\Language\LanguageNameUtils;
 use MediaWiki\Maintenance\Maintenance;
 use MediaWiki\Pager\AllMessagesTablePager;
-use MediaWiki\StubObject\StubGlobalUser;
 use MediaWiki\Title\Title;
 use MediaWiki\User\User;
 
@@ -167,7 +166,6 @@ class DeleteEqualMessages extends Maintenance {
 		if ( !$user ) {
 			$this->fatalError( "Invalid username" );
 		}
-		StubGlobalUser::setUser( $user );
 
 		// Hide deletions from RecentChanges
 		$userGroupManager = $services->getUserGroupManager();

@@ -62,10 +62,8 @@ use MediaWiki\Settings\SettingsBuilder;
 use MediaWiki\Settings\Source\PhpSettingsSource;
 use MediaWiki\Settings\Source\ReflectionSchemaSource;
 use MediaWiki\Settings\WikiFarmSettingsLoader;
-use MediaWiki\StubObject\StubGlobalUser;
 use MediaWiki\StubObject\StubUserLang;
 use MediaWiki\Title\Title;
-use MediaWiki\User\User;
 use Psr\Log\LoggerInterface;
 use Wikimedia\Http\HttpStatus;
 use Wikimedia\RequestTimeout\RequestTimeout;
@@ -548,17 +546,7 @@ if ( !defined( 'MW_NO_SESSION' ) && MW_ENTRY_POINT !== 'cli' ) {
 }
 
 // Explicit globals, so this works with bootstrap.php
-global $wgUser, $wgLang, $wgOut, $wgTitle;
-
-/**
- * @var User $wgUser
- * @deprecated since 1.35, use an available context source when possible, or, as a backup,
- * RequestContext::getMain()
- */
-$wgUser = new StubGlobalUser( RequestContext::getMain()->getUser() ); // BackCompat
-register_shutdown_function( static function () {
-	StubGlobalUser::$destructorDeprecationDisarmed = true;
-} );
+global $wgLang, $wgOut, $wgTitle;
 
 /**
  * @var Language|StubUserLang $wgLang

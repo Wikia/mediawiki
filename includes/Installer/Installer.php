@@ -35,7 +35,6 @@ use MediaWiki\Registration\ExtensionDependencyError;
 use MediaWiki\Registration\ExtensionRegistry;
 use MediaWiki\Settings\SettingsBuilder;
 use MediaWiki\Status\Status;
-use MediaWiki\StubObject\StubGlobalUser;
 use MediaWiki\Title\Title;
 use MediaWiki\User\User;
 use MediaWiki\Utils\ExecutableFinder;
@@ -524,8 +523,6 @@ abstract class Installer {
 		// Note that this will reset the context's language,
 		// so set the user before setting the language.
 		$user = User::newFromId( 0 );
-		StubGlobalUser::setUser( $user );
-
 		RequestContext::getMain()->setUser( $user );
 
 		// Don't attempt to load user language options (T126177)

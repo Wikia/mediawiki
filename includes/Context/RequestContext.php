@@ -28,7 +28,6 @@ use MediaWiki\Request\WebRequest;
 use MediaWiki\Session\CsrfTokenSet;
 use MediaWiki\Session\PHPSessionHandler;
 use MediaWiki\Skin\Skin;
-use MediaWiki\StubObject\StubGlobalUser;
 use MediaWiki\Title\Title;
 use MediaWiki\User\User;
 use MediaWiki\User\UserRigorOptions;
@@ -667,7 +666,7 @@ class RequestContext implements IContextSource, MutableContext {
 	/**
 	 * Import a client IP address, HTTP headers, user ID, and session ID
 	 *
-	 * This sets the current session, $wgUser, and $wgRequest from $params.
+	 * This sets the current session and $wgRequest from $params.
 	 * Once the return value falls out of scope, the old context is restored.
 	 * This method should only be called in contexts where there is no session
 	 * ID or end user receiving the response (CLI or HTTP job runners). This
@@ -737,7 +736,6 @@ class RequestContext implements IContextSource, MutableContext {
 			// and caught (leaving the main context in a mixed state), there is no risk
 			// of the User object being attached to the wrong IP, headers, or session.
 			$context->setUser( $user );
-			StubGlobalUser::setUser( $context->getUser() ); // b/c
 			if ( $session && PHPSessionHandler::isEnabled() ) {
 				session_id( $session->getId() );
 				// phpcs:ignore Generic.PHP.NoSilencedErrors.Discouraged

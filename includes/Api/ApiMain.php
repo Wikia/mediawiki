@@ -32,7 +32,6 @@ use MediaWiki\Request\FauxRequest;
 use MediaWiki\Request\WebRequest;
 use MediaWiki\Request\WebRequestUpload;
 use MediaWiki\Rest\HeaderParser\Origin;
-use MediaWiki\StubObject\StubGlobalUser;
 use MediaWiki\User\UserRigorOptions;
 use MediaWiki\WikiMap\WikiMap;
 use Throwable;
@@ -630,7 +629,6 @@ class ApiMain extends ApiBase {
 			if ( $this->lacksSameOriginSecurity() ) {
 				wfDebug( "API: stripping user credentials when the same-origin policy is not applied" );
 				$user = $services->getUserFactory()->newAnonymous();
-				StubGlobalUser::setUser( $user );
 				$derivativeContext->setUser( $user );
 				$request->response()->header( 'MediaWiki-Login-Suppressed: true' );
 			}

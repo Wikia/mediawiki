@@ -26,7 +26,6 @@ use MediaWiki\ChangeTags\ChangeTags;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Maintenance\Maintenance;
 use MediaWiki\Specials\SpecialUpload;
-use MediaWiki\StubObject\StubGlobalUser;
 use MediaWiki\Title\Title;
 use MediaWiki\User\User;
 use Wikimedia\FileBackend\FSFile\FSFile;
@@ -167,7 +166,6 @@ class ImportImages extends Maintenance {
 			$user = User::newSystemUser( User::MAINTENANCE_SCRIPT_USER, [ 'steal' => true ] );
 		}
 		'@phan-var User $user';
-		StubGlobalUser::setUser( $user );
 
 		# Get block check. If a value is given, this specified how often the check is performed
 		$checkUserBlock = (int)$this->getOption( 'check-userblock' );
@@ -285,7 +283,6 @@ class ImportImages extends Maintenance {
 						);
 						continue;
 					}
-					StubGlobalUser::setUser( $realUser );
 					$user = $realUser;
 				}
 			} else {
