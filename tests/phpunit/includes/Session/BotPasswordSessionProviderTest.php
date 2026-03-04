@@ -297,7 +297,6 @@ class BotPasswordSessionProviderTest extends MediaWikiIntegrationTestCase {
 		$this->initProvider( $provider, $logger, $this->config, $this->getServiceContainer()->getSessionManager() );
 		if ( $useSessionCookieJwt ) {
 			$this->config->set( MainConfigNames::UseSessionCookieJwt, true );
-			$this->config->set( MainConfigNames::UseSessionCookieForBotPasswords, true );
 			$startTime = 1_000_000;
 			ConvertibleTimestamp::setFakeTime( $startTime );
 			$jwtExpiry = $this->config->get( MainConfigNames::SessionCookieJwtExpiration );
@@ -496,7 +495,6 @@ class BotPasswordSessionProviderTest extends MediaWikiIntegrationTestCase {
 		$this->initProvider( $provider, $logger, $this->config, $this->getServiceContainer()->getSessionManager() );
 		$this->config->set( MainConfigNames::EnableBotPasswords, true );
 		$this->config->set( MainConfigNames::UseSessionCookieJwt, true );
-		$this->config->set( MainConfigNames::UseSessionCookieForBotPasswords, true );
 		$this->config->set( MainConfigNames::ForceHTTPS, false );
 
 		$setUserInStore = static function ( $sessionId, User $user, $bp ) use ( $store, $provider ) {
@@ -781,7 +779,6 @@ class BotPasswordSessionProviderTest extends MediaWikiIntegrationTestCase {
 		$this->initProvider( $provider, $logger, $this->config );
 
 		$this->config->set( MainConfigNames::UseSessionCookieJwt, $useSessionCookieJwt );
-		$this->config->set( MainConfigNames::UseSessionCookieForBotPasswords, true );
 		$this->initProvider( $provider, null, $this->config );
 
 		$expectedCookies = [
@@ -812,7 +809,6 @@ class BotPasswordSessionProviderTest extends MediaWikiIntegrationTestCase {
 		$config = $this->config;
 		$config->set( MainConfigNames::ForceHTTPS, $forceHTTPS );
 		$config->set( MainConfigNames::UseSessionCookieJwt, true );
-		$config->set( MainConfigNames::UseSessionCookieForBotPasswords, true );
 		$config->set( MainConfigNames::JwtSessionCookieIssuer, 'http://example.org' );
 		$this->initProvider(
 			$provider,

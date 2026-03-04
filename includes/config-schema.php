@@ -575,7 +575,6 @@ return [
 			'SuspiciousIpExpiry' => false,
 			'SessionPbkdf2Iterations' => 10001,
 			'UseSessionCookieJwt' => false,
-			'UseSessionCookieForBotPasswords' => false,
 			'JwtSessionCookieIssuer' => null,
 			'MemCachedServers' => [
 				'127.0.0.1:11211',

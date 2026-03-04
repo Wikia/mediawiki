@@ -1577,12 +1577,6 @@ $wgSessionPbkdf2Iterations = null;
 $wgUseSessionCookieJwt = null;
 
 /**
- * Config variable stub for the UseSessionCookieForBotPasswords setting, for use by phpdoc and IDEs.
- * @see MediaWiki\MainConfigSchema::UseSessionCookieForBotPasswords
- */
-$wgUseSessionCookieForBotPasswords = null;
-
-/**
  * Config variable stub for the JwtSessionCookieIssuer setting, for use by phpdoc and IDEs.
  * @see MediaWiki\MainConfigSchema::JwtSessionCookieIssuer
  */

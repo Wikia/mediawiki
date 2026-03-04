@@ -236,7 +236,6 @@ class BotPasswordSessionProvider extends ImmutableSessionProviderWithCookie {
 	}
 
 	protected function useJwtCookie(): bool {
-		return $this->jwtSessionCookieHelper->useJwtCookie() &&
-			$this->config->get( MainConfigNames::UseSessionCookieForBotPasswords );
+		return $this->jwtSessionCookieHelper->useJwtCookie();
 	}
 }
