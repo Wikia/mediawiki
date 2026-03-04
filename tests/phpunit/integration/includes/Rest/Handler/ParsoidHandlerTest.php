@@ -1552,6 +1552,23 @@ class ParsoidHandlerTest extends MediaWikiIntegrationTestCase {
 				400
 			),
 		];
+
+		yield 'PageConfig for deleted revision when linting' => [
+			[
+				'oldid' => 1,
+				'pageName' => '',
+				'opts' => [ 'format' => 'lint' ],
+			],
+			'wikitext' => null,
+			'html2WtMode' => false,
+			'expected' => new LocalizedHttpException(
+				new MessageValue(
+					"rest-permission-denied-revision",
+					[ 'Not an available content version.' ]
+				),
+				403
+			),
+		];
 	}
 
 	/**
@@ -1565,6 +1582,11 @@ class ParsoidHandlerTest extends MediaWikiIntegrationTestCase {
 		$html2WtMode,
 		HttpException $expected
 	) {
+		$page = $this->getNonexistingTestPage( __METHOD__ );
+		$firstRev = $this->editPage( $page, 'First' )->getNewRevision();
+		$secondRev = $this->editPage( $page, 'Second' )->getNewRevision();
+		$this->revisionDelete( $firstRev );
+
 		try {
 			$this->newParsoidHandler()->tryToCreatePageConfig( $attribs, $wikitext, $html2WtMode );
 			$this->fail( 'Expected exception: ' . get_class( $expected ) );
@@ -2307,5 +2329,51 @@ class ParsoidHandlerTest extends MediaWikiIntegrationTestCase {
 
 	// TODO: test wt2html failure modes
 	// TODO: test redlinks
+
+	public function testWt2html_Forbidden() {
+		$page = $this->getNonexistingTestPage( __METHOD__ );
+		$firstRev = $this->editPage( $page, 'First' )->getNewRevision();
+		$secondRev = $this->editPage( $page, 'Second' )->getNewRevision();
+
+		$this->revisionDelete( $firstRev );
+		$pageConfig = $this->getPageConfig( $page, $firstRev );
+
+		$attribs = self::DEFAULT_ATTRIBS;
+		$attribs['opts']['from'] = 'wikitext';
+		$attribs['opts']['format'] = 'html';
+
+		$handler = $this->newParsoidHandler();
+		try {
+			$response = $handler->wt2html( $pageConfig, $attribs );
+			$this->fail( 'Should have thrown' );
+		} catch ( LocalizedHttpException $e ) {
+			$this->assertSame( 403, $e->getCode() );
+		}
+	}
+
+	public function testHtml2wt_Forbidden() {
+		$page = $this->getNonexistingTestPage( __METHOD__ );
+		$firstRev = $this->editPage( $page, 'First' )->getNewRevision();
+		$secondRev = $this->editPage( $page, 'Second' )->getNewRevision();
+
+		$this->revisionDelete( $firstRev );
+		$pageConfig = $this->getPageConfig( $page, $firstRev );
+
+		$attribs = self::DEFAULT_ATTRIBS;
+		$attribs['oldid'] = $firstRev->getId();
+		$attribs['opts'] += self::DEFAULT_ATTRIBS['opts'];
+		$attribs['opts']['from'] ??= 'html';
+		$attribs['envOptions'] += self::DEFAULT_ATTRIBS['envOptions'];
+
+		$html = '<html lang="en"><body>123</body></html>';
+
+		$handler = $this->newParsoidHandler();
+		try {
+			$handler->html2wt( $pageConfig, $attribs, $html );
+			$this->fail( 'Should have thrown' );
+		} catch ( LocalizedHttpException $e ) {
+			$this->assertSame( 403, $e->getCode() );
+		}
+	}
 
 }

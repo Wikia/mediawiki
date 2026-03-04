@@ -96,7 +96,7 @@ class PageContentTest extends MediaWikiUnitTestCase {
 		);
 		$record->setSlot( $mainSlot );
 		$this->rev->method( 'hasSlot' )->willReturn( true );
-		$this->rev->method( 'getContent' )->willReturn( $mainSlot->getContent() );
+		$this->rev->method( 'getContentOrThrow' )->willReturn( $mainSlot->getContent() );
 		$pageContent = new PageContent( $this->rev );
 		$model = $pageContent->getModel( SlotRecord::MAIN );
 		$this->assertEquals( 'testing', $model );

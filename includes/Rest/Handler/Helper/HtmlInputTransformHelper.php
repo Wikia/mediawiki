@@ -764,6 +764,11 @@ class HtmlInputTransformHelper {
 				413,
 				[ 'reason' => $status->getHTML() ]
 			);
+		} elseif ( $status->hasMessage( 'missing-revision-permission' ) ) {
+			throw new LocalizedHttpException( new MessageValue( 'rest-permission-denied-revision' ),
+				403,
+				[ 'reason' => $status->getHTML() ]
+			);
 		} else {
 			throw new LocalizedHttpException( new MessageValue( "rest-parsoid-error" ),
 				400,

@@ -9,6 +9,7 @@ declare( strict_types = 1 );
 namespace MediaWiki\Parser\Parsoid\Config;
 
 use InvalidArgumentException;
+use MediaWiki\Content\Content;
 use MediaWiki\Revision\RevisionRecord;
 use Wikimedia\Parsoid\Config\PageContent as IPageContent;
 use Wikimedia\Parsoid\Core\LinkTarget as ParsoidLinkTarget;
@@ -50,20 +51,24 @@ class PageContent extends IPageContent {
 
 	/** @inheritDoc */
 	public function getModel( string $role ): string {
-		$this->checkRole( $role );
-		return $this->rev->getContent( $role )->getModel();
+		return $this->getContentInternal( $role )->getModel();
 	}
 
 	/** @inheritDoc */
 	public function getFormat( string $role ): string {
-		$this->checkRole( $role );
-		return $this->rev->getContent( $role )->getDefaultFormat();
+		return $this->getContentInternal( $role )->getDefaultFormat();
 	}
 
 	/** @inheritDoc */
 	public function getContent( string $role ): string {
+		return $this->getContentInternal( $role )->serialize();
+	}
+
+	private function getContentInternal( string $role ): Content {
 		$this->checkRole( $role );
-		return $this->rev->getContentOrThrow( $role )->serialize();
+		return $this->rev->getContentOrThrow(
+			$role, RevisionRecord::RAW
+		);
 	}
 
 }

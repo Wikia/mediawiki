@@ -38,17 +38,9 @@ class PageConfig extends IPageConfig {
 
 	public function getContentModel(): string {
 		// @todo Check just the main slot, or all slots, or what?
-		$rev = $this->getRevision();
-		if ( $rev ) {
-			$content = $rev->getContent( SlotRecord::MAIN );
-			if ( $content ) {
-				return $content->getModel();
-			} else {
-				// The page does have a content model but we can't see it. Returning the
-				// default model is not really correct. But we can't see the content either
-				// so it won't matter much what we do here.
-				return $this->slotRoleHandler->getDefaultModel( $this->title );
-			}
+		$content = $this->getRevisionContent();
+		if ( $content && $content->hasRole( SlotRecord::MAIN ) ) {
+			return $content->getModel( SlotRecord::MAIN );
 		} else {
 			return $this->slotRoleHandler->getDefaultModel( $this->title );
 		}

@@ -99,6 +99,7 @@ class PageConfigFactory extends \Wikimedia\Parsoid\Config\PageConfigFactory {
 	 * @param bool $ensureAccessibleContent If true, ensures that we can get content
 	 *   from the newly constructed pageConfig's RevisionRecord and throws a
 	 *   RevisionAccessException if not.
+	 * @param bool $checkAuthority
 	 * @return \Wikimedia\Parsoid\Config\PageConfig
 	 * @throws RevisionAccessException
 	 */
@@ -107,7 +108,8 @@ class PageConfigFactory extends \Wikimedia\Parsoid\Config\PageConfigFactory {
 		PageIdentity $pageId,
 		$revision = null,
 		?Bcp47Code $pageLanguageOverride = null,
-		bool $ensureAccessibleContent = false
+		bool $ensureAccessibleContent = false,
+		bool $checkAuthority = false
 	): \Wikimedia\Parsoid\Config\PageConfig {
 		$title = Title::newFromPageIdentity( $pageId );
 
@@ -167,6 +169,7 @@ class PageConfigFactory extends \Wikimedia\Parsoid\Config\PageConfigFactory {
 		// If we have a revision record, check that we are allowed to see it.
 		// Mirrors the check from RevisionRecord::getContent
 		if (
+			$checkAuthority &&
 			$revisionRecord !== null &&
 			!$revisionRecord->audienceCan(
 				RevisionRecord::DELETED_TEXT, RevisionRecord::FOR_PUBLIC

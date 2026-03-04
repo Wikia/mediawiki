@@ -536,6 +536,12 @@ abstract class ParsoidHandler extends Handler {
 		$hasOldId = ( $revId !== null );
 		$ensureAccessibleContent = !$html2WtMode || $hasOldId;
 
+		// When transforming for lint, we aren't going to go through a ParserOutputAccess
+		// to checkPreconditions
+		$checkAuthority = (
+			( $attribs['opts']['format'] ?? '' ) === ParsoidFormatHelper::FORMAT_LINT
+		);
+
 		try {
 			// Note: Parsoid by design isn't supposed to use the user
 			// context right now, and all user state is expected to be
@@ -548,7 +554,8 @@ abstract class ParsoidHandler extends Handler {
 				$title,
 				$revisionRecord ?? $revId,
 				$pagelanguageOverride,
-				$ensureAccessibleContent
+				$ensureAccessibleContent,
+				$checkAuthority
 			);
 		} catch ( SuppressedDataException $e ) {
 			throw new LocalizedHttpException(
