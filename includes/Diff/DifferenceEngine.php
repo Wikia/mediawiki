@@ -578,15 +578,21 @@ class DifferenceEngine extends ContextSource {
 		$out = $this->getOutput();
 
 		$missing = [];
-		if ( $this->mOldid && ( !$this->mOldRevisionRecord || !$this->mOldContent ) ) {
+		if ( $this->mOldid && !$this->mOldRevisionRecord ) {
 			$missing[] = $this->deletedIdMarker( $this->mOldid );
 		}
-		if ( !$this->mNewRevisionRecord || !$this->mNewContent ) {
+		if ( !$this->mNewRevisionRecord ) {
 			$missing[] = $this->deletedIdMarker( $this->mNewid );
 		}
 
 		$out->setPageTitleMsg( $this->msg( 'errorpagetitle' ) );
-		$msg = $this->msg( 'difference-missing-revision' )
+
+		// Don't display the deletion log for the main page, it's probably not useful
+		$key = $this->getTitle()->equals( Title::newMainPage() ) ?
+			'difference-missing-revision-nolog' :
+			'difference-missing-revision';
+
+		$msg = $this->msg( $key )
 			->params( $this->getLanguage()->listToText( $missing ) )
 			->numParams( count( $missing ) )
 			->parseAsBlock();
@@ -2218,7 +2224,18 @@ class DifferenceEngine extends ContextSource {
 			$this->mNewRevisionRecord = $this->revisionStore->getRevisionByTitle( $this->getTitle() );
 		}
 
-		if ( !$this->mNewRevisionRecord instanceof RevisionRecord ) {
+		// Load the old RevisionRecord object
+		$this->mOldRevisionRecord = false;
+		if ( $this->mOldid ) {
+			$this->mOldRevisionRecord = $this->revisionStore->getRevisionById( $this->mOldid );
+		} elseif ( $this->mOldid === 0 && $this->mNewRevisionRecord instanceof RevisionRecord ) {
+			$revRecord = $this->revisionStore->getPreviousRevision( $this->mNewRevisionRecord );
+			// No previous revision; mark to show as first-version only.
+			$this->mOldid = $revRecord ? $revRecord->getId() : false;
+			$this->mOldRevisionRecord = $revRecord ?? false;
+		} /* elseif ( $this->mOldid === false ) leave mOldRevisionRecord false; */
+
+		if ( $this->mOldRevisionRecord === null || $this->mNewRevisionRecord === null ) {
 			return false;
 		}
 
@@ -2227,21 +2244,6 @@ class DifferenceEngine extends ContextSource {
 		$this->mNewPage = $this->mNewid ?
 			Title::newFromPageIdentity( $this->mNewRevisionRecord->getPage() ) :
 			null;
-
-		// Load the old RevisionRecord object
-		$this->mOldRevisionRecord = false;
-		if ( $this->mOldid ) {
-			$this->mOldRevisionRecord = $this->revisionStore->getRevisionById( $this->mOldid );
-		} elseif ( $this->mOldid === 0 ) {
-			$revRecord = $this->revisionStore->getPreviousRevision( $this->mNewRevisionRecord );
-			// No previous revision; mark to show as first-version only.
-			$this->mOldid = $revRecord ? $revRecord->getId() : false;
-			$this->mOldRevisionRecord = $revRecord ?? false;
-		} /* elseif ( $this->mOldid === false ) leave mOldRevisionRecord false; */
-
-		if ( $this->mOldRevisionRecord === null ) {
-			return false;
-		}
 
 		if ( $this->mOldRevisionRecord && $this->mOldRevisionRecord->getId() ) {
 			$this->mOldPage = Title::newFromPageIdentity( $this->mOldRevisionRecord->getPage() );

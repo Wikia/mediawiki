@@ -14,6 +14,7 @@ use MediaWiki\CommentFormatter\CommentFormatter;
 use MediaWiki\Context\IContextSource;
 use MediaWiki\Context\RequestContext;
 use MediaWiki\Debug\DeprecationHelper;
+use MediaWiki\Diff\DifferenceEngine;
 use MediaWiki\EditPage\EditPage;
 use MediaWiki\Exception\PermissionsError;
 use MediaWiki\HookContainer\HookRunner;
@@ -479,7 +480,6 @@ class Article implements Page {
 		if ( $context->getRequest()->getCheck( 'diff' ) ) {
 			wfDebug( __METHOD__ . ": showing diff page" );
 			$this->showDiffPage();
-
 			return;
 		}
 
@@ -1091,36 +1091,38 @@ class Article implements Page {
 			// T213621: $rev maybe null due to either lack of permission to view the
 			// revision or actually not existing. So let's try loading it from the id
 			$rev = $this->revisionStore->getRevisionById( $oldid );
-			if ( $rev ) {
-				// Revision exists but $user lacks permission to diff it.
-				// Do nothing here.
-				// The $rev will later be used to create standard diff elements however.
-			} else {
-				$outputPage->setPageTitleMsg( $context->msg( 'errorpagetitle' ) );
-				$msg = $context->msg( 'difference-missing-revision' )
-					->params( $oldid )
-					->numParams( 1 )
-					->parseAsBlock();
-				$outputPage->addHTML( $msg );
-				return;
-			}
 		}
 
 		$services = MediaWikiServices::getInstance();
 
-		$contentHandler = $services
-			->getContentHandlerFactory()
-			->getContentHandler(
-				$rev->getMainContentModel()
+		if ( $rev ) {
+			$contentHandler = $services
+				->getContentHandlerFactory()
+				->getContentHandler(
+					$rev->getMainContentModel()
+				);
+
+			$de = $contentHandler->createDifferenceEngine(
+				$context,
+				$oldid,
+				$diff,
+				$rcid,
+				$purge,
+				$unhide
 			);
-		$de = $contentHandler->createDifferenceEngine(
-			$context,
-			$oldid,
-			$diff,
-			$rcid,
-			$purge,
-			$unhide
-		);
+		} else {
+			// We don't have a content handler, so use the default difference engine
+			// (this will fail eventually, but letting it get this far avoids the need
+			// to duplicate the logic for printing the failure message)
+			$de = new DifferenceEngine(
+				$context,
+				$oldid,
+				$diff,
+				$rcid,
+				$purge,
+				$unhide
+			);
+		}
 
 		$diffType = $request->getVal( 'diff-type' );
 
@@ -2153,14 +2155,24 @@ class Article implements Page {
 			) &&
 			$context->getAuthority()->isAllowedAny( 'deletedtext', 'undelete' )
 		) {
+			// You can see deleted content. So we know exactly what page is it on
+			// and can render the message in that context regardless of what
+			// title (if any) is given in URL params
 			return $context->msg(
 				'missing-revision-permission',
 				$oldid,
 				$revRecord->getTimestamp(),
 				Title::newFromPageIdentity( $revRecord->getPage() )->getPrefixedURL()
-			);
+			)->page( $revRecord->getPage() );
 		}
-		return $context->msg( 'missing-revision', $oldid );
+
+		if ( $context->getRequest()->getCheck( 'title' ) ) {
+			// If you specify a title then link to the deletion log for that title
+			return $context->msg( 'missing-revision', $oldid );
+		} else {
+			// Don't show the deletion log for the main page if you don't specify a title
+			return $context->msg( 'missing-revision-nolog', $oldid );
+		}
 	}
 
 	private function usePostProcessingCache( ParserOptions $poptions ): bool {

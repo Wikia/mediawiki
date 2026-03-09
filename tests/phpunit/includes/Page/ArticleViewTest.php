@@ -381,7 +381,7 @@ class ArticleViewTest extends MediaWikiIntegrationTestCase {
 		$article->view();
 
 		$output = $article->getContext()->getOutput();
-		$this->assertStringContainsString( 'missing-revision: ' . $badId, $this->getHtml( $output ) );
+		$this->assertStringContainsString( 'missing-revision-nolog: ' . $badId, $this->getHtml( $output ) );
 
 		$this->assertStringNotContainsString( 'Test A', $this->getHtml( $output ) );
 	}
