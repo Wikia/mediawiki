@@ -315,10 +315,11 @@ abstract class ImageHandler extends MediaHandler {
 	 * @return string
 	 */
 	public function getShortDesc( $file ) {
-		global $wgLang;
-		$nbytes = htmlspecialchars( $wgLang->formatSize( $file->getSize() ), ENT_QUOTES );
+		$lang = $this->getLanguage();
+		$nbytes = htmlspecialchars( $lang->formatSize( $file->getSize() ), ENT_QUOTES );
 		$widthheight = wfMessage( 'widthheight' )
 			->numParams( $file->getWidth(), $file->getHeight() )
+			->inLanguage( $lang )
 			->escaped();
 
 		return "$widthheight ($nbytes)";
@@ -337,12 +338,14 @@ abstract class ImageHandler extends MediaHandler {
 				->numParams( $file->getWidth(), $file->getHeight() )
 				->sizeParams( $file->getSize() )
 				->params( '<span class="mime-type">' . $file->getMimeType() . '</span>' )
+				->inLanguage( $this->getLanguage() )
 				->parse();
 		} else {
 			$msg = wfMessage( 'file-info-size-pages' )
 				->numParams( $file->getWidth(), $file->getHeight() )
 				->sizeParams( $file->getSize() )
 				->params( '<span class="mime-type">' . $file->getMimeType() . '</span>' )->numParams( $pages )
+				->inLanguage( $this->getLanguage() )
 				->parse();
 		}
 

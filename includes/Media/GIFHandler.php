@@ -154,8 +154,7 @@ class GIFHandler extends BitmapHandler {
 	 * @return string
 	 */
 	public function getLongDesc( $image ) {
-		global $wgLang;
-
+		$lang = $this->getLanguage();
 		$original = parent::getLongDesc( $image );
 
 		$metadata = $image->getMetadataArray();
@@ -169,18 +168,19 @@ class GIFHandler extends BitmapHandler {
 		$info[] = $original;
 
 		if ( $metadata['looped'] ) {
-			$info[] = wfMessage( 'file-info-gif-looped' )->parse();
+			$info[] = wfMessage( 'file-info-gif-looped' )->inLanguage( $lang )->parse();
 		}
 
 		if ( $metadata['frameCount'] > 1 ) {
-			$info[] = wfMessage( 'file-info-gif-frames' )->numParams( $metadata['frameCount'] )->parse();
+			$info[] = wfMessage( 'file-info-gif-frames' )->numParams( $metadata['frameCount'] )
+				->inLanguage( $lang )->parse();
 		}
 
 		if ( $metadata['duration'] ) {
-			$info[] = htmlspecialchars( $wgLang->formatTimePeriod( $metadata['duration'] ), ENT_QUOTES );
+			$info[] = htmlspecialchars( $lang->formatTimePeriod( $metadata['duration'] ), ENT_QUOTES );
 		}
 
-		return $wgLang->commaList( $info );
+		return $lang->commaList( $info );
 	}
 
 	/**

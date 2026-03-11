@@ -11,6 +11,7 @@ namespace MediaWiki\FileRepo\File;
 use LogicException;
 use MediaWiki\Config\ConfigException;
 use MediaWiki\Context\IContextSource;
+use MediaWiki\Context\RequestContext;
 use MediaWiki\FileRepo\FileRepo;
 use MediaWiki\FileRepo\ForeignAPIRepo;
 use MediaWiki\FileRepo\LocalRepo;
@@ -1599,12 +1600,15 @@ abstract class File implements MediaHandlerState {
 	/**
 	 * Get a MediaHandler instance for this file
 	 *
+	 * @param Language|null $lang The language this media handler will use to localize
+	 *   descriptions.
 	 * @return MediaHandler|false Registered MediaHandler for file's MIME type
 	 *   or false if none found
 	 */
-	public function getHandler() {
+	public function getHandler( ?Language $lang = null ) {
 		if ( !$this->handler ) {
-			$this->handler = MediaHandler::getHandler( $this->getMimeType() );
+			$lang ??= RequestContext::getMain()->getLanguage();
+			$this->handler = MediaHandler::getHandler( $this->getMimeType(), $lang );
 		}
 
 		return $this->handler;
@@ -2450,15 +2454,21 @@ abstract class File implements MediaHandlerState {
 	 * while others returned plain text. When calling this method, you should treat it as returning
 	 * unsafe HTML, and call `Sanitizer::removeSomeTags()` on the result.
 	 *
+	 * @param ?Language $lang User language to return the description in (since 1.46)
 	 * @return string HTML (possibly unsafe, call `Sanitizer::removeSomeTags()` on the result)
 	 * @return-taint tainted
 	 */
-	public function getLongDesc() {
-		$handler = $this->getHandler();
+	public function getLongDesc( ?Language $lang = null ) {
+		if ( $lang === null ) {
+			wfDeprecatedMsg( 'Calling File::getLongDesc without a lang parameter ' .
+				'was deprecated in MediaWiki 1.46', '1.46' );
+		}
+
+		$handler = $this->getHandler( $lang );
 		if ( $handler ) {
 			return $handler->getLongDesc( $this );
 		} else {
-			return MediaHandler::getGeneralLongDesc( $this );
+			return MediaHandler::getGeneralLongDesc( $this, $lang );
 		}
 	}
 
@@ -2469,15 +2479,21 @@ abstract class File implements MediaHandlerState {
 	 * while others returned plain text. When calling this method, you should treat it as returning
 	 * unsafe HTML, and call `Sanitizer::removeSomeTags()` on the result.
 	 *
+	 * @param ?Language $lang User language to return the description in (since 1.46)
 	 * @return string HTML (possibly unsafe, call `Sanitizer::removeSomeTags()` on the result)
 	 * @return-taint tainted
 	 */
-	public function getShortDesc() {
-		$handler = $this->getHandler();
+	public function getShortDesc( ?Language $lang = null ) {
+		if ( $lang === null ) {
+			wfDeprecatedMsg( 'Calling File::getShortDesc without a lang parameter ' .
+				'was deprecated in MediaWiki 1.46', '1.46' );
+		}
+
+		$handler = $this->getHandler( $lang );
 		if ( $handler ) {
 			return $handler->getShortDesc( $this );
 		} else {
-			return MediaHandler::getGeneralShortDesc( $this );
+			return MediaHandler::getGeneralShortDesc( $this, $lang );
 		}
 	}
 

@@ -314,7 +314,7 @@ class FullSearchResultWidget implements SearchResultWidget {
 
 		// File::getShortDesc() is documented to return HTML, but many handlers used to incorrectly
 		// return plain text (T395834), so sanitize it in case the same bug is present in extensions.
-		$unsafeShortDesc = $img->getShortDesc();
+		$unsafeShortDesc = $img->getShortDesc( $this->specialPage->getLanguage() );
 		$shortDesc = Sanitizer::removeSomeTags( $unsafeShortDesc );
 
 		return [

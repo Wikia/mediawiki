@@ -460,7 +460,8 @@ class SvgHandler extends ImageHandler {
 	public function getLongDesc( $file ) {
 		$metadata = $this->validateMetadata( $file->getMetadataArray() );
 		if ( isset( $metadata['error'] ) ) {
-			return wfMessage( 'svg-long-error', $metadata['error']['message'] )->escaped();
+			return wfMessage( 'svg-long-error', $metadata['error']['message'] )
+				->inLanguage( $this->getLanguage() )->escaped();
 		}
 
 		if ( $this->isAnimatedImage( $file ) ) {
@@ -472,6 +473,7 @@ class SvgHandler extends ImageHandler {
 		return $msg
 			->numParams( $file->getWidth(), $file->getHeight() )
 			->sizeParams( $file->getSize() )
+			->inLanguage( $this->getLanguage() )
 			->parse();
 	}
 

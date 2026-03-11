@@ -555,6 +555,7 @@ class ParserTestRunner {
 			static function ( MediaWikiServices $services ) {
 				$handlers = $services->getMainConfig()->get( MainConfigNames::ParserTestMediaHandlers );
 				return new MediaHandlerFactory(
+					$services->getLanguageFactory(),
 					new NullLogger(),
 					$handlers
 				);

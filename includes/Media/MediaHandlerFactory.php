@@ -9,6 +9,9 @@
 
 namespace MediaWiki\Media;
 
+use MediaWiki\Context\RequestContext;
+use MediaWiki\Language\Language;
+use MediaWiki\Language\LanguageFactory;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -39,9 +42,6 @@ class MediaHandlerFactory {
 		'image/jpx' => Jpeg2000Handler::class,
 	];
 
-	/** @var LoggerInterface */
-	private $logger;
-
 	/** @var array */
 	private $registry;
 
@@ -53,10 +53,10 @@ class MediaHandlerFactory {
 	private $handlers;
 
 	public function __construct(
-		LoggerInterface $logger,
+		private LanguageFactory $langFactory,
+		private LoggerInterface $logger,
 		array $registry
 	) {
-		$this->logger = $logger;
 		$this->registry = $registry + self::CORE_HANDLERS;
 	}
 
@@ -70,9 +70,17 @@ class MediaHandlerFactory {
 
 	/**
 	 * @param string $type mimetype
+	 * @param Language|string|null $lang Language object or language code
 	 * @return MediaHandler|false
 	 */
-	public function getHandler( $type ) {
+	public function getHandler(
+		$type,
+		// phpcs:ignore MediaWiki.Usage.NullableType.ExplicitNullableTypes -- false positive
+		Language|string|null $lang = null
+	) {
+		if ( $lang === null ) {
+			$lang = RequestContext::getMain()->getLanguage();
+		}
 		if ( isset( $this->handlers[$type] ) ) {
 			return $this->handlers[$type];
 		}
@@ -87,6 +95,11 @@ class MediaHandlerFactory {
 					[ 'class' => $class ]
 				);
 				$handler = false;
+			} else {
+				if ( !$lang instanceof Language ) {
+					$lang = $this->langFactory->getLanguage( $lang );
+				}
+				$handler->setLanguage( $lang );
 			}
 		} else {
 			$this->logger->debug(

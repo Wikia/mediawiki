@@ -6,11 +6,11 @@
 
 namespace MediaWiki\FileRepo\File;
 
+use MediaWiki\Context\RequestContext;
 use MediaWiki\Deferred\DeferredUpdates;
 use MediaWiki\Deferred\SiteStatsUpdate;
 use MediaWiki\FileRepo\FileRepo;
 use MediaWiki\FileRepo\LocalRepo;
-use MediaWiki\Language\Language;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Status\Status;
@@ -83,8 +83,7 @@ class LocalFileRestoreBatch {
 	 * @return Status
 	 */
 	public function execute() {
-		/** @var Language $wgLang */
-		global $wgLang;
+		$lang = RequestContext::getMain()->getLanguage();
 
 		$repo = $this->file->getRepo();
 		if ( !$this->all && !$this->ids ) {
@@ -149,14 +148,14 @@ class LocalFileRestoreBatch {
 			$idsPresent[] = $row->fa_id;
 
 			if ( $row->fa_name != $this->file->getName() ) {
-				$status->error( 'undelete-filename-mismatch', $wgLang->timeanddate( $row->fa_timestamp ) );
+				$status->error( 'undelete-filename-mismatch', $lang->timeanddate( $row->fa_timestamp ) );
 				$status->failCount++;
 				continue;
 			}
 
 			if ( $row->fa_storage_key == '' ) {
 				// Revision was missing pre-deletion
-				$status->error( 'undelete-bad-store-key', $wgLang->timeanddate( $row->fa_timestamp ) );
+				$status->error( 'undelete-bad-store-key', $lang->timeanddate( $row->fa_timestamp ) );
 				$status->failCount++;
 				continue;
 			}

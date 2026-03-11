@@ -8,9 +8,11 @@ namespace MediaWiki\Media;
 
 use InvalidArgumentException;
 use MediaWiki\Context\IContextSource;
+use MediaWiki\Context\RequestContext;
 use MediaWiki\FileRepo\File\File;
 use MediaWiki\FileRepo\File\LocalFile;
 use MediaWiki\HookContainer\HookRunner;
+use MediaWiki\Language\Language;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Parser\Parser;
 use MediaWiki\Status\Status;
@@ -41,15 +43,38 @@ abstract class MediaHandler {
 	 */
 	private const MAX_ERR_LOG_SIZE = 65535;
 
+	private ?Language $lang = null;
+
 	/**
 	 * Get a MediaHandler for a given MIME type from the instance cache
 	 *
 	 * @param string $type
+	 * @param Language|null $lang
 	 * @return MediaHandler|false
 	 */
-	public static function getHandler( $type ) {
+	public static function getHandler( $type, ?Language $lang = null ) {
+		$lang ??= RequestContext::getMain()->getLanguage();
 		return MediaWikiServices::getInstance()
-			->getMediaHandlerFactory()->getHandler( $type );
+			->getMediaHandlerFactory()->getHandler( $type, $lang );
+	}
+
+	/**
+	 * Get the language to be used by this media handler for text formatting.
+	 */
+	public function getLanguage(): Language {
+		if ( !$this->lang ) {
+			throw new \RuntimeException( "Need to set language before accessing." );
+		}
+		return $this->lang;
+	}
+
+	 /**
+	  * Set the language to be used by this media handler for text formatting.
+	  * Must be executed before getLanguage is called, getHandler automatically takes
+	  * care of that.
+	  */
+	public function setLanguage( Language $lang ): void {
+		$this->lang = $lang;
 	}
 
 	/**
@@ -818,7 +843,7 @@ abstract class MediaHandler {
 	 * @return-taint tainted
 	 */
 	public function getShortDesc( $file ) {
-		return self::getGeneralShortDesc( $file );
+		return self::getGeneralShortDesc( $file, $this->getLanguage() );
 	}
 
 	/**
@@ -836,31 +861,42 @@ abstract class MediaHandler {
 	 * @return-taint tainted
 	 */
 	public function getLongDesc( $file ) {
-		return self::getGeneralLongDesc( $file );
+		return self::getGeneralLongDesc( $file, $this->getLanguage() );
 	}
 
 	/**
 	 * Used instead of getShortDesc if there is no handler registered for file.
 	 *
 	 * @param File $file
+	 * @param ?Language $lang
 	 * @return string HTML
 	 */
-	public static function getGeneralShortDesc( $file ) {
-		global $wgLang;
-
-		return htmlspecialchars( $wgLang->formatSize( $file->getSize() ), ENT_QUOTES );
+	public static function getGeneralShortDesc( $file, ?Language $lang = null ) {
+		if ( $lang === null ) {
+			wfDeprecatedMsg( 'Calling MediaHandler::getGeneralShortDesc without a lang parameter ' .
+				'was deprecated in MediaWiki 1.46', '1.46' );
+			$lang = RequestContext::getMain()->getLanguage();
+		}
+		return htmlspecialchars( $lang->formatSize( $file->getSize() ), ENT_QUOTES );
 	}
 
 	/**
 	 * Used instead of getLongDesc if there is no handler registered for file.
 	 *
 	 * @param File $file
+	 * @param ?Language $lang
 	 * @return string HTML
 	 */
-	public static function getGeneralLongDesc( $file ) {
+	public static function getGeneralLongDesc( $file, ?Language $lang = null ) {
+		if ( $lang === null ) {
+			wfDeprecatedMsg( 'Calling MediaHandler::getGeneralLongDesc without a lang parameter ' .
+				'was deprecated in MediaWiki 1.46', '1.46' );
+			$lang = RequestContext::getMain()->getLanguage();
+		}
 		return wfMessage( 'file-info' )
 			->sizeParams( $file->getSize() )
 			->params( '<span class="mime-type">' . $file->getMimeType() . '</span>' )
+			->inLanguage( $lang )
 			->parse();
 	}
 

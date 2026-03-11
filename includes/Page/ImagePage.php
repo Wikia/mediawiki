@@ -599,7 +599,7 @@ class ImagePage extends Article {
 
 			// File::getLongDesc() is documented to return HTML, but many handlers used to incorrectly
 			// return plain text (T395834), so sanitize it in case the same bug is present in extensions.
-			$unsafeLongDesc = $this->displayImg->getLongDesc();
+			$unsafeLongDesc = $this->displayImg->getLongDesc( $lang );
 			$longDesc = Sanitizer::removeSomeTags( $unsafeLongDesc );
 			$longDesc = $context->msg( 'parentheses' )->rawParams( $longDesc )->escaped();
 

@@ -1439,6 +1439,7 @@ return [
 
 	'MediaHandlerFactory' => static function ( MediaWikiServices $services ): MediaHandlerFactory {
 		return new MediaHandlerFactory(
+			$services->getLanguageFactory(),
 			LoggerFactory::getInstance( 'MediaHandlerFactory' ),
 			$services->getMainConfig()->get( MainConfigNames::MediaHandlers )
 		);

@@ -134,7 +134,7 @@ class PNGHandler extends BitmapHandler {
 	 * @return string
 	 */
 	public function getLongDesc( $image ) {
-		global $wgLang;
+		$lang = $this->getLanguage();
 		$original = parent::getLongDesc( $image );
 
 		$metadata = $image->getMetadataArray();
@@ -147,20 +147,22 @@ class PNGHandler extends BitmapHandler {
 		$info[] = $original;
 
 		if ( $metadata['loopCount'] == 0 ) {
-			$info[] = wfMessage( 'file-info-png-looped' )->parse();
+			$info[] = wfMessage( 'file-info-png-looped' )->inLanguage( $lang )->parse();
 		} elseif ( $metadata['loopCount'] > 1 ) {
-			$info[] = wfMessage( 'file-info-png-repeat' )->numParams( $metadata['loopCount'] )->parse();
+			$info[] = wfMessage( 'file-info-png-repeat' )->numParams( $metadata['loopCount'] )
+				->inLanguage( $lang )->parse();
 		}
 
 		if ( $metadata['frameCount'] > 0 ) {
-			$info[] = wfMessage( 'file-info-png-frames' )->numParams( $metadata['frameCount'] )->parse();
+			$info[] = wfMessage( 'file-info-png-frames' )->numParams( $metadata['frameCount'] )
+				->inLanguage( $lang )->parse();
 		}
 
 		if ( $metadata['duration'] ) {
-			$info[] = htmlspecialchars( $wgLang->formatTimePeriod( $metadata['duration'] ), ENT_QUOTES );
+			$info[] = htmlspecialchars( $lang->formatTimePeriod( $metadata['duration'] ), ENT_QUOTES );
 		}
 
-		return $wgLang->commaList( $info );
+		return $lang->commaList( $info );
 	}
 
 	/**

@@ -142,14 +142,12 @@ class ForeignAPIFile extends File {
 			$thumbUrl = '/';
 		}
 		if ( $thumbUrl === false ) {
-			global $wgLang;
-
 			return $this->repo->getThumbError(
 				$this->getName(),
 				$width,
 				$height,
 				$otherParams,
-				$wgLang->getCode()
+				$this->handler->getLanguage()->getCode()
 			);
 		}
 
