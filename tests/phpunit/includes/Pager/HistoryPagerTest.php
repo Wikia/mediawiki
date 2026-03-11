@@ -49,8 +49,8 @@ class HistoryPagerTest extends MediaWikiIntegrationTestCase {
 				$articleMock,
 				$contextMock
 			] )
+			->onlyMethods( [] )
 			->getMock();
-		$actionMock->method( 'getArticle' )->willReturn( $articleMock );
 		$actionMock->message = [
 			'cur' => 'cur',
 			'last' => 'last',

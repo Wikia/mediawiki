@@ -9,6 +9,7 @@
 namespace MediaWiki\Actions;
 
 use MediaWiki\Context\IContextSource;
+use MediaWiki\Debug\MWDebug;
 use MediaWiki\Exception\ErrorPageError;
 use MediaWiki\Exception\PermissionsError;
 use MediaWiki\Exception\ReadOnlyError;
@@ -248,6 +249,7 @@ abstract class Action implements MessageLocalizer {
 		private readonly Article $article,
 		protected readonly IContextSource $context,
 	) {
+		MWDebug::detectDeprecatedOverride( $this, __CLASS__, 'getArticle', '1.35' );
 	}
 
 	/**

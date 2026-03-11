@@ -1079,6 +1079,8 @@ because of Phabricator reports.
   MediaHandler::getGeneralShortDesc or MediaHandler::getGeneralLongDesc
   without specifying a language is deprecated.
   Inject the suitable context language, falling back to RequestContext.
+* Overriding Action::getArticle now emits deprecation warnings; overriding
+  was deprecated in 1.35.
 * …
 
 === Other changes in 1.46 ===
