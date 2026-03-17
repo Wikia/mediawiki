@@ -55,7 +55,7 @@ abstract class ChannelFeed extends FeedItem {
 	 * @since 1.46
 	 */
 	public function outputHeader( $output ): void {
-		if ( MWDebug::detectDeprecatedOverride( $this, __CLASS__, 'outHeader' ) ) {
+		if ( MWDebug::detectDeprecatedOverride( $this, __CLASS__, 'outHeader', '1.46' ) ) {
 			$this->outHeader();
 			return;
 		}
@@ -71,6 +71,7 @@ abstract class ChannelFeed extends FeedItem {
 	 * @deprecated since 1.46; use outputFooter instead
 	 */
 	public function outHeader() {
+		wfDeprecated( __METHOD__, '1.46' );
 		global $wgOut;
 		$this->outputHeader( $wgOut );
 	}
@@ -85,7 +86,7 @@ abstract class ChannelFeed extends FeedItem {
 	 * @since 1.46
 	 */
 	public function outputItem( FeedItem $item, $output ): void {
-		if ( MWDebug::detectDeprecatedOverride( $this, __CLASS__, 'outItem' ) ) {
+		if ( MWDebug::detectDeprecatedOverride( $this, __CLASS__, 'outItem', '1.46' ) ) {
 			$this->outItem( $item );
 			return;
 		}
@@ -102,6 +103,7 @@ abstract class ChannelFeed extends FeedItem {
 	 * @deprecated since 1.46; use outputItem instead
 	 */
 	public function outItem( $item ) {
+		wfDeprecated( __METHOD__, '1.46' );
 		global $wgOut;
 		$this->outputItem( $item, $wgOut );
 	}
@@ -115,7 +117,7 @@ abstract class ChannelFeed extends FeedItem {
 	 * @since 1.46
 	 */
 	public function outputFooter( $output ): void {
-		if ( MWDebug::detectDeprecatedOverride( $this, __CLASS__, 'outFooter' ) ) {
+		if ( MWDebug::detectDeprecatedOverride( $this, __CLASS__, 'outFooter', '1.46' ) ) {
 			$this->outFooter();
 			return;
 		}
@@ -131,6 +133,7 @@ abstract class ChannelFeed extends FeedItem {
 	 * @deprecated since 1.46; use outputFooter instead
 	 */
 	public function outFooter() {
+		wfDeprecated( __METHOD__, '1.46' );
 		global $wgOut;
 		$this->outputFooter( $wgOut );
 	}

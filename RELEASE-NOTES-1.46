@@ -1052,8 +1052,9 @@ because of Phabricator reports.
 * ChannelFeed::httpHeaders() and ChannelFeed::outXmlHeader() have been
   deprecated and emit deprecation warnings, use ::sendHttpHeaders() and
   ::outputXmlHeader() instead.
-* ChannelFeed::outHeader(), ::outItem() and ::outFooter() have been deprecated,
-  use ::outputHeader(), ::outputItem() and ::outputFooter() instead.
+* ChannelFeed::outHeader(), ::outItem() and ::outFooter() have been deprecated
+  and emit deprecation warnings, use ::outputHeader(), ::outputItem() and
+  ::outputFooter() instead.
 * ResourceLoader::makeConfigSetScript(), deprecated in 1.44, now emits
   deprecation warnings.
 * SpecialVersion::getVersionLinked() is unused and has been deprecated.
