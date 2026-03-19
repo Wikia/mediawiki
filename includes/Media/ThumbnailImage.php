@@ -182,8 +182,16 @@ class ThumbnailImage extends MediaTransformOutput {
 			$attribs['width'] = $this->width;
 			$attribs['height'] = $this->height;
 		}
+		$style = '';
 		if ( !empty( $options['valign'] ) ) {
-			$attribs['style'] = "vertical-align: {$options['valign']}";
+			$style .= "vertical-align: {$options['valign']};";
+		}
+		if ( !empty( $options['style'] ) ) {
+			$style .= $options['style'];
+		}
+		$style = trim( $style );
+		if ( $style ) {
+			$attribs['style'] = $style;
 		}
 		if ( !empty( $options['img-class'] ) ) {
 			$attribs['class'] = $options['img-class'];

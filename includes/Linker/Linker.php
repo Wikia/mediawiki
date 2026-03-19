@@ -459,6 +459,11 @@ class Linker {
 			$params += [
 				'img-class' => 'mw-file-element',
 			];
+
+			if ( isset( $frameParams['upright'] ) ) {
+				$params['img-class'] .= ' mw-file-upright';
+				$params['style'] = '--mw-file-upright: ' . $frameParams['upright'];
+			}
 			$params = self::getImageLinkMTOParams( $frameParams, $query, $parser ) + $params;
 			$s = $thumb->toHtml( $params );
 		}
@@ -741,6 +746,10 @@ class Linker {
 			$params += [
 				'img-class' => 'mw-file-element',
 			];
+			if ( isset( $frameParams['upright'] ) ) {
+				$params['img-class'] .= ' mw-file-upright';
+				$params['style'] = '--mw-file-upright: ' . $frameParams['upright'];
+			}
 			// Only thumbs gets the magnify link
 			if ( $rdfaType === 'mw:File/Thumb' ) {
 				$params['magnify-resource'] = $url;
