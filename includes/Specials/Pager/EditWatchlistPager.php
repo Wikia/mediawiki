@@ -357,15 +357,14 @@ class EditWatchlistPager extends CodexTablePager {
 			$this->mCaption
 		);
 
-		// Action buttons
-		$buttons = ( new Codex() )->button()
+		// Removal button. Will be replaced by the EditWatchlistDialog.vue app.
+		$removalButton = ( new Codex() )->button()
 			->setAttributes( array_merge(
 				[ 'class' => 'mw-editwatchlist-remove-selected' ],
 				Linker::tooltipAndAccesskeyAttribs( 'watchlistedit-normal-submit' )
 			) )
 			->setLabel( $this->msg( 'watchlistedit-table-remove-selected' )->text() )
 			->setType( 'submit' )
-			->setAction( 'destructive' )
 			->build()
 			->getHtml();
 
@@ -375,7 +374,7 @@ class EditWatchlistPager extends CodexTablePager {
 			$caption . Html::rawElement(
 				'div',
 				[ 'class' => 'cdx-table__header__header-content' ],
-				$buttons
+				$removalButton
 			)
 		);
 	}
