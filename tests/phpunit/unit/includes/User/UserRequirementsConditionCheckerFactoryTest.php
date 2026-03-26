@@ -14,8 +14,8 @@ use MediaWiki\User\UserGroupManager;
 use MediaWiki\User\UserRequirementsConditionChecker;
 use MediaWiki\User\UserRequirementsConditionCheckerFactory;
 use MediaWiki\User\UserRequirementsConditionEvaluatorBase;
+use MediaWiki\User\UserRequirementsConditionValidator;
 use MediaWikiUnitTestCase;
-use Psr\Log\Test\TestLogger;
 use Wikimedia\TestingAccessWrapper;
 
 /**
@@ -69,11 +69,11 @@ class UserRequirementsConditionCheckerFactoryTest extends MediaWikiUnitTestCase 
 			$options,
 			$this->createMock( GroupPermissionsLookup::class ),
 			$this->createMock( HookContainer::class ),
-			new TestLogger(),
 			$this->createMock( UserEditTracker::class ),
 			$this->createMock( UserRegistrationLookup::class ),
 			$this->createMock( UserFactory::class ),
 			$this->createMock( IContextSource::class ),
+			$this->createMock( UserRequirementsConditionValidator::class ),
 		);
 	}
 }

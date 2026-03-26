@@ -217,6 +217,7 @@ use MediaWiki\User\UserNamePrefixSearch;
 use MediaWiki\User\UserNameUtils;
 use MediaWiki\User\UserRequirementsConditionChecker;
 use MediaWiki\User\UserRequirementsConditionCheckerFactory;
+use MediaWiki\User\UserRequirementsConditionValidator;
 use MediaWiki\Utils\SBOMGenerator;
 use MediaWiki\Utils\UrlUtils;
 use MediaWiki\Watchlist\WatchedItemQueryService;
@@ -2391,6 +2392,13 @@ class MediaWikiServices extends ServiceContainer {
 	 */
 	public function getUserRequirementsConditionCheckerFactory(): UserRequirementsConditionCheckerFactory {
 		return $this->getService( 'UserRequirementsConditionCheckerFactory' );
+	}
+
+	/**
+	 * @since 1.46
+	 */
+	public function getUserRequirementsConditionValidator(): UserRequirementsConditionValidator {
+		return $this->getService( 'UserRequirementsConditionValidator' );
 	}
 
 	/**

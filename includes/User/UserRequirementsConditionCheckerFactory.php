@@ -11,7 +11,6 @@ use MediaWiki\Context\IContextSource;
 use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\Permissions\GroupPermissionsLookup;
 use MediaWiki\User\Registration\UserRegistrationLookup;
-use Psr\Log\LoggerInterface;
 
 /**
  * @since 1.45
@@ -34,11 +33,11 @@ class UserRequirementsConditionCheckerFactory {
 		ServiceOptions $options,
 		private readonly GroupPermissionsLookup $groupPermissionsLookup,
 		private readonly HookContainer $hookContainer,
-		private readonly LoggerInterface $logger,
 		private readonly UserEditTracker $userEditTracker,
 		private readonly UserRegistrationLookup $userRegistrationLookup,
 		private readonly UserFactory $userFactory,
 		private readonly IContextSource $context,
+		private readonly UserRequirementsConditionValidator $userRequirementsConditionValidator,
 	) {
 		$options->assertRequiredOptions( self::CONSTRUCTOR_OPTIONS );
 		$this->checkerOptions = new ServiceOptions(
@@ -65,9 +64,9 @@ class UserRequirementsConditionCheckerFactory {
 			$this->instances[$key] = new UserRequirementsConditionChecker(
 				$this->checkerOptions,
 				$this->hookContainer,
-				$this->logger,
 				$this->userFactory,
 				$this->context,
+				$this->userRequirementsConditionValidator,
 				$this->getDefaultEvaluators( $userGroupManager )
 			);
 		}
@@ -97,9 +96,9 @@ class UserRequirementsConditionCheckerFactory {
 		return new UserRequirementsConditionChecker(
 			$this->checkerOptions,
 			$this->hookContainer,
-			$this->logger,
 			$this->userFactory,
 			$this->context,
+			$this->userRequirementsConditionValidator,
 			$evaluators,
 		);
 	}

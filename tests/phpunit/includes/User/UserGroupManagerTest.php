@@ -36,7 +36,6 @@ use MediaWiki\Utils\MWTimestamp;
 use MediaWikiIntegrationTestCase;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\MockObject\Rule\InvokedCount;
-use TestLogger;
 use Wikimedia\Assert\PreconditionException;
 use Wikimedia\Rdbms\IDBAccessObject;
 use Wikimedia\Timestamp\TimestampFormat as TS;
@@ -117,9 +116,9 @@ class UserGroupManagerTest extends MediaWikiIntegrationTestCase {
 					$services->getMainConfig()
 				),
 				$services->getHookContainer(),
-				new TestLogger(),
 				$services->getUserFactory(),
 				$context ?? RequestContext::getMain(),
+				$services->getUserRequirementsConditionValidator(),
 				[
 					new UserRequirementsConditionEvaluator(
 						new ServiceOptions(

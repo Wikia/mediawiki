@@ -14,7 +14,6 @@ use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\HookContainer\HookRunner;
 use MediaWiki\MainConfigNames;
 use MediaWiki\WikiMap\WikiMap;
-use Psr\Log\LoggerInterface;
 
 /**
  * @since 1.45
@@ -38,9 +37,9 @@ class UserRequirementsConditionChecker {
 	public function __construct(
 		private readonly ServiceOptions $options,
 		HookContainer $hookContainer,
-		private readonly LoggerInterface $logger,
 		private readonly UserFactory $userFactory,
 		private readonly IContextSource $context,
+		private readonly UserRequirementsConditionValidator $userRequirementsConditionValidator,
 		/** @var UserRequirementsConditionEvaluatorBase[] */
 		private readonly array $evaluators = [],
 	) {
@@ -113,6 +112,8 @@ class UserRequirementsConditionChecker {
 	 * If you change the logic of this method, please update
 	 * ApiQuerySiteinfo::appendAutoPromote(), as it depends on this method.
 	 *
+	 * If the passed condition is invalid, false is returned without evaluating it.
+	 *
 	 * @param mixed $cond A condition, possibly containing other conditions
 	 * @param UserIdentity $user The user to check the conditions against
 	 * @param bool $usePrivateConditions Whether to evaluate private conditions
@@ -122,6 +123,10 @@ class UserRequirementsConditionChecker {
 	 *      on the result. Null can be returned only if $usePrivateConditions is false.
 	 */
 	public function recursivelyCheckCondition( $cond, UserIdentity $user, bool $usePrivateConditions = true ): ?bool {
+		if ( !$this->userRequirementsConditionValidator->isValid( $cond ) ) {
+			return false;
+		}
+
 		$skippedConditions = [];
 		if ( !$usePrivateConditions ) {
 			$skippedConditions = $this->options->get( MainConfigNames::UserRequirementsPrivateConditions );
@@ -176,12 +181,6 @@ class UserRequirementsConditionChecker {
 
 			// XOR (exactly one condition passes)
 			if ( $cond[0] === '^' ) {
-				if ( count( $cond ) > 3 ) {
-					$this->logger->warning(
-						'recursivelyCheckCondition() given XOR ("^") condition on three or more conditions.' .
-						' Check your $wgRestrictedGroups, $wgAutopromote and $wgAutopromoteOnce settings.'
-					);
-				}
 				$result1 = $this->recursivelyCheckConditionInternal( $cond[1], $user, $skippedConditions );
 				$result2 = $this->recursivelyCheckConditionInternal( $cond[2], $user, $skippedConditions );
 				if ( $result1 === null || $result2 === null ) {

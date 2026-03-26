@@ -287,6 +287,7 @@ use MediaWiki\User\UserNamePrefixSearch;
 use MediaWiki\User\UserNameUtils;
 use MediaWiki\User\UserRequirementsConditionChecker;
 use MediaWiki\User\UserRequirementsConditionCheckerFactory;
+use MediaWiki\User\UserRequirementsConditionValidator;
 use MediaWiki\Utils\SBOMGenerator;
 use MediaWiki\Utils\UrlUtils;
 use MediaWiki\Watchlist\NoWriteWatchedItemStore;
@@ -2947,12 +2948,17 @@ return [
 			),
 			$services->getGroupPermissionsLookup(),
 			$services->getHookContainer(),
-			// TODO: Did anyone use this log group before? Should it be renamed? Or is there a better name we can use?
-			LoggerFactory::getInstance( 'UserGroupManager' ),
 			$services->getUserEditTracker(),
 			$services->getUserRegistrationLookup(),
 			$services->getUserFactory(),
 			RequestContext::getMain(),
+			$services->getUserRequirementsConditionValidator(),
+		);
+	},
+
+	'UserRequirementsConditionValidator' => static function (): UserRequirementsConditionValidator {
+		return new UserRequirementsConditionValidator(
+			LoggerFactory::getInstance( 'UserGroupManager' ),
 		);
 	},
 

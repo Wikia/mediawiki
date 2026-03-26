@@ -3696,6 +3696,7 @@ $wgAutoloadLocalClasses = [
 	'MediaWiki\\User\\UserRequirementsConditionCheckerFactory' => __DIR__ . '/includes/User/UserRequirementsConditionCheckerFactory.php',
 	'MediaWiki\\User\\UserRequirementsConditionEvaluator' => __DIR__ . '/includes/User/UserRequirementsConditionEvaluator.php',
 	'MediaWiki\\User\\UserRequirementsConditionEvaluatorBase' => __DIR__ . '/includes/User/UserRequirementsConditionEvaluatorBase.php',
+	'MediaWiki\\User\\UserRequirementsConditionValidator' => __DIR__ . '/includes/User/UserRequirementsConditionValidator.php',
 	'MediaWiki\\User\\UserRigorOptions' => __DIR__ . '/includes/User/UserRigorOptions.php',
 	'MediaWiki\\User\\UserSelectQueryBuilder' => __DIR__ . '/includes/User/UserSelectQueryBuilder.php',
 	'MediaWiki\\User\\UserTimeCorrection' => __DIR__ . '/includes/User/UserTimeCorrection.php',
