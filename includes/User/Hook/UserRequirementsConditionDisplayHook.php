@@ -27,7 +27,7 @@ interface UserRequirementsConditionDisplayHook {
 	 * @param null|MessageSpecifier &$messageSpec The message to use. If null, the default message will be used.
 	 */
 	public function onUserRequirementsConditionDisplay(
-		$type,
+		string|int $type,
 		array $args,
 		IContextSource $context,
 		?MessageSpecifier &$messageSpec

@@ -5019,7 +5019,7 @@ class HookRunner implements
 	}
 
 	/** @inheritDoc */
-	public function onUserRequirementsCondition( $type, array $args, UserIdentity $user,
+	public function onUserRequirementsCondition( string|int $type, array $args, UserIdentity $user,
 		bool $isPerformingRequest, ?bool &$result
 	): void {
 		$this->container->run(
@@ -5030,7 +5030,7 @@ class HookRunner implements
 	}
 
 	/** @inheritDoc */
-	public function onUserRequirementsConditionDisplay( $type, array $args, IContextSource $context,
+	public function onUserRequirementsConditionDisplay( string|int $type, array $args, IContextSource $context,
 		?MessageSpecifier &$messageSpec
 	): void {
 		$this->container->run(

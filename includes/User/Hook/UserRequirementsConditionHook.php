@@ -27,7 +27,7 @@ interface UserRequirementsConditionHook {
 	 * @param null|bool &$result Result of checking the condition
 	 */
 	public function onUserRequirementsCondition(
-		$type,
+		string|int $type,
 		array $args,
 		UserIdentity $user,
 		bool $isPerformingRequest,

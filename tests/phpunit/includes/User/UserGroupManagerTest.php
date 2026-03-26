@@ -1032,7 +1032,7 @@ class UserGroupManagerTest extends MediaWikiIntegrationTestCase {
 		$user = RequestContext::getMain()->getUser();
 		$this->setTemporaryHook(
 			'UserRequirementsCondition',
-			function ( $type, array $arg, UserIdentity $hookUser, $isPerformer, &$result ) use ( $user ) {
+			function ( string|int $type, array $arg, UserIdentity $hookUser, $isPerformer, &$result ) use ( $user ) {
 				$this->assertTrue( $user->equals( $hookUser ) );
 				$this->assertSame( 999, $type );
 				$this->assertSame( 'ARGUMENT', $arg[0] );

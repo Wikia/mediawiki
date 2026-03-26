@@ -18,7 +18,7 @@ interface AutopromoteConditionHook {
 	 *
 	 * @since 1.35
 	 *
-	 * @param string $type Condition type
+	 * @param string|int $type Condition type
 	 * @param array $args Arguments
 	 * @param User $user
 	 * @param null|bool &$result Result of checking autopromote condition
