@@ -43,6 +43,23 @@ class UserGroupRestrictions {
 		$this->demote = $restrictionSpec['demote'] ?? false;
 	}
 
+	/**
+	 * Creates a new object representing user group restriction, but first, it validates the conditions.
+	 * Invalid conditions are ignored, and effectively treated as if there was no condition of the given kind.
+	 */
+	public static function newFromSpecValidated(
+		array $spec,
+		UserRequirementsConditionValidator $validator
+	): UserGroupRestrictions {
+		if ( isset( $spec['memberConditions'] ) && !$validator->isValid( $spec['memberConditions'] ) ) {
+			unset( $spec['memberConditions'] );
+		}
+		if ( isset( $spec['updaterConditions'] ) && !$validator->isValid( $spec['updaterConditions'] ) ) {
+			unset( $spec['updaterConditions'] );
+		}
+		return new self( $spec );
+	}
+
 	public function getMemberConditions(): array {
 		return $this->memberConditions;
 	}

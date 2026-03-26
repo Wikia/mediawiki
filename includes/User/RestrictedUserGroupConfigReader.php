@@ -24,6 +24,7 @@ class RestrictedUserGroupConfigReader {
 
 	public function __construct(
 		private readonly ServiceOptions $options,
+		private readonly UserRequirementsConditionValidator $userRequirementsConditionValidator,
 	) {
 	}
 
@@ -42,7 +43,10 @@ class RestrictedUserGroupConfigReader {
 		}
 
 		return array_map(
-			static fn ( $groupRestrictions ) => new UserGroupRestrictions( $groupRestrictions ),
+			fn ( $groupRestrictions ) => UserGroupRestrictions::newFromSpecValidated(
+				$groupRestrictions,
+				$this->userRequirementsConditionValidator
+			),
 			$rawConfig
 		);
 	}

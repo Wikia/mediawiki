@@ -2226,7 +2226,8 @@ return [
 			return new RestrictedUserGroupConfigReader(
 				new ServiceOptions(
 					RestrictedUserGroupConfigReader::CONSTRUCTOR_OPTIONS, $services->getMainConfig()
-				)
+				),
+				$services->getUserRequirementsConditionValidator()
 			);
 		},
 

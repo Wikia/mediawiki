@@ -11,6 +11,7 @@ use MediaWiki\Config\SiteConfiguration;
 use MediaWiki\MainConfigNames;
 use MediaWiki\User\RestrictedUserGroupConfigReader;
 use MediaWiki\User\UserGroupRestrictions;
+use MediaWiki\User\UserRequirementsConditionValidator;
 use MediaWiki\WikiMap\WikiMap;
 use MediaWikiUnitTestCase;
 
@@ -46,7 +47,10 @@ class RestrictedUserGroupConfigReaderTest extends MediaWikiUnitTestCase {
 		$serviceOptions = new ServiceOptions( RestrictedUserGroupConfigReader::CONSTRUCTOR_OPTIONS, [
 			MainConfigNames::RestrictedGroups => $restrictionsPerWiki[$localWikiId] ?? [],
 		] );
-		return new RestrictedUserGroupConfigReader( $serviceOptions );
+		$validator = $this->createMock( UserRequirementsConditionValidator::class );
+		$validator->method( 'isValid' )
+			->willReturn( true );
+		return new RestrictedUserGroupConfigReader( $serviceOptions, $validator );
 	}
 
 	public function testGetConfig_local() {

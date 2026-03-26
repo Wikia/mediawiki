@@ -7,6 +7,7 @@
 namespace MediaWiki\Tests\User;
 
 use MediaWiki\User\UserGroupRestrictions;
+use MediaWiki\User\UserRequirementsConditionValidator;
 use MediaWikiUnitTestCase;
 
 /**
@@ -80,5 +81,50 @@ class UserGroupRestrictionsTest extends MediaWikiUnitTestCase {
 		$restrictions = new UserGroupRestrictions( $spec );
 		$this->assertFalse( $restrictions->continuouslyEnforced() );
 		$this->assertFalse( $restrictions->allowsAutomaticDemotion() );
+	}
+
+	/** @dataProvider provideValidation_everythingInvalid */
+	public function testValidation_everythingInvalid( array $spec ) {
+		$validator = $this->createMock( UserRequirementsConditionValidator::class );
+		$validator->method( 'isValid' )
+			->willReturn( false );
+
+		$restrictions = UserGroupRestrictions::newFromSpecValidated( $spec, $validator );
+		$this->assertSame( [], $restrictions->getMemberConditions() );
+		$this->assertSame( [], $restrictions->getUpdaterConditions() );
+	}
+
+	public static function provideValidation_everythingInvalid(): iterable {
+		yield 'Both member and updater conditions set' => [
+			'spec' => [
+				'memberConditions' => 'cond1',
+				'updaterConditions' => 'cond2',
+			],
+		];
+		yield 'Only member conditions set' => [
+			'spec' => [
+				'memberConditions' => 'cond1',
+			],
+		];
+		yield 'Only updater conditions set' => [
+			'spec' => [
+				'updaterConditions' => 'cond2',
+			],
+		];
+	}
+
+	public function testValidation_partiallyInvalid() {
+		$validator = $this->createMock( UserRequirementsConditionValidator::class );
+		$validator->expects( $this->exactly( 2 ) )
+			->method( 'isValid' )
+			->willReturnCallback( static fn ( $cond ) => $cond === 'cond1' );
+		$spec = [
+			'memberConditions' => 'cond1',
+			'updaterConditions' => 'cond2',
+		];
+
+		$restrictions = UserGroupRestrictions::newFromSpecValidated( $spec, $validator );
+		$this->assertSame( [ 'cond1' ], $restrictions->getMemberConditions() );
+		$this->assertSame( [], $restrictions->getUpdaterConditions() );
 	}
 }
