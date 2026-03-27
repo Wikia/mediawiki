@@ -128,23 +128,23 @@ class ComposerLaunchParallel extends ForkController {
 	 */
 	private function updateTestTimings( int $childNumber, float $elapsedTime ): void {
 		$groupName = $this->getGroupName();
-		$lockFilePath = $this->getLogFilePath( "phpunit_{$groupName}_split_group_timings.json.lock" );
-		$lockFileHandle = fopen( $lockFilePath, "w" );
-		if ( flock( $lockFileHandle, LOCK_EX ) ) {
-			$splitGroupTimingFile = $this->getLogFilePath( "phpunit_{$groupName}_split_group_timings.json" );
-			if ( !file_exists( $splitGroupTimingFile ) ) {
+		$splitGroupTimingFilePath = $this->getLogFilePath( "phpunit_{$groupName}_split_group_timings.json" );
+		touch( $splitGroupTimingFilePath );
+		$splitGroupTimingFileHandle = fopen( $splitGroupTimingFilePath, "r+" );
+		if ( flock( $splitGroupTimingFileHandle, LOCK_EX ) ) {
+			$existingContent = file_get_contents( $splitGroupTimingFilePath );
+			if ( strlen( $existingContent ) === 0 ) {
 				$timingData = [];
 			} else {
-				$timingData = json_decode( file_get_contents( $splitGroupTimingFile ), true );
+				$timingData = json_decode( $existingContent, true );
 			}
 			$timingData[ "PHPUnit {$groupName} split_group {$childNumber}" ] = $elapsedTime;
-			file_put_contents( $splitGroupTimingFile, json_encode( $timingData, JSON_FORCE_OBJECT ) );
-			fclose( $lockFileHandle );
-			unlink( $lockFilePath );
+			ftruncate( $splitGroupTimingFileHandle, 0 );
+			fwrite( $splitGroupTimingFileHandle, json_encode( $timingData, JSON_FORCE_OBJECT ) );
+			fclose( $splitGroupTimingFileHandle );
 		} else {
-			fclose( $lockFileHandle );
-			unlink( $lockFilePath );
-			throw new LockingException( $lockFilePath );
+			fclose( $splitGroupTimingFileHandle );
+			throw new LockingException( $splitGroupTimingFilePath );
 		}
 	}
 

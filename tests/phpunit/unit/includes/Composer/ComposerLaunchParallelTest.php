@@ -97,7 +97,7 @@ class ComposerLaunchParallelTest extends TestCase {
 		$wrapper->runTestSuite( 1 );
 	}
 
-	public function testUpdateTestTimings() {
+	public function testWriteTestTimings() {
 		$logDir = sys_get_temp_dir();
 		unlink( $logDir . "/phpunit_databaseless_split_group_timings.json" );
 		$composerLaunchParallel = new ComposerLaunchParallel(
@@ -114,6 +114,33 @@ class ComposerLaunchParallelTest extends TestCase {
 		$timingData = json_decode( file_get_contents( $logDir . "/phpunit_databaseless_split_group_timings.json" ), true );
 		$this->assertEquals( [
 			"PHPUnit databaseless split_group 1" => 12.234987
+		], $timingData );
+		unlink( $logDir . "/phpunit_databaseless_split_group_timings.json" );
+	}
+
+	public function testUpdateExistingTestTimings() {
+		$logDir = sys_get_temp_dir();
+		file_put_contents(
+			$logDir . "/phpunit_databaseless_split_group_timings.json",
+			json_encode( [
+				"PHPUnit databaseless split_group 1" => 12.234987
+			] )
+		);
+		$composerLaunchParallel = new ComposerLaunchParallel(
+			"phpunit-databaseless.xml",
+			[],
+			[ 'Broken', 'Standalone', 'Database' ],
+			null,
+			$this->createMock( SplitGroupExecutor::class ),
+			$this->createMock( ComposerSystemInterface::class ),
+			$logDir
+		);
+		$wrapper = TestingAccessWrapper::newFromObject( $composerLaunchParallel );
+		$wrapper->updateTestTimings( 2, 13.5 );
+		$timingData = json_decode( file_get_contents( $logDir . "/phpunit_databaseless_split_group_timings.json" ), true );
+		$this->assertEquals( [
+			"PHPUnit databaseless split_group 1" => 12.234987,
+			"PHPUnit databaseless split_group 2" => 13.5
 		], $timingData );
 		unlink( $logDir . "/phpunit_databaseless_split_group_timings.json" );
 	}
