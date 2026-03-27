@@ -43,6 +43,7 @@ use Wikimedia\Timestamp\TimestampFormat as TS;
 /**
  * @covers \MediaWiki\User\UserGroupManager
  * @covers \MediaWiki\User\UserRequirementsConditionChecker
+ * @covers \MediaWiki\User\UserRequirementsConditionEvaluator
  * @group Database
  */
 class UserGroupManagerTest extends MediaWikiIntegrationTestCase {

@@ -13,18 +13,13 @@ use MediaWiki\Context\IContextSource;
 use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\HookContainer\HookRunner;
 use MediaWiki\MainConfigNames;
-use MediaWiki\Parser\Sanitizer;
 use MediaWiki\Permissions\GroupPermissionsLookup;
 use MediaWiki\User\Registration\UserRegistrationLookup;
 use MediaWiki\WikiMap\WikiMap;
 use Psr\Log\LoggerInterface;
-use Wikimedia\IPUtils;
-use Wikimedia\Rdbms\IDBAccessObject;
-use Wikimedia\Timestamp\TimestampFormat as TS;
 
 /**
  * @since 1.45
- * @stable to extend Since 1.46
  */
 class UserRequirementsConditionChecker {
 
@@ -43,13 +38,6 @@ class UserRequirementsConditionChecker {
 		MainConfigNames::UserRequirementsPrivateConditions,
 	];
 
-	/**
-	 * @internal For use preventing an infinite loop when checking APCOND_BLOCKED
-	 * @var array An assoc. array mapping the getCacheKey userKey to a bool indicating
-	 * an ongoing condition check.
-	 */
-	private array $recursionMap = [];
-
 	private HookRunner $hookRunner;
 
 	public function __construct(
@@ -63,9 +51,27 @@ class UserRequirementsConditionChecker {
 		private readonly IContextSource $context,
 		private readonly UserGroupManager $userGroupManager,
 		private readonly string|false $wikiId = UserIdentity::LOCAL,
+		/** @var UserRequirementsConditionEvaluatorBase[] */
+		private array $evaluators = [],
 	) {
 		$this->hookRunner = new HookRunner( $hookContainer );
 		$this->options->assertRequiredOptions( self::CONSTRUCTOR_OPTIONS );
+
+		// Temporary, until OATHAuth is updated to no longer extend the current class (T421355)
+		if ( $this->evaluators === [] ) {
+			$this->evaluators[] = new UserRequirementsConditionEvaluator(
+				new ServiceOptions(
+					UserRequirementsConditionEvaluator::CONSTRUCTOR_OPTIONS,
+					$this->options,
+				),
+				$this->groupPermissionsLookup,
+				$this->userEditTracker,
+				$this->userRegistrationLookup,
+				$this->userFactory,
+				$this->context,
+				$this->userGroupManager,
+			);
+		}
 	}
 
 	/**
@@ -80,124 +86,42 @@ class UserRequirementsConditionChecker {
 	 *     and we're not supposed to evaluate these.
 	 * @throws InvalidArgumentException if autopromote condition was not recognized.
 	 * @throws LogicException if APCOND_BLOCKED is checked again before returning a result.
-	 * @stable to override Since 1.46
 	 */
 	protected function checkCondition( array $cond, UserIdentity $user ): ?bool {
 		$isPerformingRequest = !defined( 'MW_NO_SESSION' ) && $user->equals( $this->context->getUser() );
 
-		// Some checks depend on hooks or other dynamically-determined state, so we can fetch them only
-		// for the local wiki and not for remote users. The latter may require API requests to the remote
-		// wiki, which has not been implemented for now due to performance concerns.
-		$isCurrentWiki = ( $user->getWikiId() === false ) || WikiMap::isCurrentWikiId( $user->getWikiId() );
+		$conditionType = $cond[0];
+		$args = array_slice( $cond, 1 );
 
-		switch ( $cond[0] ) {
-			case APCOND_EMAILCONFIRMED:
-				if ( !$isCurrentWiki ) {
-					return false;
-				}
-				$userObject = $this->userFactory->newFromUserIdentity( $user );
-				return Sanitizer::validateEmail( $userObject->getEmail() ) &&
-					( !$this->options->get( MainConfigNames::EmailAuthentication ) ||
-						$userObject->getEmailAuthenticationTimestamp() );
-			case APCOND_EDITCOUNT:
-				$reqEditCount = $cond[1] ?? $this->options->get( MainConfigNames::AutoConfirmCount );
-
-				// T157718: Avoid edit count lookup if the specified edit count is 0 or invalid
-				if ( $reqEditCount <= 0 ) {
-					return true;
-				}
-				return (int)$this->userEditTracker->getUserEditCount( $user ) >= $reqEditCount;
-			case APCOND_AGE:
-				$reqAge = $cond[1] ?? $this->options->get( MainConfigNames::AutoConfirmAge );
-				if ( $reqAge <= 0 ) {
-					return true;
-				}
-				$registration = $this->userRegistrationLookup->getRegistration( $user );
-				$age = time() - (int)wfTimestampOrNull( TS::UNIX, $registration );
-				return $age >= $reqAge;
-			case APCOND_AGE_FROM_EDIT:
-				$reqAge = $cond[1] ?? $this->options->get( MainConfigNames::AutoConfirmAge );
-				if ( $reqAge <= 0 ) {
-					return true;
-				}
-				$firstEdit = $this->userEditTracker->getFirstEditTimestamp( $user );
-				if ( $firstEdit === false ) {
-					// If the user has no edits, then they don't meet the requirement.
-					return false;
-				}
-				$age = time() - (int)wfTimestampOrNull( TS::UNIX, $firstEdit );
-				return $age >= $reqAge;
-			case APCOND_INGROUPS:
-				if ( !$isCurrentWiki ) {
-					return false;
-				}
-				$groups = array_slice( $cond, 1 );
-				return count( array_intersect(
-						$groups,
-						$this->userGroupManager->getUserGroups( $user )
-					) ) === count( $groups );
-			case APCOND_ISIP:
-				// Since the IPs are not permanently bound to users, the IP conditions can only be checked
-				// for the requesting user. Otherwise, assume the condition is false.
-				return $isPerformingRequest && $cond[1] === $this->context->getRequest()->getIP();
-			case APCOND_IPINRANGE:
-				return $isPerformingRequest && IPUtils::isInRange( $this->context->getRequest()->getIP(), $cond[1] );
-			case APCOND_BLOCKED:
-				if ( !$isCurrentWiki ) {
-					// This condition is more likely to be used as "! APCOND_BLOCKED", so ensure it can't be bypassed
-					// when tested from a remote wiki.
-					return true;
-				}
-				// Because checking for ipblock-exempt leads back to here (thus infinite recursion),
-				// we if we've been here before for this user without having returned a value.
-				// See T270145 and T349608
-				$userKey = $this->getCacheKey( $user );
-				if ( $this->recursionMap[$userKey] ?? false ) {
-					throw new LogicException(
-						"Unexpected recursion! APCOND_BLOCKED is being checked during" .
-						" an existing APCOND_BLOCKED check for \"{$user->getName()}\"!"
-					);
-				}
-				$this->recursionMap[$userKey] = true;
-				// Setting the second parameter here to true prevents us from getting back here
-				// during standard MediaWiki core behavior
-				$userObject = $this->userFactory->newFromUserIdentity( $user );
-				$block = $userObject->getBlock( IDBAccessObject::READ_LATEST, true );
-				$this->recursionMap[$userKey] = false;
-
-				return (bool)$block?->isSitewide();
-			case APCOND_ISBOT:
-				if ( !$isCurrentWiki ) {
-					return false;
-				}
-				return in_array( 'bot', $this->groupPermissionsLookup
-					->getGroupPermissions(
-						$this->userGroupManager->getUserGroups( $user )
-					)
-				);
-			default:
-				$result = null;
-				$type = $cond[0];
-				$args = array_slice( $cond, 1 );
-				$this->hookRunner->onUserRequirementsCondition( $type, $args, $user, $isPerformingRequest, $result );
-
-				if ( $isPerformingRequest && $isCurrentWiki ) {
-					// The legacy hook is run only if the tested user is the one performing
-					// the request (like for autopromote), and the user is from the local wiki.
-					// If any of these conditions is not met, we cannot invoke the hook,
-					// as it may produce incorrect results.
-					$userObject = $this->userFactory->newFromUserIdentity( $user );
-					$this->hookRunner->onAutopromoteCondition( $type, $args, $userObject, $result );
-				}
-
-				if ( $result === null ) {
-					throw new InvalidArgumentException(
-						"Unrecognized condition $type in UserRequirementsCondition!"
-					);
-				}
-
-				return (bool)$result;
+		foreach ( $this->evaluators as $evaluator ) {
+			$result = $evaluator->checkCondition( $conditionType, $args, $user, $isPerformingRequest );
+			if ( $result !== null ) {
+				return $result;
+			}
 		}
+
+		$result = null;
+		$type = $cond[0];
+		$args = array_slice( $cond, 1 );
+		$this->hookRunner->onUserRequirementsCondition( $conditionType, $args, $user, $isPerformingRequest, $result );
+
+		$isCurrentWiki = ( $user->getWikiId() === false ) || WikiMap::isCurrentWikiId( $user->getWikiId() );
+		if ( $isPerformingRequest && $isCurrentWiki ) {
+			// The legacy hook is run only if the tested user is the one performing
+			// the request (like for autopromote), and the user is from the local wiki.
+			// If any of these conditions is not met, we cannot invoke the hook,
+			// as it may produce incorrect results.
+			$userObject = $this->userFactory->newFromUserIdentity( $user );
+			$this->hookRunner->onAutopromoteCondition( $conditionType, $args, $userObject, $result );
+		}
+
+		if ( $result === null ) {
+			throw new InvalidArgumentException(
+				"Unrecognized condition $type in UserRequirementsCondition!"
+			);
+		}
+
+		return (bool)$result;
 	}
 
 	/**
@@ -377,12 +301,5 @@ class UserRequirementsConditionChecker {
 			$result[] = $cond;
 		}
 		return $result;
-	}
-
-	/**
-	 * Gets a unique key for various caches.
-	 */
-	private function getCacheKey( UserIdentity $user ): string {
-		return $user->isRegistered() ? "u:{$user->getId( $this->wikiId )}" : "anon:{$user->getName()}";
 	}
 }

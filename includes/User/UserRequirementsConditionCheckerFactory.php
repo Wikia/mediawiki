@@ -21,8 +21,11 @@ class UserRequirementsConditionCheckerFactory {
 	/** @var UserRequirementsConditionChecker[] */
 	private $instances = [];
 
+	private ServiceOptions $checkerOptions;
+	private ServiceOptions $evaluatorOptions;
+
 	public function __construct(
-		private readonly ServiceOptions $options,
+		ServiceOptions $options,
 		private readonly GroupPermissionsLookup $groupPermissionsLookup,
 		private readonly HookContainer $hookContainer,
 		private readonly LoggerInterface $logger,
@@ -31,6 +34,14 @@ class UserRequirementsConditionCheckerFactory {
 		private readonly UserFactory $userFactory,
 		private readonly IContextSource $context,
 	) {
+		$this->checkerOptions = new ServiceOptions(
+			UserRequirementsConditionChecker::CONSTRUCTOR_OPTIONS,
+			$options
+		);
+		$this->evaluatorOptions = new ServiceOptions(
+			UserRequirementsConditionEvaluator::CONSTRUCTOR_OPTIONS,
+			$options
+		);
 	}
 
 	/**
@@ -45,7 +56,7 @@ class UserRequirementsConditionCheckerFactory {
 		$key = (string)$wikiId;
 		if ( !isset( $this->instances[$key] ) ) {
 			$this->instances[$key] = new UserRequirementsConditionChecker(
-				$this->options,
+				$this->checkerOptions,
 				$this->groupPermissionsLookup,
 				$this->hookContainer,
 				$this->logger,
@@ -55,9 +66,56 @@ class UserRequirementsConditionCheckerFactory {
 				$this->context,
 				$userGroupManager,
 				$wikiId,
+				$this->getDefaultEvaluators( $userGroupManager )
 			);
 		}
 
 		return $this->instances[$key];
+	}
+
+	/**
+	 * Creates a condition checker with custom condition evaluators.
+	 * It can be useful if caller needs to check a condition in a hypothetical situation,
+	 * by simulating certain values the checker operates on.
+	 *
+	 * The custom evaluators passed to this method are invoked before any default ones,
+	 * in the same order as provided. If no custom evaluator handles the condition, it will
+	 * be processed as usual.
+	 */
+	public function getCheckerWithCustomConditions(
+		UserGroupManager $userGroupManager,
+		array $customEvaluators
+	): UserRequirementsConditionChecker {
+		$evaluators = array_merge(
+			$customEvaluators,
+			$this->getDefaultEvaluators( $userGroupManager )
+		);
+		return new UserRequirementsConditionChecker(
+			$this->checkerOptions,
+			$this->groupPermissionsLookup,
+			$this->hookContainer,
+			$this->logger,
+			$this->userEditTracker,
+			$this->userRegistrationLookup,
+			$this->userFactory,
+			$this->context,
+			$userGroupManager,
+			UserIdentity::LOCAL,
+			$evaluators,
+		);
+	}
+
+	private function getDefaultEvaluators( UserGroupManager $userGroupManager ): array {
+		return [
+			new UserRequirementsConditionEvaluator(
+				$this->evaluatorOptions,
+				$this->groupPermissionsLookup,
+				$this->userEditTracker,
+				$this->userRegistrationLookup,
+				$this->userFactory,
+				$this->context,
+				$userGroupManager
+			)
+		];
 	}
 }
