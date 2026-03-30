@@ -13,8 +13,6 @@ use MediaWiki\Context\IContextSource;
 use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\HookContainer\HookRunner;
 use MediaWiki\MainConfigNames;
-use MediaWiki\Permissions\GroupPermissionsLookup;
-use MediaWiki\User\Registration\UserRegistrationLookup;
 use MediaWiki\WikiMap\WikiMap;
 use Psr\Log\LoggerInterface;
 
@@ -30,11 +28,8 @@ class UserRequirementsConditionChecker {
 	 */
 	public const VALID_OPS = [ '&', '|', '^', '!' ];
 
-	/** @internal For use by ServiceWiring */
+	/** @internal For use by UserRequirementsConditionCheckerFactory */
 	public const CONSTRUCTOR_OPTIONS = [
-		MainConfigNames::AutoConfirmAge,
-		MainConfigNames::AutoConfirmCount,
-		MainConfigNames::EmailAuthentication,
 		MainConfigNames::UserRequirementsPrivateConditions,
 	];
 
@@ -42,36 +37,15 @@ class UserRequirementsConditionChecker {
 
 	public function __construct(
 		private readonly ServiceOptions $options,
-		private readonly GroupPermissionsLookup $groupPermissionsLookup,
 		HookContainer $hookContainer,
 		private readonly LoggerInterface $logger,
-		private readonly UserEditTracker $userEditTracker,
-		private readonly UserRegistrationLookup $userRegistrationLookup,
 		private readonly UserFactory $userFactory,
 		private readonly IContextSource $context,
-		private readonly UserGroupManager $userGroupManager,
-		private readonly string|false $wikiId = UserIdentity::LOCAL,
 		/** @var UserRequirementsConditionEvaluatorBase[] */
-		private array $evaluators = [],
+		private readonly array $evaluators = [],
 	) {
 		$this->hookRunner = new HookRunner( $hookContainer );
 		$this->options->assertRequiredOptions( self::CONSTRUCTOR_OPTIONS );
-
-		// Temporary, until OATHAuth is updated to no longer extend the current class (T421355)
-		if ( $this->evaluators === [] ) {
-			$this->evaluators[] = new UserRequirementsConditionEvaluator(
-				new ServiceOptions(
-					UserRequirementsConditionEvaluator::CONSTRUCTOR_OPTIONS,
-					$this->options,
-				),
-				$this->groupPermissionsLookup,
-				$this->userEditTracker,
-				$this->userRegistrationLookup,
-				$this->userFactory,
-				$this->context,
-				$this->userGroupManager,
-			);
-		}
 	}
 
 	/**

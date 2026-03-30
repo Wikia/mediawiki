@@ -2942,7 +2942,8 @@ return [
 	{
 		return new UserRequirementsConditionCheckerFactory(
 			new ServiceOptions(
-				UserRequirementsConditionChecker::CONSTRUCTOR_OPTIONS, $services->getMainConfig()
+				UserRequirementsConditionCheckerFactory::CONSTRUCTOR_OPTIONS,
+				$services->getMainConfig()
 			),
 			$services->getGroupPermissionsLookup(),
 			$services->getHookContainer(),

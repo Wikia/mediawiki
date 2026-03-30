@@ -56,7 +56,7 @@ class UserRequirementsConditionCheckerFactoryTest extends MediaWikiUnitTestCase 
 
 	private function getFactory(): UserRequirementsConditionCheckerFactory {
 		$options = new ServiceOptions(
-			UserRequirementsConditionChecker::CONSTRUCTOR_OPTIONS,
+			UserRequirementsConditionCheckerFactory::CONSTRUCTOR_OPTIONS,
 			[
 				MainConfigNames::AutoConfirmAge => 4,
 				MainConfigNames::AutoConfirmCount => 10,

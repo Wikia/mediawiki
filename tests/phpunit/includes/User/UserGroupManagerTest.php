@@ -31,6 +31,7 @@ use MediaWiki\User\UserIdentity;
 use MediaWiki\User\UserIdentityValue;
 use MediaWiki\User\UserRequirementsConditionChecker;
 use MediaWiki\User\UserRequirementsConditionCheckerFactory;
+use MediaWiki\User\UserRequirementsConditionEvaluator;
 use MediaWiki\Utils\MWTimestamp;
 use MediaWikiIntegrationTestCase;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -113,20 +114,31 @@ class UserGroupManagerTest extends MediaWikiIntegrationTestCase {
 				new ServiceOptions(
 					UserRequirementsConditionChecker::CONSTRUCTOR_OPTIONS,
 					$configOverrides,
-					[
-						MainConfigNames::AutoConfirmAge => 0,
-						MainConfigNames::AutoConfirmCount => 0,
-					],
 					$services->getMainConfig()
 				),
-				$services->getGroupPermissionsLookup(),
 				$services->getHookContainer(),
 				new TestLogger(),
-				$userEditTrackerOverride ?? $services->getUserEditTracker(),
-				$userRegistrationLookupOverride ?? $services->getUserRegistrationLookup(),
 				$services->getUserFactory(),
 				$context ?? RequestContext::getMain(),
-				$ugm,
+				[
+					new UserRequirementsConditionEvaluator(
+						new ServiceOptions(
+							UserRequirementsConditionEvaluator::CONSTRUCTOR_OPTIONS,
+							$configOverrides,
+							[
+								MainConfigNames::AutoConfirmAge => 0,
+								MainConfigNames::AutoConfirmCount => 0,
+							],
+							$services->getMainConfig()
+						),
+						$services->getGroupPermissionsLookup(),
+						$userEditTrackerOverride ?? $services->getUserEditTracker(),
+						$userRegistrationLookupOverride ?? $services->getUserRegistrationLookup(),
+						$services->getUserFactory(),
+						$context ?? RequestContext::getMain(),
+						$ugm
+					)
+				]
 			) );
 
 		return $ugm;

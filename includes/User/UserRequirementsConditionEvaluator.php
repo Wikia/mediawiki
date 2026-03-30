@@ -20,7 +20,7 @@ use Wikimedia\Timestamp\TimestampFormat as TS;
 
 class UserRequirementsConditionEvaluator extends UserRequirementsConditionEvaluatorBase {
 
-	/** @internal For use by ServiceWiring */
+	/** @internal For use by UserRequirementsConditionCheckerFactory */
 	public const CONSTRUCTOR_OPTIONS = [
 		MainConfigNames::AutoConfirmAge,
 		MainConfigNames::AutoConfirmCount,

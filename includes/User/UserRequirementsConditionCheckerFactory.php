@@ -18,8 +18,14 @@ use Psr\Log\LoggerInterface;
  */
 class UserRequirementsConditionCheckerFactory {
 
+	/** @internal For use by ServiceWiring */
+	public const CONSTRUCTOR_OPTIONS = [
+		...UserRequirementsConditionChecker::CONSTRUCTOR_OPTIONS,
+		...UserRequirementsConditionEvaluator::CONSTRUCTOR_OPTIONS
+	];
+
 	/** @var UserRequirementsConditionChecker[] */
-	private $instances = [];
+	private array $instances = [];
 
 	private ServiceOptions $checkerOptions;
 	private ServiceOptions $evaluatorOptions;
@@ -34,6 +40,7 @@ class UserRequirementsConditionCheckerFactory {
 		private readonly UserFactory $userFactory,
 		private readonly IContextSource $context,
 	) {
+		$options->assertRequiredOptions( self::CONSTRUCTOR_OPTIONS );
 		$this->checkerOptions = new ServiceOptions(
 			UserRequirementsConditionChecker::CONSTRUCTOR_OPTIONS,
 			$options
@@ -57,15 +64,10 @@ class UserRequirementsConditionCheckerFactory {
 		if ( !isset( $this->instances[$key] ) ) {
 			$this->instances[$key] = new UserRequirementsConditionChecker(
 				$this->checkerOptions,
-				$this->groupPermissionsLookup,
 				$this->hookContainer,
 				$this->logger,
-				$this->userEditTracker,
-				$this->userRegistrationLookup,
 				$this->userFactory,
 				$this->context,
-				$userGroupManager,
-				$wikiId,
 				$this->getDefaultEvaluators( $userGroupManager )
 			);
 		}
@@ -92,15 +94,10 @@ class UserRequirementsConditionCheckerFactory {
 		);
 		return new UserRequirementsConditionChecker(
 			$this->checkerOptions,
-			$this->groupPermissionsLookup,
 			$this->hookContainer,
 			$this->logger,
-			$this->userEditTracker,
-			$this->userRegistrationLookup,
 			$this->userFactory,
 			$this->context,
-			$userGroupManager,
-			UserIdentity::LOCAL,
 			$evaluators,
 		);
 	}
