@@ -3230,9 +3230,15 @@ class EditPage implements IEditObject {
 			if ( $this->section !== '' && $this->section !== 'new' && $this->summary === '' &&
 				!$this->preview && !$this->diff
 			) {
-				$sectionTitle = self::extractSectionTitle( $this->textbox1 ); // FIXME: use Content object
-				if ( $sectionTitle !== false && $sectionTitle !== '' ) {
-					$this->summary = "/* $sectionTitle */ ";
+				// https://github.com/phan/phan/issues/5514
+				// @phan-suppress-next-line PhanImpossibleTypeComparison
+				if ( $this->section === '0' ) {
+					$this->summary = "/* */ ";
+				} else {
+					$sectionTitle = self::extractSectionTitle( $this->textbox1 ); // FIXME: use Content object
+					if ( $sectionTitle !== false && $sectionTitle !== '' ) {
+						$this->summary = "/* $sectionTitle */ ";
+					}
 				}
 			}
 
