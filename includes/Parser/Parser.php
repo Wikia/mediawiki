@@ -2175,10 +2175,11 @@ class Parser {
 		$noFollowLinks = $mainConfig->get( MainConfigNames::NoFollowLinks );
 		$noFollowNsExceptions = $mainConfig->get( MainConfigNames::NoFollowNsExceptions );
 		$noFollowDomainExceptions = $mainConfig->get( MainConfigNames::NoFollowDomainExceptions );
+		$urlUtils = MediaWikiServices::getInstance()->getUrlUtils();
 		$ns = $title ? $title->getNamespace() : false;
 		if (
 			$noFollowLinks && !in_array( $ns, $noFollowNsExceptions )
-			&& !wfGetUrlUtils()->matchesDomainList( (string)$url, $noFollowDomainExceptions )
+			&& !$urlUtils->matchesDomainList( (string)$url, $noFollowDomainExceptions )
 		) {
 			return 'nofollow';
 		}
