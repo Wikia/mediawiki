@@ -74,6 +74,7 @@ class ThumbnailRenderJob extends Job {
 	 */
 	protected function hitThumbUrl( LocalFile $file, $transformParams ) {
 		$config = MediaWikiServices::getInstance()->getMainConfig();
+		$urlUtils = MediaWikiServices::getInstance()->getUrlUtils();
 		$uploadThumbnailRenderHttpCustomHost =
 			$config->get( MainConfigNames::UploadThumbnailRenderHttpCustomHost );
 		$uploadThumbnailRenderHttpCustomDomain =
@@ -95,7 +96,7 @@ class ThumbnailRenderJob extends Job {
 		}
 
 		if ( $uploadThumbnailRenderHttpCustomDomain ) {
-			$parsedUrl = wfGetUrlUtils()->parse( $thumbUrl );
+			$parsedUrl = $urlUtils->parse( $thumbUrl );
 
 			if ( !isset( $parsedUrl['path'] ) || $parsedUrl['path'] === '' ) {
 				$this->setLastError( __METHOD__ . ": invalid thumb URL: $thumbUrl" );
