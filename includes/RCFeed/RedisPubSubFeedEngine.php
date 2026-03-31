@@ -6,6 +6,7 @@
 
 namespace MediaWiki\RCFeed;
 
+use MediaWiki\MediaWikiServices;
 use Wikimedia\ObjectCache\RedisConnectionPool;
 
 /**
@@ -43,7 +44,8 @@ class RedisPubSubFeedEngine extends FormattedRCFeed {
 	 * @return bool
 	 */
 	public function send( array $feed, $line ) {
-		$parsed = wfGetUrlUtils()->parse( $feed['uri'] );
+		$urlUtils = MediaWikiServices::getInstance()->getUrlUtils();
+		$parsed = $urlUtils->parse( $feed['uri'] );
 		// @phan-suppress-next-line PhanTypeArraySuspiciousNullable Valid URL
 		$server = $parsed['host'];
 		$options = [ 'serializer' => 'none' ];
