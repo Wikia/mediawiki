@@ -275,11 +275,12 @@ class CdnCacheUpdate implements DeferrableUpdate, MergeableUpdate {
 	 */
 	private static function naivePurge( array $urls ) {
 		$cdnServers = MediaWikiServices::getInstance()->getMainConfig()->get( MainConfigNames::CdnServers );
+		$urlUtils = MediaWikiServices::getInstance()->getUrlUtils();
 
 		$reqs = [];
 		foreach ( $urls as $url ) {
 			$url = self::expand( $url );
-			$urlInfo = wfGetUrlUtils()->parse( $url ) ?? false;
+			$urlInfo = $urlUtils->parse( $url ) ?? false;
 			$urlHost = strlen( $urlInfo['port'] ?? '' )
 				? IPUtils::combineHostAndPort( $urlInfo['host'], (int)$urlInfo['port'] )
 				: $urlInfo['host'];
