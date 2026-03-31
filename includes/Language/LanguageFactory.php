@@ -194,7 +194,7 @@ class LanguageFactory {
 		// Check if there is a language class for the code
 		$class = $this->classFromCode( $code, $fallback );
 		// LanguageCode does not inherit Language
-		if ( class_exists( $class ) && is_a( $class, 'Language', true ) ) {
+		if ( class_exists( $class ) && is_a( $class, Language::class, true ) ) {
 			return new $class( ...$constructorArgs );
 		}
 
@@ -218,9 +218,9 @@ class LanguageFactory {
 	 */
 	private function classFromCode( $code, $fallback = true ) {
 		if ( $fallback && $code == 'en' ) {
-			return 'Language';
+			return Language::class;
 		} else {
-			return 'Language' . str_replace( '-', '_', ucfirst( $code ) );
+			return '\\MediaWiki\\Languages\\Language' . str_replace( '-', '_', ucfirst( $code ) );
 		}
 	}
 
