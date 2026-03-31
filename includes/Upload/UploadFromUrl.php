@@ -71,11 +71,12 @@ class UploadFromUrl extends UploadBase {
 	 * @return bool
 	 */
 	public static function isAllowedHost( $url ) {
+		$urlUtils = MediaWikiServices::getInstance()->getURLUtils();
 		$domains = self::getAllowedHosts();
 		if ( !count( $domains ) ) {
 			return true;
 		}
-		$parsedUrl = wfGetUrlUtils()->parse( $url );
+		$parsedUrl = $urlUtils->parse( $url );
 		if ( !$parsedUrl ) {
 			return false;
 		}
