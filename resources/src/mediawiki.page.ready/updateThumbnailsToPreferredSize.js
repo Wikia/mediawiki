@@ -57,6 +57,7 @@ const updateThumbnailToPreferredSize = ( img ) => {
 			}
 		}
 	}
+	img.classList.add( 'mw-file-element--updated' );
 };
 
 /**
@@ -82,7 +83,7 @@ function updateThumbnailsToPreferredSize( $element ) {
 				}
 			} );
 		} );
-		$element.find( 'img[srcset]' ).each( ( _, img ) => {
+		$element.find( '.mw-default-size img[srcset]' ).each( ( _, img ) => {
 			observer.observe( img );
 		} );
 	}

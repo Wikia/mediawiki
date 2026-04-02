@@ -146,14 +146,14 @@
 		"maxSizeUncompressed": "15.4 kB"
 	},
 	{
-		"@owner": "Web Team (temporarily until more suitable owner identified)",
+		"@owner": "Readers (temporarily until more suitable owner identified)",
 		"resourceModule": "noscript",
 		"maxSize": null
 	},
 	{
-		"@owner": "Web Team",
+		"@owner": "Readers",
 		"resourceModule": "mediawiki.page.ready",
-		"maxSizeUncompressed": "15.7 kB"
+		"maxSizeUncompressed": "16.0 kB"
 	},
 	{
 		"@owner": "Design System Team",

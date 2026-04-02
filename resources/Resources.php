@@ -1741,6 +1741,9 @@ return [
 	'mediawiki.page.ready' => [
 		'localBasePath' => MW_INSTALL_PATH . '/resources/src/mediawiki.page.ready',
 		'remoteBasePath' => "$wgResourceBasePath/resources/src/mediawiki.page.ready",
+		'styles' => [
+			'updateThumbnailsToPreferredSize.less',
+		],
 		'packageFiles' => [
 			'ready.js',
 			'updateThumbnailsToPreferredSize.js',
