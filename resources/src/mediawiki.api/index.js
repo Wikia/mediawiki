@@ -257,6 +257,13 @@
 
 			this.preprocessParameters( parameters, this.defaults.useUS );
 
+			// Add the 'action' query parameter to the request URI, and not just POST request body,
+			// for ease of use in debugging, analytics, or request filtering. (T421288)
+			if ( ajaxOptions.type === 'POST' && parameters.action !== undefined ) {
+				ajaxOptions.url += ( ajaxOptions.url.includes( '?' ) ? '&' : '?' ) +
+					'action=' + encodeURIComponent( parameters.action );
+			}
+
 			// If multipart/form-data has been requested and emulation is possible, emulate it
 			if (
 				ajaxOptions.type === 'POST' &&
