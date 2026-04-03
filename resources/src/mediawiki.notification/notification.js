@@ -65,12 +65,6 @@
 	}
 
 	/**
-	 * @typedef {Object} mw.notification~Notification
-	 * @property {mw.Message|jQuery|HTMLElement|string} message
-	 * @property {mw.notification.NotificationOptions} options
-	 */
-
-	/**
 	 * @classdesc Describes a notification. See [mw.notification module]{@link mw.notification}. A Notification object for 1 message.
 	 * @param {mw.Message|jQuery|HTMLElement|string} message
 	 * @param {mw.notification.NotificationOptions} options
@@ -79,10 +73,8 @@
 	 * This does not insert anything into the document. To add to document use
 	 * [mw.notification.notify]{@link mw.notification#notify}.
 	 *
-	 * @class Notification
-	 * @global
+	 * @class mw.notification.Notification
 	 * @hideconstructor
-	 * @param {mw.notification~Notification} Notification object
 	 */
 	function Notification( message, options ) {
 
@@ -178,162 +170,160 @@
 		}
 	}
 
-	/**
-	 * Start the notification. Called automatically by mw.notification#notify
-	 * (possibly asynchronously on document-ready).
-	 *
-	 * This inserts the notification into the page, closes any matching tagged notifications,
-	 * handles the fadeIn animations and replacement transitions, and starts autoHide timers.
-	 *
-	 * @private
-	 */
-	Notification.prototype.start = function () {
-		$area.css( 'display', '' );
+	Notification.prototype = /** @lends mw.notification.Notification.prototype */ {
+		constructor: Notification,
 
-		if ( this.isOpen ) {
-			return;
-		}
+		/**
+		 * Start the notification. Called automatically by mw.notification#notify
+		 * (possibly asynchronously on document-ready).
+		 *
+		 * This inserts the notification into the page, closes any matching tagged notifications,
+		 * handles the fadeIn animations and replacement transitions, and starts autoHide timers.
+		 *
+		 * @private
+		 */
+		start: function () {
+			$area.css( 'display', '' );
 
-		this.isOpen = true;
-		openNotificationCount++;
+			if ( this.isOpen ) {
+				return;
+			}
 
-		// Announce to screen readers when notification becomes visible
-		announceToAriaLive( this.$notification.find( '.mw-notification-content' ), this.options );
+			this.isOpen = true;
+			openNotificationCount++;
 
-		const options = this.options;
-		const $notification = this.$notification;
+			// Announce to screen readers when notification becomes visible
+			announceToAriaLive( this.$notification.find( '.mw-notification-content' ), this.options );
 
-		let $tagMatches;
-		if ( options.tag ) {
-			// Find notifications with the same tag
-			$tagMatches = $area.find( '.mw-notification-tag-' + options.tag );
-		}
+			const options = this.options;
+			const $notification = this.$notification;
 
-		// If we found existing notification with the same tag, replace them
-		if ( options.tag && $tagMatches.length ) {
+			let $tagMatches;
+			if ( options.tag ) {
+				// Find notifications with the same tag
+				$tagMatches = $area.find( '.mw-notification-tag-' + options.tag );
+			}
 
-			// While there can be only one "open" notif with a given tag, there can be several
-			// matches here because they remain in the DOM until the animation is finished.
-			$tagMatches.each( function () {
-				const notif = $( this ).data( 'mw-notification' );
-				if ( notif && notif.isOpen ) {
-					// Detach from render flow with position absolute so that the new tag can
-					// occupy its space instead.
-					notif.$notification
-						.css( {
-							position: 'absolute',
-							width: notif.$notification.width()
-						} )
-						.css( notif.$notification.position() )
-						.addClass( 'mw-notification-replaced' );
-					notif.close();
-				}
-			} );
+			// If we found existing notification with the same tag, replace them
+			if ( options.tag && $tagMatches.length ) {
 
-			$notification
-				.insertBefore( $tagMatches.first() )
-				.addClass( 'mw-notification-visible' );
-		} else {
-			$area.append( $notification );
-			requestAnimationFrame( () => {
-				// This frame renders the element in the area (invisible)
-				requestAnimationFrame( () => {
-					$notification.addClass( 'mw-notification-visible' );
+				// While there can be only one "open" notif with a given tag, there can be several
+				// matches here because they remain in the DOM until the animation is finished.
+				$tagMatches.each( function () {
+					const notif = $( this ).data( 'mw-notification' );
+					if ( notif && notif.isOpen ) {
+						// Detach from render flow with position absolute so that the new tag can
+						// occupy its space instead.
+						notif.$notification
+							.css( {
+								position: 'absolute',
+								width: notif.$notification.width()
+							} )
+							.css( notif.$notification.position() )
+							.addClass( 'mw-notification-replaced' );
+						notif.close();
+					}
 				} );
+
+				$notification
+					.insertBefore( $tagMatches.first() )
+					.addClass( 'mw-notification-visible' );
+			} else {
+				$area.append( $notification );
+				requestAnimationFrame( () => {
+					// This frame renders the element in the area (invisible)
+					requestAnimationFrame( () => {
+						$notification.addClass( 'mw-notification-visible' );
+					} );
+				} );
+			}
+
+			// By default a notification is paused.
+			// If this notification is within the first {autoHideLimit} notifications then
+			// start the auto-hide timer as soon as it's created.
+			const autohideCount = $area.find( '.mw-notification-autohide' ).length;
+			if ( autohideCount <= notification.autoHideLimit ) {
+				this.resume();
+			}
+		},
+
+		/**
+		 * Pause any running auto-hide timer for this notification.
+		 */
+		pause: function () {
+			if ( this.isPaused ) {
+				return;
+			}
+			this.isPaused = true;
+
+			if ( this.timeoutId ) {
+				this.timeout.clear( this.timeoutId );
+				delete this.timeoutId;
+			}
+		},
+
+		/**
+		 * Start autoHide timer if not already started.
+		 * Does nothing if autoHide is disabled.
+		 * Either to resume from pause or to make the first start.
+		 */
+		resume: function () {
+			if ( !this.isPaused ) {
+				return;
+			}
+			// Start any autoHide timeouts
+			if ( this.options.autoHide ) {
+				this.isPaused = false;
+				this.timeoutId = this.timeout.set( () => {
+					// Already finished, so don't try to re-clear it
+					delete this.timeoutId;
+					this.close();
+				}, this.autoHideSeconds * 1000 );
+			}
+		},
+
+		/**
+		 * Close the notification.
+		 */
+		close: function () {
+			if ( !this.isOpen ) {
+				return;
+			}
+
+			this.isOpen = false;
+			openNotificationCount--;
+
+			// Clear any remaining timeout on close
+			this.pause();
+
+			// Remove the mw-notification-autohide class from the notification to avoid
+			// having a half-closed notification counted as a notification to resume
+			// when handling {autoHideLimit}.
+			this.$notification.removeClass( 'mw-notification-autohide' );
+
+			// Now that a notification is being closed. Start auto-hide timers for any
+			// notification that has now become one of the first {autoHideLimit} notifications.
+			notification.resume();
+
+			requestAnimationFrame( () => {
+				this.$notification.removeClass( 'mw-notification-visible' );
+
+				setTimeout( () => {
+					if ( openNotificationCount === 0 ) {
+						// Hide the area after the last notification closes. Otherwise, the padding on
+						// the area can be obscure content, despite the area being empty/invisible (T54659). // FIXME
+						$area.css( 'display', 'none' );
+						this.$notification.remove();
+					} else {
+						// FIXME: Use CSS transition
+						// eslint-disable-next-line no-jquery/no-slide
+						this.$notification.slideUp( 'fast', function () {
+							$( this ).remove();
+						} );
+					}
+				}, 500 );
 			} );
 		}
-
-		// By default a notification is paused.
-		// If this notification is within the first {autoHideLimit} notifications then
-		// start the auto-hide timer as soon as it's created.
-		const autohideCount = $area.find( '.mw-notification-autohide' ).length;
-		if ( autohideCount <= notification.autoHideLimit ) {
-			this.resume();
-		}
-	};
-
-	/**
-	 * Pause any running auto-hide timer for this notification.
-	 *
-	 * @memberof Notification
-	 */
-	Notification.prototype.pause = function () {
-		if ( this.isPaused ) {
-			return;
-		}
-		this.isPaused = true;
-
-		if ( this.timeoutId ) {
-			this.timeout.clear( this.timeoutId );
-			delete this.timeoutId;
-		}
-	};
-
-	/**
-	 * Start autoHide timer if not already started.
-	 * Does nothing if autoHide is disabled.
-	 * Either to resume from pause or to make the first start.
-	 *
-	 * @memberof Notification
-	 */
-	Notification.prototype.resume = function () {
-		if ( !this.isPaused ) {
-			return;
-		}
-		// Start any autoHide timeouts
-		if ( this.options.autoHide ) {
-			this.isPaused = false;
-			this.timeoutId = this.timeout.set( () => {
-				// Already finished, so don't try to re-clear it
-				delete this.timeoutId;
-				this.close();
-			}, this.autoHideSeconds * 1000 );
-		}
-	};
-
-	/**
-	 * Close the notification.
-	 *
-	 * @memberof Notification
-	 */
-	Notification.prototype.close = function () {
-		if ( !this.isOpen ) {
-			return;
-		}
-
-		this.isOpen = false;
-		openNotificationCount--;
-
-		// Clear any remaining timeout on close
-		this.pause();
-
-		// Remove the mw-notification-autohide class from the notification to avoid
-		// having a half-closed notification counted as a notification to resume
-		// when handling {autoHideLimit}.
-		this.$notification.removeClass( 'mw-notification-autohide' );
-
-		// Now that a notification is being closed. Start auto-hide timers for any
-		// notification that has now become one of the first {autoHideLimit} notifications.
-		notification.resume();
-
-		requestAnimationFrame( () => {
-			this.$notification.removeClass( 'mw-notification-visible' );
-
-			setTimeout( () => {
-				if ( openNotificationCount === 0 ) {
-					// Hide the area after the last notification closes. Otherwise, the padding on
-					// the area can be obscure content, despite the area being empty/invisible (T54659). // FIXME
-					$area.css( 'display', 'none' );
-					this.$notification.remove();
-				} else {
-					// FIXME: Use CSS transition
-					// eslint-disable-next-line no-jquery/no-slide
-					this.$notification.slideUp( 'fast', function () {
-						$( this ).remove();
-					} );
-				}
-			}, 500 );
-		} );
 	};
 
 	/**
@@ -481,7 +471,7 @@
 		 * @param {mw.notification.NotificationOptions} [options] The options to use
 		 *  for the notification. Options not specified default to the values in
 		 *  [#defaults]{@link mw.notification.defaults}.
-		 * @return {mw.notification~Notification} Notification object
+		 * @return {mw.notification.Notification}
 		 */
 		notify: function ( message, options ) {
 			options = Object.assign( {}, notification.defaults, options );
