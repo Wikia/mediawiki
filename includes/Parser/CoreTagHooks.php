@@ -154,12 +154,12 @@ class CoreTagHooks {
 	 * @param array $attributes
 	 * @param Parser $parser
 	 * @param PPFrame $frame
-	 * @return string
+	 * @return array
 	 * @since 1.36
 	 * @internal
 	 * @deprecated since 1.46; use the ParserCoreTagHooks service instead
 	 */
-	public static function langconvert( ?string $content, array $attributes, Parser $parser, PPFrame $frame ): string {
+	public static function langconvert( ?string $content, array $attributes, Parser $parser, PPFrame $frame ): array {
 		wfDeprecated( __METHOD__, '1.46' );
 		return MediaWikiServices::getInstance()->getParserCoreTagHooks()->langconvert(
 			$content, $attributes, $parser, $frame

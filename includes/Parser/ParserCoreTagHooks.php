@@ -224,43 +224,59 @@ class ParserCoreTagHooks {
 	 * @param array $attributes
 	 * @param Parser $parser
 	 * @param PPFrame $frame
-	 * @return string
+	 * @return array
 	 * @internal
 	 */
-	public function langconvert( ?string $content, array $attributes, Parser $parser, PPFrame $frame ): string {
+	public function langconvert( ?string $content, array $attributes, Parser $parser, PPFrame $frame ): array {
+		$output = false;
 		if ( isset( $attributes['from'] ) && isset( $attributes['to'] ) ) {
-			$fromArg = trim( $attributes['from'] );
-			$toArg = trim( $attributes['to'] );
-			$fromLangCode = explode( '-', $fromArg )[0];
-			if ( $fromLangCode && $fromLangCode === explode( '-', $toArg )[0] ) {
-				$lang = $this->languageFactory
-					->getLanguage( $fromLangCode );
-				$converter = $this->languageConverterFactory
-					->getLanguageConverter( $lang );
-
-				# ensure that variants are available,
-				# and the variants are valid BCP 47 codes
-				if ( $converter->hasVariants()
-					&& strcasecmp( $fromArg, LanguageCode::bcp47( $fromArg ) ) === 0
-					&& strcasecmp( $toArg, LanguageCode::bcp47( $toArg ) ) === 0
-				) {
-					$toVariant = $converter->validateVariant( $toArg );
-
-					if ( $toVariant ) {
-						return $converter->autoConvert(
-							$parser->recursiveTagParse( $content ?? '', $frame ),
-							$toVariant
-						);
-					}
-				}
+			$from = self::strictlyValidateBcp47Variant( $attributes['from'] );
+			$to = self::strictlyValidateBcp47Variant( $attributes['to'] );
+			// Verify these are both variants of the same base language!
+			if ( $from !== null && $to !== null && $from['parent']->equals( $to['parent'] ) ) {
+				$converter = $from['converter'];
+				$output = $converter->autoConvert(
+					$parser->recursiveTagParse( $content ?? '', $frame ),
+					$to['code']
+				);
 			}
 		}
 
-		return Html::rawElement(
-			'span',
-			[ 'class' => 'error' ],
-			$parser->msg( 'invalid-langconvert-attrs' )->parse()
-		);
+		if ( $output === false ) {
+			$output = Html::rawElement(
+				'span',
+				[ 'class' => 'error' ],
+				$parser->msg( 'invalid-langconvert-attrs' )->parse()
+			);
+		}
+		// Protect this from double-conversion.
+		return [ $output, 'markerType' => 'nowiki' ];
 	}
 
+	private function strictlyValidateBcp47Variant( string $arg ): ?array {
+		// allow whitespace around raw value
+		$arg = trim( $arg );
+		// Validate the language code against the allowed variants in the
+		// appropriate converter for the base language.
+		$lang = $this->languageFactory->getLanguage( $arg );
+		$baseLang = $this->languageFactory->getParentLanguage( $lang );
+		$converter = $this->languageConverterFactory->getLanguageConverter( $baseLang );
+		$variant = $converter->validateVariant( $lang->getCode() );
+		// Now strictly enforce the fact that the original argument was the
+		// BCP-47 code in particular (not a compatibility alias)
+		// This helps ensure that legacy compatibility aliases don't creep
+		// into new wikitext (since <langconvert> was a new extension).
+		if (
+			$variant === null ||
+			strcasecmp( LanguageCode::bcp47( $variant ), $arg ) !== 0
+		) {
+			return null;
+		}
+		return [
+			'converter' => $converter,
+			'language' => $lang,
+			'parent' => $baseLang,
+			'code' => $variant
+		];
+	}
 }
