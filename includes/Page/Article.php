@@ -497,12 +497,9 @@ class Article implements Page {
 		# Allow frames by default
 		$outputPage->getMetadata()->setPreventClickjacking( false );
 
-		$parserOptions = $this->getParserOptions();
+		$parserOptions = $this->getParserOptions( $oldid );
 
 		$poOptions = [];
-		# Allow extensions to vary parser options used for article rendering
-		( new HookRunner( MediaWikiServices::getInstance()->getHookContainer() ) )
-			->onArticleParserOptions( $this, $parserOptions );
 		// Temporary support for using new Parsoid LanguageConverter impl.
 		// T415435: remove once testing is complete.
 		if ( $parserOptions->getUseParsoid() && $context->getRequest()->getFuzzyBool( 'parsoidnewlc', false ) ) {
@@ -2086,13 +2083,7 @@ class Article implements Page {
 	 * @return ParserOutput|false ParserOutput or false if the given revision ID is not found
 	 */
 	public function getParserOutput( $oldid = null, ?UserIdentity $user = null ) {
-		if ( $user === null ) {
-			$parserOptions = $this->getParserOptions();
-		} else {
-			$parserOptions = $this->mPage->makeParserOptions( $user );
-			$parserOptions->setRenderReason( $this->getOldID() ? 'page_view_oldid' : 'page_view' );
-		}
-
+		$parserOptions = $this->getParserOptions( $oldid, $user );
 		return $this->mPage->getParserOutput( $parserOptions, $oldid );
 	}
 
@@ -2100,9 +2091,14 @@ class Article implements Page {
 	 * Get parser options suitable for rendering the primary article wikitext
 	 * @return ParserOptions
 	 */
-	public function getParserOptions() {
-		$parserOptions = $this->mPage->makeParserOptions( $this->getContext() );
-		$parserOptions->setRenderReason( $this->getOldID() ? 'page_view_oldid' : 'page_view' );
+	public function getParserOptions( ?int $oldid = null, ?UserIdentity $user = null ) {
+		$parserOptions =
+			$this->mPage->makeParserOptions( $user ?? $this->getContext() );
+		$parserOptions->setRenderReason( $oldid ? 'page_view_oldid' : 'page_view' );
+		# Allow extensions to vary parser options used for article rendering
+		( new HookRunner( MediaWikiServices::getInstance()->getHookContainer() ) )
+			->onArticleParserOptions( $this, $parserOptions );
+
 		return $parserOptions;
 	}
 
