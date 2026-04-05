@@ -62,8 +62,6 @@
 .margin-block( @start, @end ) {
 	margin-top: @start;
 	margin-bottom: @end;
-	-webkit-margin-before: @start; // Archaic WebKit/Chrome versions
-	-webkit-margin-after: @end;
 	/* stylelint-disable declaration-block-no-redundant-longhand-properties */
 	margin-block-start: @start; // Firefox 41, Safari 12.1, Chrome 69, Opera 56
 	margin-block-end: @end;
@@ -75,8 +73,6 @@
 .margin-inline( @start, @end ) {
 	margin-left: @start;
 	margin-right: @end;
-	-webkit-margin-start: @start; // Archaic WebKit/Chrome versions
-	-webkit-margin-end: @end;
 	/* stylelint-disable declaration-block-no-redundant-longhand-properties */
 	margin-inline-start: @start; // Firefox 41, Safari 12.1, Chrome 69, Opera 56
 	margin-inline-end: @end;
@@ -88,8 +84,6 @@
 .padding-block( @start, @end ) {
 	padding-top: @start;
 	padding-bottom: @end;
-	-webkit-padding-before: @start; // Archaic WebKit/Chrome versions
-	-webkit-padding-after: @end;
 	/* stylelint-disable declaration-block-no-redundant-longhand-properties */
 	padding-block-start: @start; // Firefox 41, Safari 12.1, Chrome 69, Opera 56
 	padding-block-end: @end;
@@ -101,8 +95,6 @@
 .padding-inline( @start, @end ) {
 	padding-left: @start;
 	padding-right: @end;
-	-webkit-padding-start: @start; // Archaic WebKit/Chrome versions
-	-webkit-padding-end: @end;
 	/* stylelint-disable declaration-block-no-redundant-longhand-properties */
 	padding-inline-start: @start; // Firefox 41, Safari 12.1, Chrome 69, Opera 56
 	padding-inline-end: @end;
