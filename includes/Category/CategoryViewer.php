@@ -381,10 +381,12 @@ class CategoryViewer extends ContextSource {
 				}
 			}
 
+			$categoryFields = [ 'cat_id', 'cat_title', 'cat_subcats', 'cat_pages', 'cat_files' ];
+
 			$categoryData = [];
 			if ( $categoryTitles !== [] ) {
 				$categoryRes = $dbr->newSelectQueryBuilder()
-					->select( [ 'cat_id', 'cat_title', 'cat_subcats', 'cat_pages', 'cat_files' ] )
+					->select( $categoryFields )
 					->from( 'category' )
 					->where( [ 'cat_title' => $categoryTitles ] )
 					->caller( __METHOD__ )
@@ -397,12 +399,9 @@ class CategoryViewer extends ContextSource {
 
 			foreach ( $pageRows as $row ) {
 				if ( (int)$row->page_namespace === NS_CATEGORY ) {
-					$catTitle = $row->page_title;
-					$catRow = $categoryData[$catTitle] ?? null;
-					if ( $catRow ) {
-						foreach ( [ 'cat_id', 'cat_title', 'cat_subcats', 'cat_pages', 'cat_files' ] as $field ) {
-							$row->$field = $catRow->$field;
-						}
+					$catRow = $categoryData[$row->page_title] ?? null;
+					foreach ( $categoryFields as $field ) {
+						$row->$field = $catRow->$field ?? null;
 					}
 				}
 			}
