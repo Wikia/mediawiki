@@ -105,7 +105,7 @@ class EntryPoint extends MediaWikiEntryPoint {
 	protected function doSetup() {
 		parent::doSetup();
 
-		$context = RequestContext::getMain();
+		$context = $this->getContext();
 
 		$responseFactory = new ResponseFactory( $this->getTextFormatters() );
 		$responseFactory->setShowExceptionDetails(
