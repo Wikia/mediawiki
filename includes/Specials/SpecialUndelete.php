@@ -846,7 +846,7 @@ class SpecialUndelete extends SpecialPage {
 			$rdel = " $rdel";
 		}
 
-		$minor = $revRecord->isMinor() ? ChangesList::flag( 'minor' ) : '';
+		$minor = $revRecord->isMinor() ? ChangesList::flag( 'minor', $this->getContext() ) : '';
 
 		$dbr = $this->dbProvider->getReplicaDatabase();
 		$tagIds = $dbr->newSelectQueryBuilder()
@@ -1379,14 +1379,14 @@ class SpecialUndelete extends SpecialPage {
 		$userLink = Linker::revUserTools( $revRecord );
 
 		// Minor edit
-		$minor = $revRecord->isMinor() ? ChangesList::flag( 'minor' ) : '';
+		$minor = $revRecord->isMinor() ? ChangesList::flag( 'minor', $this->getContext() ) : '';
 
 		// Revision text size
 		$size = $row->ar_len;
 		if ( $size !== null ) {
 			$revTextSize = Linker::formatRevisionSize( $size );
 			$prevSize = $sizes[$row->ar_parent_id ?? 0] ?? 0;
-			$sDiff = ChangesList::showCharacterDifference( $prevSize, $size );
+			$sDiff = ChangesList::showCharacterDifference( $prevSize, $size, $this->getContext() );
 			$revTextSize = "$revTextSize $sDiff";
 		}
 

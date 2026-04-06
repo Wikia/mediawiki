@@ -961,6 +961,13 @@ because of Phabricator reports.
   deprecation warnings. Use UserRequirementsCondition hook, instead.
 * The RecentChange::parseToRCType and RecentChange::parseFromRCType methods are
   deprecated and will now trigger deprecation warnings.
+* RecentChange::getCharacterDifference was unused and has been deprecated, call
+  ChangesList::formatCharacterDifference or ChangesList::showCharacterDifference
+  instead.
+* Calling ChangesList::flag and ChangesList::showCharacterDifference without
+  specifying a context has been deprecated.
+* Calling ChangesList::userCan without specifying a performer has been
+  deprecated.
 * Parser::makeImage() has been deprecated with warnings; use
   ::makeImageHtml() instead, which doesn't expose the internal LinkHolderArray.
 * Parser::replaceLinkHolders() now emits deprecation warnings; it was

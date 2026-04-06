@@ -752,11 +752,16 @@ class RecentChange implements Taggable {
 	/**
 	 * Returns the change size (HTML).
 	 * The lengths can be given optionally.
+	 *
+	 * @deprecated since 1.46, use ChangesList::showCharacterDifference or
+	 * ChangesList::formatCharacterDifference instead.
+	 *
 	 * @param int $old
 	 * @param int $new
 	 * @return string
 	 */
 	public function getCharacterDifference( $old = 0, $new = 0 ) {
+		wfDeprecated( __METHOD__, '1.46' );
 		if ( $old === 0 ) {
 			$old = $this->mAttribs['rc_old_len'];
 		}

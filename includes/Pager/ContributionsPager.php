@@ -965,11 +965,11 @@ abstract class ContributionsPager extends RangeChronologicalPager {
 		}
 		$flags = [];
 		if ( $this->currentRevRecord->getParentId() === 0 ) {
-			$flags[] = ChangesList::flag( 'newpage' );
+			$flags[] = ChangesList::flag( 'newpage', $this->getContext() );
 		}
 
 		if ( $this->currentRevRecord->isMinor() ) {
-			$flags[] = ChangesList::flag( 'minor' );
+			$flags[] = ChangesList::flag( 'minor', $this->getContext() );
 		}
 		return $flags;
 	}

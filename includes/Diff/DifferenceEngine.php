@@ -876,7 +876,7 @@ class DifferenceEngine extends ContextSource {
 			}
 
 			if ( $this->mOldRevisionRecord->isMinor() ) {
-				$oldminor = ChangesList::flag( 'minor' );
+				$oldminor = ChangesList::flag( 'minor', $this->getContext() );
 			} else {
 				$oldminor = '';
 			}
@@ -938,7 +938,7 @@ class DifferenceEngine extends ContextSource {
 		}
 
 		if ( $this->mNewRevisionRecord->isMinor() ) {
-			$newminor = ChangesList::flag( 'minor' );
+			$newminor = ChangesList::flag( 'minor', $this->getContext() );
 		} else {
 			$newminor = '';
 		}

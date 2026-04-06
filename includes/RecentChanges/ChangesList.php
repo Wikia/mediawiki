@@ -339,7 +339,13 @@ class ChangesList extends ContextSource {
 			}
 		}
 
-		$context = $context ?: RequestContext::getMain();
+		if ( !$context ) {
+			wfDeprecatedMsg(
+				'Calling ChangesList::flag without specifying a context is deprecated since 1.46',
+				'1.46'
+			);
+			$context = RequestContext::getMain();
+		}
 
 		// Inconsistent naming, kept for b/c
 		if ( isset( $map[$flag] ) ) {
@@ -400,6 +406,10 @@ class ChangesList extends ContextSource {
 	 */
 	public static function showCharacterDifference( $old, $new, ?IContextSource $context = null ) {
 		if ( !$context ) {
+			wfDeprecatedMsg(
+				'Calling ChangesList::showCharacterDifference without specifying a context is deprecated since 1.46',
+				'1.46'
+			);
 			$context = RequestContext::getMain();
 		}
 
@@ -873,7 +883,13 @@ class ChangesList extends ContextSource {
 	 * @return bool
 	 */
 	public static function userCan( $rc, $field, ?Authority $performer = null ) {
-		$performer ??= RequestContext::getMain()->getAuthority();
+		if ( !$performer ) {
+			wfDeprecatedMsg(
+				'Calling ChangesList::userCan without specifying a performer is deprecated since 1.46',
+				'1.46'
+			);
+			$performer = RequestContext::getMain()->getAuthority();
+		}
 
 		if ( $rc->mAttribs['rc_source'] === RecentChange::SRC_LOG ) {
 			return LogEventsList::userCanBitfield( $rc->mAttribs['rc_deleted'], $field, $performer );
