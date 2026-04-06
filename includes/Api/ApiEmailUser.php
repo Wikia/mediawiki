@@ -8,7 +8,6 @@
 
 namespace MediaWiki\Api;
 
-use MediaWiki\Context\RequestContext;
 use MediaWiki\Mail\EmailUserFactory;
 use MediaWiki\Status\Status;
 use MediaWiki\User\UserFactory;
@@ -32,7 +31,7 @@ class ApiEmailUser extends ApiBase {
 	public function execute() {
 		$params = $this->extractRequestParams();
 
-		$emailUser = $this->emailUserFactory->newEmailUser( RequestContext::getMain()->getAuthority() );
+		$emailUser = $this->emailUserFactory->newEmailUser( $this->getAuthority() );
 		$targetUser = $this->userFactory->newFromName( $params['target'] );
 
 		if ( $targetUser === null ) {
