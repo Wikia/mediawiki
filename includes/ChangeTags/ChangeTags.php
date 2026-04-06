@@ -181,9 +181,7 @@ class ChangeTags {
 	 *
 	 * @param string $tags Comma-separated list of tags
 	 * @param null|string $unused Unused (formerly: $page)
-	 * @param MessageLocalizer|null $localizer
-	 * @note Even though it takes null as a valid argument, a MessageLocalizer is preferred
-	 *       in a new code, as the null value is subject to change in the future
+	 * @param MessageLocalizer|null $localizer Passing null is deprecated
 	 * @return array Array with two items: (html, classes)
 	 *   - html: String: HTML for displaying the tags (empty string when param $tags is empty)
 	 *   - classes: Array of strings: CSS classes used in the generated html, one class for each tag
@@ -194,6 +192,10 @@ class ChangeTags {
 			return [ '', [] ];
 		}
 		if ( !$localizer ) {
+			wfDeprecatedMsg(
+				"Calling ChangeTags::formatSummaryRow without a localizer is deprecated.",
+				'1.46'
+			);
 			$localizer = RequestContext::getMain();
 		}
 
@@ -742,9 +744,7 @@ class ChangeTags {
 	 * @param string $selected Tag to select by default
 	 * @param bool $ooui Use an OOUI TextInputWidget as selector instead of a non-OOUI input field
 	 *        You need to call OutputPage::enableOOUI() yourself.
-	 * @param IContextSource|null $context
-	 * @note Even though it takes null as a valid argument, an IContextSource is preferred
-	 *       in a new code, as the null value can change in the future
+	 * @param IContextSource|null $context Passing null is deprecated.
 	 * @param bool $activeOnly Whether to filter for tags that have been used or not
 	 * @param bool $useAllTags Whether to use all known tags or to only use software defined tags
 	 *        These map to ChangeTagsStore->listDefinedTags and ChangeTagsStore->getCoreDefinedTags respectively
@@ -756,6 +756,10 @@ class ChangeTags {
 		bool $useAllTags = self::USE_ALL_TAGS
 	) {
 		if ( !$context ) {
+			wfDeprecatedMsg(
+				"Calling ChangeTags::buildTagFilterSelector without a localizer is deprecated.",
+				'1.46'
+			);
 			$context = RequestContext::getMain();
 		}
 

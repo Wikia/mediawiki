@@ -1060,6 +1060,8 @@ because of Phabricator reports.
 * The usage of the SpecialPage constructor parameter $includable is deprecated
   and emits deprecation warnings.
   Override the method isIncludable() or extend IncludableSpecialPage instead.
+* Calling ChangeTags::formatSummaryRow and ChangeTags::buildTagFilterSelector
+  without specifying a context was unused and got deprecated.
 * …
 
 === Other changes in 1.46 ===
