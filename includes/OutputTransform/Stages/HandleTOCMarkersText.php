@@ -4,7 +4,6 @@ declare( strict_types = 1 );
 namespace MediaWiki\OutputTransform\Stages;
 
 use MediaWiki\Config\ServiceOptions;
-use MediaWiki\Context\RequestContext;
 use MediaWiki\Html\Html;
 use MediaWiki\Language\Language;
 use MediaWiki\MainConfigNames;
@@ -125,13 +124,11 @@ class HandleTOCMarkersText extends ContentTextTransformStage {
 	 * Wraps the TOC in a div with ARIA navigation role and provides the hide/collapse JavaScript.
 	 *
 	 * @param string $toc Html of the Table Of Contents
-	 * @param Language|null $lang Language for the toc title, defaults to user language
+	 * @param Language $lang Language for the toc title
 	 * @param array $options Title, class, and ID options for the TOC
 	 * @return string Full html of the TOC
 	 */
-	private static function tocList( string $toc, ?Language $lang = null, array $options = [] ) {
-		$lang ??= RequestContext::getMain()->getLanguage();
-
+	private static function tocList( string $toc, Language $lang, array $options = [] ) {
 		$title = wfMessage( $options['title'] ?? 'toc' )->inLanguage( $lang )->escaped();
 
 		return Html::openElement( 'div', [
@@ -167,7 +164,7 @@ class HandleTOCMarkersText extends ContentTextTransformStage {
 	 * Generate a table of contents from a section tree.
 	 *
 	 * @param TOCData $tocData Return value of ParserOutput::getTOCData()
-	 * @param Language|null $lang Language for the toc title, defaults to user language
+	 * @param Language $lang Language for the toc title
 	 * @param array $options
 	 *   - 'maxtoclevel' Max TOC level to generate
 	 *   - 'title': The message key to use as heading for the TOC,
@@ -176,7 +173,7 @@ class HandleTOCMarkersText extends ContentTextTransformStage {
 	 *   - 'id': The ID to use on the TOC, defaults to 'toc'
 	 * @return string HTML fragment
 	 */
-	private static function generateTOC( TOCData $tocData, ?Language $lang = null, array $options = [] ): string {
+	private static function generateTOC( TOCData $tocData, Language $lang, array $options = [] ): string {
 		$toc = '';
 		$lastLevel = 0;
 		$maxTocLevel = $options['maxtoclevel'] ?? null;
