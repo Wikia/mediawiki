@@ -27,6 +27,7 @@ use MediaWiki\Language\LanguageNameUtils;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Maintenance\Maintenance;
 use MediaWiki\Registration\ExtensionRegistry;
+use Wikimedia\LanguageData\LanguageUtil;
 
 class LanguageNameIndexer extends Maintenance {
 	public function __construct() {
@@ -36,9 +37,6 @@ class LanguageNameIndexer extends Maintenance {
 		$extensionRegistry = ExtensionRegistry::getInstance();
 		if ( !$extensionRegistry->isLoaded( 'cldr' ) ) {
 			$this->requireExtension( 'cldr' );
-		}
-		if ( !$extensionRegistry->isLoaded( 'UniversalLanguageSelector' ) ) {
-			$this->requireExtension( 'UniversalLanguageSelector' );
 		}
 	}
 
@@ -50,13 +48,7 @@ class LanguageNameIndexer extends Maintenance {
 
 		$languageNames = [];
 		// Add languages from language-data
-		$ulsLanguages = $this->getLanguageData()[ 'languages' ];
-		foreach ( $ulsLanguages as $languageCode => $languageEntry ) {
-			// Redirect have only one item
-			if ( isset( $languageEntry[ 2 ] ) ) {
-				$languageNames[ 'autonyms' ][ $languageCode ] = $languageEntry[ 2 ];
-			}
-		}
+		$languageNames[ 'autonyms' ] = LanguageUtil::get()->getAutonyms();
 
 		// Languages and their names in different languages from Names.php and the cldr extension
 		// This comes after $ulsLanguages so that for example the als/gsw mixup is using the code
@@ -217,23 +209,6 @@ class LanguageNameIndexer extends Maintenance {
 		$this->output( " - average size is $avg entries\n" );
 
 		$this->generateFile( $buckets );
-	}
-
-	/**
-	 * @return array
-	 */
-	private function getLanguageData() {
-		$file = __DIR__ . '/../extensions/UniversalLanguageSelector/lib/jquery.uls/src/jquery.uls.data.js';
-		$contents = file_get_contents( $file );
-		if ( !preg_match( '/.*\$\.uls\.data\s*=\s*(.*?)\s*}\s*\(\s*jQuery\s*\)/s', $contents, $matches ) ) {
-			throw new LogicException( 'Syntax error in jquery.uls.data.js?' );
-		}
-		$json = $matches[ 1 ];
-		$data = json_decode( $json, true );
-		if ( !$data ) {
-			throw new LogicException( 'json_decode failed. Syntax error in jquery.uls.data.js?' );
-		}
-		return $data;
 	}
 
 	/**

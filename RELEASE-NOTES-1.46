@@ -115,6 +115,7 @@ For notes on 1.45.x and older releases, see HISTORY.
 ==== New external libraries ====
 
 * Added okvpn/clock-lts at 1.0.0 to over-ride lcobucci/clock.
+* Added wikimedia/language-data composer library at v1.1.11.
 * …
 
 ===== New development-only external libraries =====
