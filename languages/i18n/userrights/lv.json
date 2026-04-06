@@ -7,6 +7,7 @@
 			"Nixiéoffset",
 			"Papuass",
 			"Silraks",
+			"Vlad5250",
 			"Yyy"
 		]
 	},
@@ -53,7 +54,7 @@
 	"grouppage-autoconfirmed": "{{ns:project}}:Automātiski apstiprināti dalībnieki",
 	"grouppage-bot": "{{ns:project}}:Boti",
 	"grouppage-sysop": "{{ns:project}}:Administratori",
-	"grouppage-interface-admin": "{{ns:project}}:Interfeisa administratori",
+	"grouppage-interface-admin": "{{ns:project}}:Saskarnes administratori",
 	"grouppage-bureaucrat": "{{ns:project}}:Birokrāti",
 	"grouppage-suppress": "{{ns:project}}:Cenzētāji",
 	"right-read": "Lasīt lapas",
@@ -91,7 +92,8 @@
 	"right-ipblock-exempt": "Apiet IP bloķēšanu, automātisku bloķēšanu un IP apgabalu bloķēšanu",
 	"right-unblockself": "Atbloķēt sevi",
 	"right-protect": "Izmainīt aizsargātās lapas un to aizsardzības līmeni",
-	"right-editprotected": "Labot aizsargātās lapas (bez kaskādes aizsardzības)",
+	"right-editprotected": "Labot aizsargātās lapas ({{int:restriction-level-sysop}})",
+	"right-editsemiprotected": "Labot aizsargātās lapas ({{int:restriction-level-autoconfirmed}})",
 	"right-editcontentmodel": "Labot lapas satura modeli",
 	"right-editinterface": "Labot lietotāja saskarni",
 	"right-editusercss": "Izmainīt citu dalībnieku CSS failus",
