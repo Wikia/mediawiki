@@ -167,7 +167,7 @@ module.exports = exports = defineComponent( {
 		const datetimeStatus = ref( 'default' );
 		const datetimeMessages = ref( {} );
 		const datetimeZone = ref( 'user' );
-		const expiryType = ref( 'preset-duration' );
+		const expiryType = ref( 'indefinite' );
 
 		/*
 		 * Convert a local date to a Date object, implicitly in the UTC time zone.
@@ -219,11 +219,7 @@ module.exports = exports = defineComponent( {
 		function setDurationFromGiven( given ) {
 			const optionsContainsValue = ( opts, v ) => opts.some( ( option ) => option.value === v );
 			if ( mw.util.isInfinity( given ) ) {
-				expiryType.value = 'preset-duration';
-				// Set the "infinite" option that exists.
-				presetDuration.value = presetDurationOptions.find(
-					( option ) => mw.util.isInfinity( option.value )
-				).value;
+				expiryType.value = 'indefinite';
 			} else if ( optionsContainsValue( presetDurationOptions, given ) ) {
 				expiryType.value = 'preset-duration';
 				presetDuration.value = given;
