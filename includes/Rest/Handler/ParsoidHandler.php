@@ -434,7 +434,10 @@ abstract class ParsoidHandler extends Handler {
 		$request = $this->getRequest();
 		$format = $attribs['opts']['format'];
 
-		if ( $format === ParsoidFormatHelper::FORMAT_WIKITEXT ) {
+		if (
+			$format === ParsoidFormatHelper::FORMAT_WIKITEXT ||
+			$format === ParsoidFormatHelper::FORMAT_LINT
+		) {
 			return true;
 		}
 

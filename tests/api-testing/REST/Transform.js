@@ -546,6 +546,28 @@ describe( '/transform/ and related endpoints', () => {
 				.end( done );
 		} );
 
+		it( 'should lint the given wikitext, ignoring accept header', ( done ) => {
+			client.req
+				.post( endpointPrefix + '/v1/transform/wikitext/to/lint' )
+				.set( 'Accept', 'application/json' )
+				.send( {
+					wikitext: {
+						headers: {
+							'content-type': 'text/plain;profile="https://www.mediawiki.org/wiki/Specs/wikitext/1.0.0"'
+						},
+						body: '{|\nhi\n|ho\n|}'
+					}
+				} )
+				.expect( status200 )
+				.expect( ( res ) => {
+					res.body.should.be.instanceof( Array );
+					res.body.length.should.equal( 1 );
+					res.body[ 0 ].type.should.equal( 'fostered' );
+					validateSpec( res );
+				} )
+				.end( done );
+		} );
+
 		it( 'should lint the given revision, transform', ( done ) => {
 			client.req
 				.post( `${ endpointPrefix }/v1/transform/wikitext/to/lint/${ pageEncoded }/${ revid }` )
