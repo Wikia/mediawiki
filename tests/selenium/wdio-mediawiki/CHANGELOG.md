@@ -1,5 +1,10 @@
 # Changelog
 
+## 6.5.1 / 2026-04-07
+
+This bug releas makes sure we log and throw errors if the MediaWiki API returns error in the response JSON.
+* Catch MediaWiki API errors and log (T422457)
+
 ## 6.5.0 / 2026-03-20
 
 In 6.5.0 we changed how we choose hos many parallel tests suites that will run in CI. It wil now use 75%
