@@ -3678,6 +3678,7 @@ $wgAutoloadLocalClasses = [
 	'MediaWiki\\User\\UserEditTracker' => __DIR__ . '/includes/User/UserEditTracker.php',
 	'MediaWiki\\User\\UserFactory' => __DIR__ . '/includes/User/UserFactory.php',
 	'MediaWiki\\User\\UserGroupAssignmentService' => __DIR__ . '/includes/User/UserGroupAssignmentService.php',
+	'MediaWiki\\User\\UserGroupAssignmentServiceBase' => __DIR__ . '/includes/User/UserGroupAssignmentServiceBase.php',
 	'MediaWiki\\User\\UserGroupExpiryJob' => __DIR__ . '/includes/User/UserGroupExpiryJob.php',
 	'MediaWiki\\User\\UserGroupManager' => __DIR__ . '/includes/User/UserGroupManager.php',
 	'MediaWiki\\User\\UserGroupManagerFactory' => __DIR__ . '/includes/User/UserGroupManagerFactory.php',

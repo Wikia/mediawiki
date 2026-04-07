@@ -30,6 +30,7 @@ use Wikimedia\Timestamp\ConvertibleTimestamp;
 
 /**
  * @covers \MediaWiki\User\UserGroupAssignmentService
+ * @covers \MediaWiki\User\UserGroupAssignmentServiceBase
  * @group Database
  */
 class UserGroupAssignmentServiceTest extends MediaWikiIntegrationTestCase {
