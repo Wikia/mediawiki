@@ -6,6 +6,7 @@
 
 namespace MediaWiki\Specials;
 
+use MediaWiki\Deferred\LinksUpdate\LangLinksTable;
 use MediaWiki\HTMLForm\HTMLForm;
 use MediaWiki\Language\LanguageConverterFactory;
 use MediaWiki\Page\LinkBatchFactory;
@@ -107,8 +108,9 @@ class SpecialWithoutInterwiki extends PageQueryPage {
 			],
 			'join_conds' => [ 'langlinks' => [ 'LEFT JOIN', 'll_from = page_id' ] ]
 		];
+
 		if ( $this->prefix ) {
-			$dbr = $this->getDatabaseProvider()->getReplicaDatabase();
+			$dbr = $this->getRecacheDB();
 			$query['conds'][] = $dbr->expr(
 				'page_title',
 				IExpression::LIKE,
@@ -117,6 +119,14 @@ class SpecialWithoutInterwiki extends PageQueryPage {
 		}
 
 		return $query;
+	}
+
+	/** @inheritDoc */
+	protected function getRecacheDB() {
+		return $this->getDatabaseProvider()->getReplicaDatabase(
+			LangLinksTable::VIRTUAL_DOMAIN,
+			'vslow'
+		);
 	}
 
 	/** @inheritDoc */

@@ -2,6 +2,7 @@
 
 namespace MediaWiki\Rest\Handler;
 
+use MediaWiki\Deferred\LinksUpdate\LangLinksTable;
 use MediaWiki\Language\LanguageNameUtils;
 use MediaWiki\Page\ExistingPageRecord;
 use MediaWiki\Page\PageLookup;
@@ -120,7 +121,7 @@ class LanguageLinksHandler extends SimpleHandler {
 
 	private function fetchLinks( int $pageId ): array {
 		$result = [];
-		$res = $this->dbProvider->getReplicaDatabase()->newSelectQueryBuilder()
+		$res = $this->dbProvider->getReplicaDatabase( LangLinksTable::VIRTUAL_DOMAIN )->newSelectQueryBuilder()
 			->select( [ 'll_title', 'll_lang' ] )
 			->from( 'langlinks' )
 			->where( [ 'll_from' => $pageId ] )

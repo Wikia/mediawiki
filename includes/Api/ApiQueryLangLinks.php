@@ -8,6 +8,7 @@
 
 namespace MediaWiki\Api;
 
+use MediaWiki\Deferred\LinksUpdate\LangLinksTable;
 use MediaWiki\Language\Language;
 use MediaWiki\Language\LanguageNameUtils;
 use MediaWiki\MainConfigNames;
@@ -103,6 +104,8 @@ class ApiQueryLangLinks extends ApiQueryBase {
 		}
 
 		$this->addOption( 'LIMIT', $params['limit'] + 1 );
+
+		$this->setVirtualDomain( LangLinksTable::VIRTUAL_DOMAIN );
 		$res = $this->select( __METHOD__ );
 
 		$count = 0;

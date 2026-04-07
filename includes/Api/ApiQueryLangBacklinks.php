@@ -11,6 +11,7 @@
 
 namespace MediaWiki\Api;
 
+use MediaWiki\Deferred\LinksUpdate\LangLinksTable;
 use MediaWiki\Title\Title;
 use Wikimedia\ParamValidator\ParamValidator;
 use Wikimedia\ParamValidator\TypeDef\IntegerDef;
@@ -95,6 +96,7 @@ class ApiQueryLangBacklinks extends ApiQueryGeneratorBase {
 
 		$this->addOption( 'LIMIT', $params['limit'] + 1 );
 
+		$this->setVirtualDomain( LangLinksTable::VIRTUAL_DOMAIN );
 		$res = $this->select( __METHOD__ );
 
 		$pages = [];

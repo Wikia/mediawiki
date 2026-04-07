@@ -7,6 +7,7 @@
 
 namespace MediaWiki\Specials;
 
+use MediaWiki\Deferred\LinksUpdate\LangLinksTable;
 use MediaWiki\Html\Html;
 use MediaWiki\Linker\Linker;
 use MediaWiki\Page\LinkBatchFactory;
@@ -49,27 +50,18 @@ class SpecialMostInterwikis extends QueryPage {
 	/** @inheritDoc */
 	public function getQueryInfo() {
 		return [
-			'tables' => [
-				'langlinks',
-				'page'
-			], 'fields' => [
+			'tables' => [ 'langlinks', 'page' ],
+			'fields' => [
 				'namespace' => 'page_namespace',
 				'title' => 'page_title',
 				'value' => 'COUNT(*)'
-			], 'conds' => [
-				'page_namespace' => $this->namespaceInfo->getContentNamespaces()
-			], 'options' => [
+			],
+			'conds' => [ 'page_namespace' => $this->namespaceInfo->getContentNamespaces() ],
+			'join_conds' => [ 'page' => [ 'LEFT JOIN', 'page_id = ll_from' ] ],
+			'options' => [
 				'HAVING' => 'COUNT(*) > 1',
-				'GROUP BY' => [
-					'page_namespace',
-					'page_title'
-				]
-			], 'join_conds' => [
-				'page' => [
-					'LEFT JOIN',
-					'page_id = ll_from'
-				]
-			]
+				'GROUP BY' => [ 'page_namespace', 'page_title' ]
+			],
 		];
 	}
 
@@ -112,6 +104,14 @@ class SpecialMostInterwikis extends QueryPage {
 		$count = $this->msg( 'ninterwikis' )->numParams( $result->value )->escaped();
 
 		return $this->getLanguage()->specialList( $link, $count );
+	}
+
+	/** @inheritDoc */
+	protected function getRecacheDB() {
+		return $this->getDatabaseProvider()->getReplicaDatabase(
+			LangLinksTable::VIRTUAL_DOMAIN,
+			'vslow'
+		);
 	}
 
 	/** @inheritDoc */
