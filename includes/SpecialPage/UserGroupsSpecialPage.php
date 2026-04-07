@@ -12,6 +12,7 @@ use MediaWiki\HTMLForm\HTMLForm;
 use MediaWiki\Logging\LogEventsList;
 use MediaWiki\Logging\LogPage;
 use MediaWiki\Message\Message;
+use MediaWiki\Status\Status;
 use MediaWiki\Title\Title;
 use MediaWiki\User\UserGroupAssignmentService;
 use MediaWiki\User\UserGroupMembership;
@@ -21,7 +22,6 @@ use OOUI\FieldsetLayout;
 use OOUI\HtmlSnippet;
 use OOUI\LabelWidget;
 use OOUI\PanelLayout;
-use Status;
 
 /**
  * A base class for special pages that allow to view and edit user groups.
@@ -812,6 +812,42 @@ abstract class UserGroupsSpecialPage extends SpecialPage {
 			}
 		} );
 		return $memberships;
+	}
+
+	/**
+	 * When there's an attempt to change user's groups in a way that the performer shouldn't do,
+	 * this function formats the Status result telling what and why happened.
+	 * @param array<string,string> $invalidGroups list of groups that shouldn't be changed, as returned by
+	 *     {@see UserGroupAssignmentServiceBase::validateUserGroups()}
+	 * @param string $targetUserName Name of the target user, for use in {{GENDER:}}
+	 */
+	protected function formatInvalidGroupsStatus( array $invalidGroups, string $targetUserName ): Status {
+		$listItems = '';
+		foreach ( $invalidGroups as $group => $reason ) {
+			$groupName = $this->getLanguage()->getGroupName( $group );
+
+			if ( $reason === 'rights' ) {
+				$reasonMessage = $this->msg( 'userrights-insufficient-rights' );
+			} else {
+				// Use the same message as for annotation next to the group checkbox
+				$customMessageKey = 'userrights-restricted-group-' . $group;
+				$messageKey = $this->msg( $customMessageKey )->exists() ?
+					$customMessageKey :
+					'userrights-restricted-group-warning';
+				$reasonMessage = $this->msg( $messageKey );
+			}
+
+			$message = $this->msg( 'userrights-unable-to-change-row', $groupName, $reasonMessage )->parse();
+			$listItems .= Html::rawElement( 'li', [], $message );
+		}
+
+		$formattedList = Html::rawElement( 'ul', [], $listItems );
+		return Status::newFatal(
+			$this->msg( 'userrights-unable-to-change' )
+				->rawParams( $formattedList )
+				->params( $targetUserName )
+				->numParams( count( $invalidGroups ) )
+		);
 	}
 
 	/**
