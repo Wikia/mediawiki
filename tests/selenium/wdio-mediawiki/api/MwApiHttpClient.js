@@ -56,12 +56,22 @@ export class MwApiHttpClient {
 			// getSetCookie in NodeJS since 18.16.0
 			this.cookies.getCookiesFromHeaders( response.headers.getSetCookie() );
 
+			let data;
 			try {
-				return text ? JSON.parse( text ) : {};
+				data = text ? JSON.parse( text ) : {};
 			} catch ( error ) {
 				console.error( '[API] Failed getting response as JSON:', error.message, text );
 				throw error;
 			}
+
+			if ( data.error ) {
+				const code = data.error.code || 'unknown';
+				const info = data.error.info || JSON.stringify( data.error );
+				console.error( `[API] API Error: ${ code }: ${ info }` );
+				throw new Error( `${ code }: ${ info }` );
+			}
+
+			return data;
 		} catch ( error ) {
 			if ( error.name === 'AbortError' ) {
 				console.error( '[API] Network timeout:', error.message, { url: this.apiUrl } );
