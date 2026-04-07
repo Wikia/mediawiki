@@ -946,6 +946,12 @@ abstract class DatabaseUpdater {
 			return false;
 		}
 
+		if ( !$this->db->tableExists( $table, __METHOD__ ) ) {
+			$this->outputApplied( "...skipping: '$table' table doesn't exist yet.\n" );
+
+			return true;
+		}
+
 		if ( $this->db->fieldExists( $table, $field, __METHOD__ ) ) {
 			return $this->applyPatch( $patch, $fullpath, "Table $table contains $field field. Dropping" );
 		}
@@ -974,6 +980,12 @@ abstract class DatabaseUpdater {
 		$updateMsg = "Dropping $index index from table $table";
 		if ( !$this->checkSchemaAltersAllowed( $updateMsg ) ) {
 			return false;
+		}
+
+		if ( !$this->db->tableExists( $table, __METHOD__ ) ) {
+			$this->outputApplied( "...skipping: '$table' table doesn't exist yet.\n" );
+
+			return true;
 		}
 
 		if ( $this->db->indexExists( $table, $index, __METHOD__ ) ) {
