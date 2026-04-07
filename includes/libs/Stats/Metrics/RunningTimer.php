@@ -33,7 +33,7 @@ class RunningTimer {
 	 * Handle for MetricInterface::setLabel
 	 *
 	 * @see MetricInterface::setLabel
-	 * @return self
+	 * @return $this
 	 */
 	public function setLabel( string $key, string $value ) {
 		$this->workingLabels[$key] = $value;
@@ -44,7 +44,7 @@ class RunningTimer {
 	 * Handle for MetricInterface::setLabels
 	 *
 	 * @see MetricInterface::setLabels
-	 * @return self
+	 * @return $this
 	 */
 	public function setLabels( array $labels ) {
 		$this->workingLabels = $labels;

@@ -111,7 +111,7 @@ class SiteStatsUpdate implements DeferrableUpdate, MergeableUpdate {
 			if ( $delta > 0 ) {
 				$stats->getCounter( 'site_stats_total' )
 					->setLabel( 'engagement', $type )
-					->incrementBy( $delta );
+					->incrementBy( (float)$delta );
 			}
 		}
 
