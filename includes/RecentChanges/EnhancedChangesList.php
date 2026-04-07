@@ -13,6 +13,7 @@ use MediaWiki\Html\TemplateParser;
 use MediaWiki\Logging\LogPage;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Parser\Sanitizer;
+use MediaWiki\RecentChanges\ChangesListQuery\WatchlistLabelCondition;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\SpecialPage\SpecialPage;
 use MediaWiki\Title\Title;
@@ -287,7 +288,16 @@ class EnhancedChangesList extends ChangesList {
 			return '';
 		}
 
-		$labels = $this->getLabels( $block[0], $tableClasses );
+		$labels = $this->getGroupLabels( $block, $tableClasses );
+		if ( $labels === '' ) {
+			foreach ( $block as $i => $rcObj ) {
+				$lineClasses = [];
+				$lineLabels = $this->getLabels( $rcObj, $lineClasses );
+				if ( $lineLabels !== '' ) {
+					$lines[$i]['data'][] = $lineLabels;
+				}
+			}
+		}
 
 		$logText = $this->getLogText( $block, [], $allLogs,
 			$collectedRcFlags['newpage'], $namehidden
@@ -489,6 +499,31 @@ class EnhancedChangesList extends ChangesList {
 		$lineParams['data'] = array_values( $data );
 
 		return $lineParams;
+	}
+
+	/**
+	 * @param RCCacheEntry[] $block
+	 * @param string[] &$classes
+	 * @return string
+	 */
+	protected function getGroupLabels( array $block, array &$classes ): string {
+		if ( !$block ) {
+			return '';
+		}
+
+		$firstLabelIds = (string)( $block[0]->mAttribs[WatchlistLabelCondition::LABEL_IDS] ?? '' );
+		if ( $firstLabelIds === '' ) {
+			return '';
+		}
+
+		foreach ( $block as $rcObj ) {
+			$labelIds = (string)( $rcObj->mAttribs[WatchlistLabelCondition::LABEL_IDS] ?? '' );
+			if ( $labelIds !== $firstLabelIds ) {
+				return '';
+			}
+		}
+
+		return $this->getLabels( $block[0], $classes );
 	}
 
 	/**

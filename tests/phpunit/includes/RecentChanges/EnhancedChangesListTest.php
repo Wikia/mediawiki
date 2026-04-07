@@ -234,6 +234,113 @@ class EnhancedChangesListTest extends MediaWikiLangTestCase {
 		$this->assertStringNotContainsString( 'mw-changeslist-watchlistlabels', $html );
 	}
 
+	public function testGroupedLogLineShowsLabelsWhenIdentical(): void {
+		$this->overrideConfigValue( MainConfigNames::EnableWatchlistLabels, true );
+
+		$enhancedChangesList = $this->newEnhancedChangesList();
+		$user = $this->getMutableTestUser()->getUser();
+		$enhancedChangesList->setUserLabels( [
+			1 => new WatchlistLabel( $user, '1', 1 ),
+		] );
+
+		$enhancedChangesList->beginRecentChangesList();
+
+		$recentChange1 = $this->getLogChange( '20131103092153', 'User:Title1' );
+		$recentChange1->mAttribs[WatchlistLabelCondition::LABEL_IDS] = '1';
+		$enhancedChangesList->recentChangesLine( $recentChange1, false );
+
+		$recentChange2 = $this->getLogChange( '20131103092253', 'User:Title2' );
+		$recentChange2->mAttribs[WatchlistLabelCondition::LABEL_IDS] = '1';
+		$enhancedChangesList->recentChangesLine( $recentChange2, false );
+
+		$html = $enhancedChangesList->endRecentChangesList();
+
+		preg_match_all( '/mw-changeslist-watchlistlabels/', $html, $matches );
+		$this->assertCount( 1, $matches[0] );
+	}
+
+	public function testGroupedLineShowsDistinctLabelsOnEachNestedLine(): void {
+		$this->overrideConfigValue( MainConfigNames::EnableWatchlistLabels, true );
+
+		$enhancedChangesList = $this->newEnhancedChangesList();
+		$user = $this->getMutableTestUser()->getUser();
+		$enhancedChangesList->setUserLabels( [
+			1 => new WatchlistLabel( $user, '1', 1 ),
+			2 => new WatchlistLabel( $user, '2', 2 ),
+		] );
+
+		$enhancedChangesList->beginRecentChangesList();
+
+		$recentChange1 = $this->getEditChange( '20131103092153', 'Cat' );
+		$recentChange1->mAttribs[WatchlistLabelCondition::LABEL_IDS] = '1';
+		$enhancedChangesList->recentChangesLine( $recentChange1, false );
+
+		$recentChange2 = $this->getEditChange( '20131103092253', 'Cat' );
+		$recentChange2->mAttribs[WatchlistLabelCondition::LABEL_IDS] = '2';
+		$enhancedChangesList->recentChangesLine( $recentChange2, false );
+
+		$html = $enhancedChangesList->endRecentChangesList();
+
+		preg_match_all( '/mw-changeslist-watchlistlabels/', $html, $matches );
+		$this->assertCount( 2, $matches[0] );
+	}
+
+	public function testGroupedLogLineShowsDistinctLabelsOnEachNestedLine(): void {
+		$this->overrideConfigValue( MainConfigNames::EnableWatchlistLabels, true );
+
+		$enhancedChangesList = $this->newEnhancedChangesList();
+		$user = $this->getMutableTestUser()->getUser();
+		$enhancedChangesList->setUserLabels( [
+			1 => new WatchlistLabel( $user, '1', 1 ),
+			2 => new WatchlistLabel( $user, '2', 2 ),
+		] );
+
+		$enhancedChangesList->beginRecentChangesList();
+
+		$recentChange1 = $this->getLogChange( '20131103092153', 'User:Title1' );
+		$recentChange1->mAttribs[WatchlistLabelCondition::LABEL_IDS] = '1';
+		$enhancedChangesList->recentChangesLine( $recentChange1, false );
+
+		$recentChange2 = $this->getLogChange( '20131103092253', 'User:Title2' );
+		$recentChange2->mAttribs[WatchlistLabelCondition::LABEL_IDS] = '2';
+		$enhancedChangesList->recentChangesLine( $recentChange2, false );
+
+		$html = $enhancedChangesList->endRecentChangesList();
+
+		preg_match_all( '/mw-changeslist-watchlistlabels/', $html, $matches );
+		$this->assertCount( 2, $matches[0] );
+	}
+
+	public function testGroupedLineWithDistinctLabelsOnlyRunsModifyLineDataHookOncePerLine(): void {
+		$this->overrideConfigValue( MainConfigNames::EnableWatchlistLabels, true );
+
+		$enhancedChangesList = $this->newEnhancedChangesList();
+		$user = $this->getMutableTestUser()->getUser();
+		$enhancedChangesList->setUserLabels( [
+			1 => new WatchlistLabel( $user, '1', 1 ),
+			2 => new WatchlistLabel( $user, '2', 2 ),
+		] );
+
+		$hookCallCount = 0;
+		$this->setTemporaryHook( 'EnhancedChangesListModifyLineData', static function () use ( &$hookCallCount ) {
+			$hookCallCount++;
+		} );
+
+		$enhancedChangesList->beginRecentChangesList();
+
+		$recentChange1 = $this->getEditChange( '20131103092153', 'Cat' );
+		$recentChange1->mAttribs[WatchlistLabelCondition::LABEL_IDS] = '1';
+		$enhancedChangesList->recentChangesLine( $recentChange1, false );
+
+		$recentChange2 = $this->getEditChange( '20131103092253', 'Cat' );
+		$recentChange2->mAttribs[WatchlistLabelCondition::LABEL_IDS] = '2';
+		$enhancedChangesList->recentChangesLine( $recentChange2, false );
+
+		$enhancedChangesList->endRecentChangesList();
+
+		$this->assertSame( 2, $hookCallCount );
+	}
+
 	/**
 	 * @return EnhancedChangesList
 	 */
@@ -258,10 +365,10 @@ class EnhancedChangesListTest extends MediaWikiLangTestCase {
 		return $recentChange;
 	}
 
-	private function getLogChange() {
+	private function getLogChange( $timestamp = '20131103092153', $pageTitle = 'Title' ) {
 		$user = $this->getMutableTestUser()->getUser();
 		$recentChange = $this->testRecentChangesHelper->makeLogRecentChange( 'foo', 'bar', $user,
-			'Title', '20131103092153', 0, 0
+			$pageTitle, $timestamp, 0, 0
 		);
 
 		return $recentChange;
