@@ -313,6 +313,7 @@
 	"listgrouprights-restrictedgroups-memberconditions": "Условия для участников:",
 	"listgrouprights-restrictedgroups-updaterconditions": "Условия на членство в этой группе участников:",
 	"listgrouprights-restrictedgroups-cond-editcount": "Участник сделал как минимум $1 {{PLURAL:$1|правку|правки|правок}}",
+	"listgrouprights-restrictedgroups-cond-emailconfirmed": "Участник подтвердил свой адрес электронной почты",
 	"listgrouprights-restrictedgroups-cond-ingroups": "Участник является членом {{PLURAL:$1|группы|всех групп}}: $2",
 	"listgrouprights-restrictedgroups-cond-isip": "Участник использует IP-адрес: $1",
 	"listgrouprights-restrictedgroups-cond-ipinrange": "Участник использует IP-адрес, находящийся в диапазоне: $1",
