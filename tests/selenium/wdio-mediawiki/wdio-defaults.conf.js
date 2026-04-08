@@ -160,7 +160,7 @@ export const config = {
 	onPrepare: function ( wdioConfig, capabilities ) {
 		console.log( `Run test targeting ${ wdioConfig.baseUrl }` );
 		logSystemInformation();
-		console.log( `[Configuration] maxInstances ${ wdioConfig.maxInstances } (max tests running in parallel) ` );
+		console.log( `[Configuration] maxInstances ${ wdioConfig.maxInstances } (max test suites running in parallel) ` );
 
 		const { maxInstances, useBrowserHeadless, recordVideo } = wdioConfig;
 
