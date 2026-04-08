@@ -83,6 +83,8 @@ class UserRequirementsConditionCheckerFactory {
 	 * The custom evaluators passed to this method are invoked before any default ones,
 	 * in the same order as provided. If no custom evaluator handles the condition, it will
 	 * be processed as usual.
+	 *
+	 * @since 1.46
 	 */
 	public function getCheckerWithCustomConditions(
 		UserGroupManager $userGroupManager,
