@@ -24,7 +24,9 @@ class LanguageSelectWidget {
 	 *   - array|null $config['languages'] Array of language codes to language names.
 	 *     If null, JavaScript will use default supported languages.
 	 *   - string $config['name'] Name attribute for form submission
-	 *   - string $config['value'] Selected language code
+	 *   - string|array $config['value'] Selected language code
+	 *       string: single select (e.g. "en")
+	 *       array: multi select (e.g. ["en", "de"])
 	 *   - string $config['id'] ID attribute for the select element
 	 *   - bool $config['disabled'] Whether the select is disabled
 	 *   - bool $config['required'] Whether the select is required

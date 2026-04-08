@@ -101,6 +101,12 @@ class HTMLSelectLanguageField extends HTMLSelectField {
 		$isMultiple = $this->mParams['multiple'] ?? false;
 		$defaultValue = $isMultiple ? [] : null;
 
+		// HTMLForm stores values as strings by default.
+		// For multi-select, convert the string back to an array for the widget.
+		if ( $isMultiple && is_string( $value ) ) {
+			$value = $value === '' ? [] : array_map( 'trim', explode( ',', $value ) );
+		}
+
 		$widget = new LanguageSelectWidget( [
 			'languages' => $this->languages,
 			'name' => $this->mName,
