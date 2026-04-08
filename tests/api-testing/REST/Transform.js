@@ -961,6 +961,22 @@ describe( '/transform/ and related endpoints', () => {
 				.end( done );
 		} );
 
+		it( 'should respect body parameter in wikitext->html (title, body_only)', ( done ) => {
+			client.req
+				.post( `${ endpointPrefix }/v1/transform/wikitext/to/html/${ pageEncoded }` )
+				.send( {
+					wikitext: null,
+					body_only: 1
+				} )
+				.expect( validHtmlResponse() )
+				.expect( ( res ) => {
+					// v3 only returns children of <body>
+					res.text.should.not.match( /<body/ );
+					res.text.should.match( /<p/ );
+				} )
+				.end( done );
+		} );
+
 		// Support for transforming from/to pagebundle is disabled in production.
 		it.skip( 'should respect body parameter in wikitext->pagebundle requests (body_only)', ( done ) => {
 			client.req

@@ -1908,6 +1908,20 @@ class ParsoidHandlerTest extends MediaWikiIntegrationTestCase {
 			$htmlHeaders
 		];
 
+		$attribs = [
+			'oldid' => 1, // will be replaced by a real revision id
+			'body_only' => true
+		];
+		$expectedText = [ '>First Revision Content<' ];
+		$unexpectedText = [ '<html' ];
+		yield 'should get from a title and revision (html, body_only)' => [
+			$attribs,
+			null,
+			$expectedText,
+			$unexpectedText,
+			$htmlHeaders
+		];
+
 		// should get from a title and revision (pagebundle) ///////////////////////////////////
 		$expectedText = [ // bits of json
 			'"body":"<!DOCTYPE html>',

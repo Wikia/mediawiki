@@ -855,9 +855,8 @@ class HtmlOutputRendererHelper implements HtmlOutputHelper {
 		// If we have a revision and the ID is 0 or null, then it's a fake revision
 		// representing a preview.
 		$parsoidOptions = $this->parsoidOptions;
-		// NOTE: VisualEditor would set this flavor when transforming from Wikitext to HTML
-		//       for the purpose of editing when doing parsefragment (in body only mode).
-		if ( $this->flavor === 'fragment' || $this->getRevisionId() === null ) {
+
+		if ( $this->getRevisionId() === null ) {
 			$this->isCacheable = false;
 		}
 
@@ -941,24 +940,22 @@ class HtmlOutputRendererHelper implements HtmlOutputHelper {
 			} catch ( ResourceLimitExceededException $e ) {
 				$status = Status::newFatal( 'parsoid-resource-limit-exceeded', $e->getMessage() );
 			}
-			Assert::invariant( $status->isOK() ? $status->getValue()->getRenderId() !== null : true, "no render id" );
 		} else {
 			'@phan-var RevisionRecord $revision';
 			$status = $this->parseUncacheable( $revision );
-
-			if ( $status->isOK() && $this->flavor === 'fragment' ) {
-				// Unwrap sections and return body_only content
-				// NOTE: This introduces an extra html -> dom -> html roundtrip
-				// This will get addressed once HtmlHolder work is complete
-				$parserOutput = $status->getValue();
-				$body = $parserOutput->getContentHolder()->getAsDom(
-					ContentHolder::BODY_FRAGMENT
-				);
-				$this->stripParsoidSectionTags( $body );
-			}
-			Assert::invariant( $status->isOK() ? $status->getValue()->getRenderId() !== null : true, "no render id" );
 		}
-
+		if ( $status->isOK() && $this->flavor === 'fragment' ) {
+			// Unwrap sections and return body_only content
+			// NOTE: This introduces an extra html -> dom -> html roundtrip
+			// This will get addressed once HtmlHolder work is complete
+			$parserOutput = $status->getValue();
+			$body = $parserOutput->getContentHolder()->getAsDom(
+				ContentHolder::BODY_FRAGMENT
+			);
+			'@phan-var DocumentFragment $body';
+			$this->stripParsoidSectionTags( $body );
+		}
+		Assert::invariant( $status->isOK() ? $status->getValue()->getRenderId() !== null : true, "no render id" );
 		return $status;
 	}
 
