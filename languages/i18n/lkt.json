@@ -339,7 +339,7 @@
 	"accmailtitle": "Iyówiƞkhiya-wičhóiye íȟaƞhaƞ iyéyapi",
 	"newarticle": "(Théča)",
 	"newarticletext": "Héčhena oyúblaye kiŋ le uŋ šni.\nIhakab oyawa kiŋháŋ ($1 wóokiye oyúblaye yawá {{GENDER:|yo|ye|yo/ye}}) oyúblaye kiŋ le yakáǧe kte.\nYačhíŋ šni éhaŋtaŋš, owákhita nith́áwa ogná <strong>hékta</strong> tȟaspúla kaȟníǧa {{GENDER:|yo|ye|yo/ye}}.",
-	"noarticletext": "Oyúblaye kiŋ lel tákuni wičhóiye šni.\nOyúblaye uŋma ektá [[Special:Search/{{PAGENAME}}|čháže kiŋ le oyále]] oyákihi, <span class=\"plainlinks\">[{{fullurl:{{#Special:Log}}|page={{urlencode:{{FULLPAGENAME}}}}}} táku khiyéla owá égnakapi kiŋ wóyale] oyákiyi, na [{{fullurl:{{FULLPAGENAME}}|action=edit}} oyúblaye kiŋ le yakáȟa] oyákihi</span>.",
+	"noarticletext": "Oyúblaye kiŋ lel tákuni wičhóiye šni.\nOyúblaye uŋma ektá [[Special:Search/{{PAGENAME}}|čháže kiŋ le oyále]] oyákihi, <span class=\"plainlinks\">[{{fullurl:{{#Special:Log}}|page={{urlencode:{{FULLPAGENAME}}}}}} táku khiyéla owá égnakapi kiŋ wóyale] oyákiyi, na [{{fullurl:{{FULLPAGENAME}}|action=edit}} oyúblaye kiŋ le yakáǧa] oyákihi</span>.",
 	"noarticletext-nopermission": "Waŋná oyúblaye kiŋ le háeče.\nOyúblaye uŋmá kiŋ el [[Special:Search/{{PAGENAME}}|oyúblaye čhaze kiŋ le oyále]] oyákihi, naíŋš <span class=\"plainlinks\">[{{fullurl:{{#Special:Log}}|page={{urlencode:{{FULLPAGENAME}}}}}} táku owá khiyéla éyagnaka]</span> oyakihi, tkȟa oyúblaye kiŋ le yakáǧa iyówiŋničhiyapi šni.",
 	"userpage-userdoesnotexist-view": "Wiki kiƞ le lel čhažé-oyáŋke \"$1\" čhažé oígwapi šni.",
 	"blocked-notice-list-link": "Wóanapte čhašówapi kiƞ waŋyáŋka {{GENDER:|yo|ye|yo/ye}}",

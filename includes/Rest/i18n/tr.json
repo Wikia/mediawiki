@@ -57,5 +57,5 @@
 	"rest-transform-missing-html": "Herhangi bir html verilmedi.",
 	"rest-module": "Modül",
 	"rest-module-default": "Varsayılan Modül",
-	"rest-module-content.v1-title": "Sayfa içeriği"
+	"rest-module-content.v1-title": "İçerik API'si"
 }

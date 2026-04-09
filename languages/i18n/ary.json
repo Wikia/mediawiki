@@ -529,6 +529,8 @@
 	"rev-deleted-event": "(تفاصيل السجل تحييدات)",
 	"rev-deleted-user-contribs": "[سميت لخدايمي ولا لادريسة د لأيپي تزولو - التعديل ماكايبانش ف لمساهمات]",
 	"rev-deleted-text-permission": "<strong>تحيدات</strong> لمراجعة د هاد الصفحة.\nتقدر تلقا التفاصيل ف [{{fullurl:{{#Special:Log}}/delete|page=$1}} سجل الحذف].",
+	"rev-deleted-unhide-diff": "راه وحدة من الجوج ڤيرسيونات ديال هاد لفرق <strong>تسيپريمات</strong>.\nتقدر تلقى التفاصيل ف [{{fullurl:{{#Special:Log}}/delete|page={{urlencode:{{FULLPAGENAME}}}}}} اللوحة ديال التحياد].\nتقدر باقي [$1 تشوف هاد لفرق] يلا بغيتي.",
+	"rev-suppressed-diff-view": "راه وحدة من الجوج ڤيرسيونات ديال هاد لفرق <strong>مخبّية</strong>.\nتقدر تشوف هاد لفرق؛ و تقدر تلقى التفاصيل ف [{{fullurl:{{#Special:Log}}/suppress|page={{urlencode:{{FULLPAGENAME}}}}}} اللوحة ديال التخباع].",
 	"rev-delundel": "وري/خبي",
 	"rev-showdeleted": "وري",
 	"revisiondelete": "حيًد/رجًع لمراجعات",
