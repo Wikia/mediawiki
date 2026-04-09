@@ -1,10 +1,11 @@
 <?php
 declare( strict_types = 1 );
 
-namespace MediaWiki\OutputTransform\Stages;
+namespace MediaWiki\Tests\OutputTransform\Stages;
 
 use MediaWiki\Config\ServiceOptions;
 use MediaWiki\MainConfigNames;
+use MediaWiki\OutputTransform\Stages\ParsoidLocalization;
 use MediaWiki\Parser\ParserOptions;
 use MediaWiki\Parser\Parsoid\PageBundleParserOutputConverter;
 use MediaWiki\Title\Title;
