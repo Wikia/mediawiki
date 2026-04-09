@@ -11,7 +11,6 @@ use LogicException;
 use MediaWiki\Auth\AuthManager;
 use MediaWiki\Auth\TemporaryPasswordAuthenticationRequest;
 use MediaWiki\Config\ServiceOptions;
-use MediaWiki\Context\RequestContext;
 use MediaWiki\Deferred\DeferredUpdates;
 use MediaWiki\Deferred\SendPasswordResetEmailUpdate;
 use MediaWiki\HookContainer\HookContainer;
@@ -271,7 +270,7 @@ class PasswordReset implements LoggerAwareInterface {
 			'requestingUser' => $performingUser->getName(),
 			'targetUsername' => $username,
 			'targetEmail' => $email,
-		] + RequestContext::getMain()->getRequest()->getSecurityLogContext();
+		] + $performingUser->getRequest()->getSecurityLogContext();
 
 		if ( !$result->isGood() ) {
 			$this->logger->info(
