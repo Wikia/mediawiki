@@ -1083,7 +1083,6 @@ class User implements Stringable, Authority, UserIdentity, UserEmailContact {
 			// Other code expects these to be set in the session, so set them.
 			$session->set( 'wsUserID', $this->getId() );
 			$session->set( 'wsUserName', $this->getName() );
-			$session->set( 'wsToken', $this->getToken() );
 
 			return true;
 		}
