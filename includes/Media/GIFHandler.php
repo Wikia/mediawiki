@@ -72,7 +72,7 @@ class GIFHandler extends BitmapHandler {
 	 */
 	public function getCommonMetaArray( File $image ) {
 		$meta = $image->getMetadataArray();
-		if ( !isset( $meta['metadata'] ) ) {
+		if ( !isset( $meta['metadata'] ) || !is_array( $meta['metadata'] ) ) {
 			return [];
 		}
 		unset( $meta['metadata']['_MW_GIF_VERSION'] );
