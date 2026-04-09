@@ -548,7 +548,7 @@ class SkinModule extends FileModule {
 	 * @return string
 	 */
 	private static function makeThumbCalc( int $size ) {
-		return 'calc( ' . $size . 'px * var( --mw-file-upright, 1 ) )';
+		return 'calc( round( ' . $size . 'px * var( --mw-file-upright, 1 ), 10px ) )';
 	}
 
 	public function getPreloadLinks( Context $context ): array {
