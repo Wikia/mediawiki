@@ -70,7 +70,6 @@ class WikiModuleTest extends ResourceLoaderTestCase {
 
 		// Because getPages is protected..
 		$getPages = new ReflectionMethod( $module, 'getPages' );
-		$getPages->setAccessible( true );
 		$out = $getPages->invoke( $module, Context::newDummyContext() );
 		$this->assertSame( $expected, $out );
 	}
@@ -447,11 +446,6 @@ class WikiModuleTest extends ResourceLoaderTestCase {
 			$module->getScript( $context ),
 			'Redirect resolved by getContent'
 		);
-	}
-
-	protected function tearDown(): void {
-		Title::clearCaches();
-		parent::tearDown();
 	}
 }
 

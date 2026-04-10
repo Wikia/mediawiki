@@ -7,7 +7,8 @@
 			"NoiX180",
 			"Salomo Christian Hutajulu",
 			"Simartampua",
-			"Veracious"
+			"Veracious",
+			"SaldırganSincap"
 		]
 	},
 	"sunday": "Akad",
@@ -564,7 +565,7 @@
 	"temp-user-banner-tooltip-title": "Akun samantaro",
 	"temp-user-banner-tooltip-description-expiration-soon": "<strong>Masa berlaku akun sementara Anda akan berakhir pada {{PLURAL:$1|1 hari|$1 hari}}.</strong> Dungdo abis maso ni marlakunai, nungi nabaru akan ibaen ima pas i berikutnai pas ho mangedit tai inda masuk sngape log.",
 	"temp-user-banner-tooltip-description-expiration-soon-day": "<strong>Akun sementara Anda akan habis masa berlakunya dalam waktu kurang dari satu hari.</strong> Dungdo abis maso ni marlakunai, nungi nabaru akan ibaen ima pas i berikutnai pas ho mangedit tai inda masuk sngape log.",
-	"temp-user-banner-tooltip-description-learn-more": "Akun samontara na ibaen dungdo mangedit amu ibaen tai tong inda pake akun i peramban dohot prangkat na onan.[[mw:Help:Temporary_accounts|Pelajari lebih lanjut]].",
+	"temp-user-banner-tooltip-description-learn-more": "Akun samontara na ibaen dungdo mangedit amu ibaen tai tong inda pake akun i peramban dohot prangkat na onan.[[mw:Special:MyLanguage/Help:Temporary_accounts|Pelajari lebih lanjut]].",
 	"temp-user-banner-tooltip-description-login": "[[Special:UserLogin|Masuk log]] sanga [[Special:CreateAccount|baen akun]] tu ikreditkon sude pature i masa depan dot mangakses fitur nalain.",
 	"blankarticle": "<strong>Peringatan:</strong> Alaman na akan ibaen mi inda na marisi sanga aha pe\nPula ho manklik \"$1\" sakali nai, alaman on akan ibaen tai tinda dong dope isi na.",
 	"anoneditwarning": "<strong>Paringatan:</strong> Amu indape masuk. Alamat IP Muyu nangkan tarida sacara publik molo Amu mambaen pangeditan. Molo Amu <strong>[$1 masuk]</strong> sanga <strong>[$2 mambaen akun]</ strong>, hasil pangeditan Muyu nangkan ikaitkon dohot gorar pamake Muyu, rap dohot manfaat lainna.",
@@ -671,7 +672,7 @@
 	"post-expand-template-argument-category": "Alaman dohot argumen templat na i abaion on.",
 	"template-equals-category": "Alaman na manggunaon = ima sabgai templat.",
 	"template-equals-category-desc": "Alaman-alaman na mandung <code><nowiki>{{=}}</nowiki></code> tetapi di wiki ini tidak dikembangkan menjadi <code>=</code>. Penggunaan ini telah diusangkan; sebuah versi MediaWiki mendatang akan mengimplementasikan <code><nowiki>{{=}}</nowiki></code> sabagai sada fungsi parser.",
-	"template-equals-warning": "<strong>Peringatan:</strong> Halaman ini menggunakan <code><nowiki>{{=}}</nowiki></code> tetapi di wiki ini yang tidak dikembangkan menjadi code>=</code>. Penggunaan ini telah diusangkan; sebuah versi MediaWiki mendatang akan mengimplementasikan <code><nowiki>{{=}}</nowiki></code> sabagai sada fungsi parser.",
+	"template-equals-warning": "<strong>Peringatan:</strong> Halaman ini menggunakan <code><nowiki>{{=}}</nowiki></code> tetapi di wiki ini yang tidak dikembangkan menjadi <code>=</code>. Penggunaan ini telah diusangkan; sebuah versi MediaWiki mendatang akan mengimplementasikan <code><nowiki>{{=}}</nowiki></code> sabagai sada fungsi parser.",
 	"parser-template-loop-warning": "hubungan marulak templat tardeteksi: [[:$1]]",
 	"template-loop-category": "Alaman on dohot templat na merupakan",
 	"template-loop-category-desc": "Alaman on mandung templat malingkar, ima templat na mamio dirinia sandiri sacara pupupaulu.",

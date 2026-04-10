@@ -339,11 +339,10 @@ class Message implements Stringable, MessageSpecifier, Serializable {
 		// Accept old serialization format for compatibility with pre-MessageParam stored values
 		$this->parameters = array_map( static function ( $param ) {
 			if ( is_array( $param ) ) {
-				$codec = MediaWikiServices::getInstance()->getJsonCodec();
 				if ( isset( $param['type'] ) ) {
-					return ListParam::newFromJsonArray( $codec, $param );
+					return ListParam::newFromJsonArray( $param );
 				} else {
-					return ScalarParam::newFromJsonArray( $codec, $param );
+					return ScalarParam::newFromJsonArray( $param );
 				}
 			} else {
 				return $param;
@@ -1469,6 +1468,7 @@ class Message implements Stringable, MessageSpecifier, Serializable {
 			}
 			$msg->isInterface = $this->isInterface;
 			$msg->language = $this->language;
+			$msg->userLangCallback = $this->userLangCallback;
 			$msg->useDatabase = $this->useDatabase;
 			$msg->contextPage = $this->contextPage;
 

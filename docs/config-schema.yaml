@@ -1371,6 +1371,28 @@ config-schema:
             Defines what namespaces thumbnails will be displayed for in Special:Search.
             This is the list of namespaces for which thumbnails (or a placeholder in
             the absence of a thumbnail) will be shown:
+    ThumbnailSteps:
+        default: null
+        type:
+            - array
+            - 'null'
+        description: |-
+            When defined, is an array of image widths used as steps for thumbnail sizes.
+            The thumbnail with smallest step that has larger value than requested will be shown
+            but it will be downsized via HTML values.
+            It increases the bandwidth to the users by serving slightly large thumbnail sizes they
+            have requested but it will save resources by de-duplicating thumbnail generation and storage.
+            Note that these steps are "best effort" and MediaWiki might decide to use the requested size
+            for any reason.
+    ThumbnailStepsRatio:
+        default: null
+        type:
+            - number
+            - 'null'
+        description: |-
+            Ratio of images that will use the thumbnail steps
+            This is to allow for gradual roll out of thumbnail steps. It should be a number between 0 and 1.
+            The precision of this value is up to 0.001, anything below that will be ignored.
     ThumbnailBuckets:
         default: null
         type:
@@ -4525,7 +4547,7 @@ config-schema:
             @since 1.36
     ReauthenticateTime:
         default:
-            default: 300
+            default: 3600
         type: object
         additionalProperties:
             type: integer
@@ -5905,6 +5927,12 @@ config-schema:
             This should be set in LocalSettings.php, otherwise $wgSecretKey will
             be used.
             @since 1.27
+    EnableUnsafeXsltOption:
+        default: false
+        description: |-
+            Enable the deprecated xslt option in the Action API.
+            This is unsafe and allows users with the editinterface right to perform XSS.
+            @see https://phabricator.wikimedia.org/T401995
     CookieExpiration:
         default: 2592000
         description: 'Default cookie lifetime, in seconds. Setting to 0 makes all cookies session-only.'
@@ -7754,26 +7782,6 @@ config-schema:
         description: |-
             Additional REST API Route files.
             A common usage is to enable development/experimental endpoints only on test wikis.
-    RestSandboxSpecs:
-        default: {  }
-        type: object
-        additionalProperties:
-            type: object
-            properties: { url: { type: string, format: url }, name: { type: string }, msg: { type: string, description: 'a message key' } }
-            required: [url]
-        description: |-
-            A list of OpenAPI specs to be made available for exploration on
-            Special:RestSandbox. If none are given, Special:RestSandbox is disabled.
-            This is an associative array, arbitrary spec IDs to spec descriptions.
-            Each spec description is an array with the following keys:
-            - url: the URL that will return the OpenAPI spec.
-            - name: the name of the API, to be shown on Special:RestSandbox.
-              Ignored if msg is given.
-            - msg: a message key for the name of the API, to be shown on
-              Special:RestSandbox.
-            @unstable Introduced in 1.43. We may want to rename or change this to
-            accommodate the need to list external APIs in a central discovery
-            document.
     MaxShellMemory:
         default: 307200
         description: 'Maximum amount of virtual memory available to shell processes under linux, in KiB.'
@@ -8037,7 +8045,7 @@ config-schema:
             For details about what data is sent, see: https://www.mediawiki.org/wiki/Manual:$wgPingback
             For the pingback privacy policy, see:
             https://wikimediafoundation.org/wiki/MediaWiki_Pingback_Privacy_Statement
-            Aggregate pingback data is available at: https://pingback.wmflabs.org/
+            Aggregate pingback data is available at: https://pingback.wmcloud.org/
             @since 1.28
     OriginTrials:
         default: []

@@ -1969,9 +1969,9 @@ class User implements Stringable, Authority, UserIdentity, UserEmailContact {
 
 		$emailAuthentication = $config->get( MainConfigNames::EmailAuthentication );
 
-		if ( $emailAuthentication && $type === 'changed' ) {
+		if ( $emailAuthentication && $type === 'changed' && $this->isEmailConfirmed() ) {
 			// Send the user an email notifying the user of the change in registered
-			// email address on their previous email address
+			// email address on their previous verified email address
 			$change = $str != '' ? 'changed' : 'removed';
 			$notificationResult = $this->sendMail(
 				wfMessage( 'notificationemail_subject_' . $change )->text(),
@@ -2089,7 +2089,7 @@ class User implements Stringable, Authority, UserIdentity, UserEmailContact {
 			global $wgLang;
 			$userOptionsLookup = MediaWikiServices::getInstance()
 				->getUserOptionsLookup();
-			$value = $userOptionsLookup->getOption( $this, 'date' );
+			$value = $userOptionsLookup->getOption( $this, 'date' ) ?? 'default';
 			$map = $wgLang->getDatePreferenceMigrationMap();
 			if ( isset( $map[$value] ) ) {
 				$value = $map[$value];
