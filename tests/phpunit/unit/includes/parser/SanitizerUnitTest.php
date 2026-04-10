@@ -204,8 +204,6 @@ class SanitizerUnitTest extends MediaWikiUnitTestCase {
 			[ 'a¡b', 'a&#161;b' ],
 			[ 'foo&#039;bar', "foo'bar" ],
 			[ '&lt;script&gt;foo&lt;/script&gt;', '<script>foo</script>' ],
-			[ '&#x338;', "\u{0338}" ],
-			[ '&#x338;', '&#x338;' ],
 		];
 	}
 

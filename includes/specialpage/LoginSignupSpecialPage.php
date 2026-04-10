@@ -1270,21 +1270,16 @@ abstract class LoginSignupSpecialPage extends AuthManagerSpecialPage {
 	 * @return string
 	 */
 	protected function makeLanguageSelectorLink( $text, $lang ) {
-		$services = MediaWikiServices::getInstance();
-
-		if ( $this->getLanguage()->getCode() == $lang
-			|| !$services->getLanguageNameUtils()->isValidCode( $lang )
-		) {
+		if ( $this->getLanguage()->getCode() == $lang ) {
 			// no link for currently used language
-			// or invalid language code
 			return htmlspecialchars( $text );
 		}
-
 		$query = $this->getPreservedParams();
 		$query['uselang'] = $lang;
 
 		$attr = [];
-		$targetLanguage = $services->getLanguageFactory()->getLanguage( $lang );
+		$targetLanguage = MediaWikiServices::getInstance()->getLanguageFactory()
+			->getLanguage( $lang );
 		$attr['lang'] = $attr['hreflang'] = $targetLanguage->getHtmlCode();
 		$attr['class'] = 'mw-authentication-popup-link';
 

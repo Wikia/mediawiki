@@ -138,13 +138,16 @@ class SiteStatsUpdate implements DeferrableUpdate, MergeableUpdate {
 					$delta = (int)$deltaByType[$type];
 					$initValues[$field] = $delta;
 					if ( $delta > 0 ) {
-						$set[$field] = new RawSQLValue( $dbw->addIdentifierQuotes( $field ) . '+' . abs( $delta ) );
+						$set[$field] = new RawSQLValue( $dbw->buildGreatest(
+							[ $field => $dbw->addIdentifierQuotes( $field ) . '+' . abs( $delta ) ],
+							0
+						) );
 					} elseif ( $delta < 0 ) {
 						$hasNegativeDelta = true;
 						$set[$field] = new RawSQLValue( $dbw->buildGreatest(
-							[ 'new' => $dbw->addIdentifierQuotes( $field ) ],
-							abs( $delta )
-						) . '-' . abs( $delta ) );
+							[ 'new' => $dbw->addIdentifierQuotes( $field ) . '-' . abs( $delta ) ],
+							0
+						) );
 					}
 				}
 

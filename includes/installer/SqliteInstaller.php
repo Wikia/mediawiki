@@ -157,9 +157,7 @@ class SqliteInstaller extends DatabaseInstaller {
 			}
 		}
 		# Put a .htaccess file in case the user didn't take our advice
-		file_put_contents( "$dir/.htaccess",
-			"Require all denied\n" .
-			"Satisfy All\n" );
+		file_put_contents( "$dir/.htaccess", "Require all denied\n" );
 		return Status::newGood();
 	}
 
