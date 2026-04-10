@@ -44,9 +44,11 @@ abstract class BaseTemplate extends QuickTemplate {
 	}
 
 	/**
+	 * @deprecated 1.46 call $this->getSkin()->getPersonalToolsForMakeListItem instead
 	 * @return array
 	 */
 	public function getPersonalTools() {
+		wfDeprecated( __METHOD__, 'Call $this->getSkin()->getPersonalToolsForMakeListItem instead (T422975)', '1.46' );
 		return $this->getSkin()->getPersonalToolsForMakeListItem( $this->get( 'personal_urls' ) );
 	}
 
