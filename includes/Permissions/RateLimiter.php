@@ -210,8 +210,7 @@ class RateLimiter {
 
 		$conds = $this->getConditions( $action );
 		$limiter = $this->wrstatsFactory->createRateLimiter( $conds, [ 'limiter', $action ] );
-		$peekMode = $incrBy === 0;
-		$limitBatch = $limiter->createBatch( $incrBy ?: 1 );
+		$limitBatch = $limiter->createBatch( $incrBy );
 		$this->logger->debug( __METHOD__ . ": limiting $action rate for {$user->getName()}" );
 
 		$id = $user->getId();
@@ -312,7 +311,7 @@ class RateLimiter {
 			'ip' => $ip,
 		];
 
-		$batchResult = $peekMode ? $limitBatch->peek() : $limitBatch->tryIncr();
+		$batchResult = $limitBatch->tryIncr();
 		foreach ( $batchResult->getFailedResults() as $type => $result ) {
 			$this->logger->info(
 				'User::pingLimiter: User tripped rate limit',

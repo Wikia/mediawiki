@@ -425,7 +425,7 @@
 	"deletecomment": "Ayiiro:",
 	"rollback-confirmation-no": "Kwaltǝ",
 	"rollbacklink": "Ngaworo walta",
-	"rollbacklinkcount": "ngawone $1 {{PLURAL:$1|yasa|yasa}}",
+	"rollbacklinkcount": "Ngawone $1 {{PLURAL:$1|edit|edits}}",
 	"changecontentmodel-reason-label": "Ayiiro:",
 	"protectcomment": "Ayiiro:",
 	"protect-default": "Faidatema samma kwalte",
