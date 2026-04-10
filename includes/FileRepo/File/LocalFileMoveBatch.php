@@ -394,26 +394,28 @@ class LocalFileMoveBatch {
 				->where( [ 'file_id' => $this->file->getFileIdFromName() ] )
 				->caller( __METHOD__ )->execute();
 		}
-		// Update current image
-		$dbw->newUpdateQueryBuilder()
-			->update( 'image' )
-			->set( [ 'img_name' => $this->newName ] )
-			->where( [ 'img_name' => $this->oldName ] )
-			->caller( __METHOD__ )->execute();
+		if ( $migrationStage & SCHEMA_COMPAT_WRITE_OLD ) {
+			// Update current image
+			$dbw->newUpdateQueryBuilder()
+				->update( 'image' )
+				->set( [ 'img_name' => $this->newName ] )
+				->where( [ 'img_name' => $this->oldName ] )
+				->caller( __METHOD__ )->execute();
 
-		// Update old images
-		$dbw->newUpdateQueryBuilder()
-			->update( 'oldimage' )
-			->set( [
-				'oi_name' => $this->newName,
-				'oi_archive_name' => new RawSQLValue( $dbw->strreplace(
-					'oi_archive_name',
-					$dbw->addQuotes( $this->oldName ),
-					$dbw->addQuotes( $this->newName )
-				) ),
-			] )
-			->where( [ 'oi_name' => $this->oldName ] )
-			->caller( __METHOD__ )->execute();
+			// Update old images
+			$dbw->newUpdateQueryBuilder()
+				->update( 'oldimage' )
+				->set( [
+					'oi_name' => $this->newName,
+					'oi_archive_name' => new RawSQLValue( $dbw->strreplace(
+						'oi_archive_name',
+						$dbw->addQuotes( $this->oldName ),
+						$dbw->addQuotes( $this->newName )
+					) ),
+				] )
+				->where( [ 'oi_name' => $this->oldName ] )
+				->caller( __METHOD__ )->execute();
+		}
 	}
 
 	/**

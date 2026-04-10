@@ -303,28 +303,30 @@ class OldLocalFile extends LocalFile {
 		$metadata = $this->getMetadataForDb( $dbw );
 
 		wfDebug( __METHOD__ . ': upgrading ' . $this->archive_name . " to the current schema" );
-		$dbw->newUpdateQueryBuilder()
-			->update( 'oldimage' )
-			->set( [
-				'oi_size' => $this->size,
-				'oi_width' => $this->width,
-				'oi_height' => $this->height,
-				'oi_bits' => $this->bits,
-				'oi_media_type' => $this->media_type,
-				'oi_major_mime' => $major,
-				'oi_minor_mime' => $minor,
-				'oi_metadata' => $metadata,
-				'oi_sha1' => $this->sha1,
-			] )
-			->where( [
-				'oi_name' => $this->getName(),
-				'oi_archive_name' => $this->archive_name,
-			] )
-			->caller( __METHOD__ )->execute();
-
 		$migrationStage = MediaWikiServices::getInstance()->getMainConfig()->get(
 			MainConfigNames::FileSchemaMigrationStage
 		);
+		if ( $migrationStage & SCHEMA_COMPAT_WRITE_OLD ) {
+			$dbw->newUpdateQueryBuilder()
+				->update( 'oldimage' )
+				->set( [
+					'oi_size' => $this->size,
+					'oi_width' => $this->width,
+					'oi_height' => $this->height,
+					'oi_bits' => $this->bits,
+					'oi_media_type' => $this->media_type,
+					'oi_major_mime' => $major,
+					'oi_minor_mime' => $minor,
+					'oi_metadata' => $metadata,
+					'oi_sha1' => $this->sha1,
+				] )
+				->where( [
+					'oi_name' => $this->getName(),
+					'oi_archive_name' => $this->archive_name,
+				] )
+				->caller( __METHOD__ )->execute();
+		}
+
 		if ( $migrationStage & SCHEMA_COMPAT_WRITE_NEW ) {
 			$dbw->newUpdateQueryBuilder()
 				->update( 'filerevision' )
@@ -440,28 +442,30 @@ class OldLocalFile extends LocalFile {
 			->insert( $dbw, 'oi_description', $comment );
 		$actorId = $services->getActorNormalization()
 			->acquireActorId( $user, $dbw );
-		$dbw->newInsertQueryBuilder()
-			->insertInto( 'oldimage' )
-			->row( [
-				'oi_name' => $this->getName(),
-				'oi_archive_name' => $archiveName,
-				'oi_size' => $props['size'],
-				'oi_width' => intval( $props['width'] ),
-				'oi_height' => intval( $props['height'] ),
-				'oi_bits' => $props['bits'],
-				'oi_actor' => $actorId,
-				'oi_timestamp' => $dbw->timestamp( $timestamp ),
-				'oi_metadata' => $this->getMetadataForDb( $dbw ),
-				'oi_media_type' => $props['media_type'],
-				'oi_major_mime' => $props['major_mime'],
-				'oi_minor_mime' => $props['minor_mime'],
-				'oi_sha1' => $props['sha1'],
-			] + $commentFields )
-			->caller( __METHOD__ )->execute();
-
 		$migrationStage = MediaWikiServices::getInstance()->getMainConfig()->get(
 			MainConfigNames::FileSchemaMigrationStage
 		);
+		if ( $migrationStage & SCHEMA_COMPAT_WRITE_OLD ) {
+			$dbw->newInsertQueryBuilder()
+				->insertInto( 'oldimage' )
+				->row( [
+						'oi_name' => $this->getName(),
+						'oi_archive_name' => $archiveName,
+						'oi_size' => $props['size'],
+						'oi_width' => intval( $props['width'] ),
+						'oi_height' => intval( $props['height'] ),
+						'oi_bits' => $props['bits'],
+						'oi_actor' => $actorId,
+						'oi_timestamp' => $dbw->timestamp( $timestamp ),
+						'oi_metadata' => $this->getMetadataForDb( $dbw ),
+						'oi_media_type' => $props['media_type'],
+						'oi_major_mime' => $props['major_mime'],
+						'oi_minor_mime' => $props['minor_mime'],
+						'oi_sha1' => $props['sha1'],
+					] + $commentFields )
+				->caller( __METHOD__ )->execute();
+		}
+
 		if ( $migrationStage & SCHEMA_COMPAT_WRITE_NEW ) {
 			$commentFields = $services->getCommentStore()
 				->insert( $dbw, 'fr_description', $comment );

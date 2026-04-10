@@ -911,22 +911,24 @@ class LocalFile extends File {
 		wfDebug( __METHOD__ . ': upgrading ' . $this->getName() . " to the current schema" );
 
 		$metadata = $this->getMetadataForDb( $dbw );
-		$dbw->newUpdateQueryBuilder()
-			->update( 'image' )
-			->set( [
-				'img_size' => $this->size,
-				'img_width' => $this->width,
-				'img_height' => $this->height,
-				'img_bits' => $this->bits,
-				'img_media_type' => $this->media_type,
-				'img_major_mime' => $major,
-				'img_minor_mime' => $minor,
-				'img_metadata' => $metadata,
-				'img_sha1' => $this->sha1,
-			] )
-			->where( [ 'img_name' => $this->getName() ] )
-			->andWhere( $freshnessCondition )
-			->caller( __METHOD__ )->execute();
+		if ( $this->migrationStage & SCHEMA_COMPAT_WRITE_OLD ) {
+			$dbw->newUpdateQueryBuilder()
+				->update( 'image' )
+				->set( [
+					'img_size' => $this->size,
+					'img_width' => $this->width,
+					'img_height' => $this->height,
+					'img_bits' => $this->bits,
+					'img_media_type' => $this->media_type,
+					'img_major_mime' => $major,
+					'img_minor_mime' => $minor,
+					'img_metadata' => $metadata,
+					'img_sha1' => $this->sha1,
+				] )
+				->where( [ 'img_name' => $this->getName() ] )
+				->andWhere( $freshnessCondition )
+				->caller( __METHOD__ )->execute();
+		}
 
 		if ( $this->migrationStage & SCHEMA_COMPAT_WRITE_NEW ) {
 			$dbw->newUpdateQueryBuilder()
@@ -959,14 +961,16 @@ class LocalFile extends File {
 		}
 		$dbw = $this->repo->getPrimaryDB();
 		$metadata = $this->getMetadataForDb( $dbw );
-		$dbw->newUpdateQueryBuilder()
-			->update( 'image' )
-			->set( [ 'img_metadata' => $metadata ] )
-			->where( [
-				'img_name' => $this->name,
-				'img_timestamp' => $dbw->timestamp( $this->timestamp ),
-			] )
-			->caller( __METHOD__ )->execute();
+		if ( $this->migrationStage & SCHEMA_COMPAT_WRITE_OLD ) {
+			$dbw->newUpdateQueryBuilder()
+				->update( 'image' )
+				->set( [ 'img_metadata' => $metadata ] )
+				->where( [
+					'img_name' => $this->name,
+					'img_timestamp' => $dbw->timestamp( $this->timestamp ),
+				] )
+				->caller( __METHOD__ )->execute();
+		}
 		if ( $this->migrationStage & SCHEMA_COMPAT_WRITE_NEW ) {
 			$dbw->newUpdateQueryBuilder()
 				->update( 'filerevision' )
@@ -2038,33 +2042,35 @@ class LocalFile extends File {
 					->caller( __METHOD__ )->execute();
 			}
 
-			$joins = [];
-			# (T36993) Note: $oldver can be empty here, if the previous
-			# version of the file was broken. Allow registration of the new
-			# version to continue anyway, because that's better than having
-			# an image that's not fixable by user operations.
-			# Collision, this is an update of a file
-			# Insert previous contents into oldimage
-			$dbw->insertSelect( 'oldimage', $tables, $fields,
-				[ 'img_name' => $this->getName() ], __METHOD__, [], [], $joins );
+			if ( $this->migrationStage & SCHEMA_COMPAT_WRITE_OLD ) {
+				$joins = [];
+				// (T36993) Note: $oldver can be empty here, if the previous
+				// version of the file was broken. Allow registration of the new
+				// version to continue anyway, because that's better than having
+				// an image that's not fixable by user operations.
+				// Collision, this is an update of a file
+				// Insert previous contents into oldimage
+				$dbw->insertSelect( 'oldimage', $tables, $fields,
+					[ 'img_name' => $this->getName() ], __METHOD__, [], [], $joins );
 
-			# Update the current image row
-			$dbw->newUpdateQueryBuilder()
-				->update( 'image' )
-				->set( [
-					'img_size' => $this->size,
-					'img_width' => intval( $this->width ),
-					'img_height' => intval( $this->height ),
-					'img_bits' => $this->bits,
-					'img_media_type' => $this->media_type,
-					'img_major_mime' => $this->major_mime,
-					'img_minor_mime' => $this->minor_mime,
-					'img_timestamp' => $dbw->timestamp( $timestamp ),
-					'img_metadata' => $this->getMetadataForDb( $dbw ),
-					'img_sha1' => $this->sha1
-				] + $commentFields + $actorFields )
-				->where( [ 'img_name' => $this->getName() ] )
-				->caller( __METHOD__ )->execute();
+				# Update the current image row
+				$dbw->newUpdateQueryBuilder()
+					->update( 'image' )
+					->set( [
+							'img_size' => $this->size,
+							'img_width' => intval( $this->width ),
+							'img_height' => intval( $this->height ),
+							'img_bits' => $this->bits,
+							'img_media_type' => $this->media_type,
+							'img_major_mime' => $this->major_mime,
+							'img_minor_mime' => $this->minor_mime,
+							'img_timestamp' => $dbw->timestamp( $timestamp ),
+							'img_metadata' => $this->getMetadataForDb( $dbw ),
+							'img_sha1' => $this->sha1
+						] + $commentFields + $actorFields )
+					->where( [ 'img_name' => $this->getName() ] )
+					->caller( __METHOD__ )->execute();
+			}
 		}
 
 		$descTitle = $this->getTitle();

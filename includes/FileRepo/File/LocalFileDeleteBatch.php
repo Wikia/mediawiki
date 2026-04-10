@@ -146,6 +146,7 @@ class LocalFileDeleteBatch {
 
 					if ( $props['fileExists'] ) {
 						// Upgrade the oldimage row
+
 						$dbw->newUpdateQueryBuilder()
 							->update( 'oldimage' )
 							->set( [ 'oi_sha1' => $props['sha1'] ] )
@@ -295,13 +296,15 @@ class LocalFileDeleteBatch {
 		[ $oldRels, $deleteCurrent ] = $this->getOldRels();
 
 		if ( count( $oldRels ) ) {
-			$dbw->newDeleteQueryBuilder()
-				->deleteFrom( 'oldimage' )
-				->where( [
-					'oi_name' => $this->file->getName(),
-					'oi_archive_name' => array_map( 'strval', array_keys( $oldRels ) )
-				] )
-				->caller( __METHOD__ )->execute();
+			if ( $migrationStage & SCHEMA_COMPAT_WRITE_OLD ) {
+				$dbw->newDeleteQueryBuilder()
+					->deleteFrom( 'oldimage' )
+					->where( [
+						'oi_name' => $this->file->getName(),
+						'oi_archive_name' => array_map( 'strval', array_keys( $oldRels ) )
+					] )
+					->caller( __METHOD__ )->execute();
+			}
 			if ( ( $migrationStage & SCHEMA_COMPAT_WRITE_NEW ) && $this->file->getFileIdFromName() ) {
 				$delete = $dbw->newDeleteQueryBuilder()
 					->deleteFrom( 'filerevision' )
@@ -316,10 +319,12 @@ class LocalFileDeleteBatch {
 		}
 
 		if ( $deleteCurrent ) {
-			$dbw->newDeleteQueryBuilder()
-				->deleteFrom( 'image' )
-				->where( [ 'img_name' => $this->file->getName() ] )
-				->caller( __METHOD__ )->execute();
+			if ( $migrationStage & SCHEMA_COMPAT_WRITE_OLD ) {
+				$dbw->newDeleteQueryBuilder()
+					->deleteFrom( 'image' )
+					->where( [ 'img_name' => $this->file->getName() ] )
+					->caller( __METHOD__ )->execute();
+			}
 			if ( ( $migrationStage & SCHEMA_COMPAT_WRITE_NEW ) && $this->file->getFileIdFromName() ) {
 				$dbw->newUpdateQueryBuilder()
 					->update( 'file' )

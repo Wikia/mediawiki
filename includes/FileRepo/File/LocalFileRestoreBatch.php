@@ -340,10 +340,12 @@ class LocalFileRestoreBatch {
 			MainConfigNames::FileSchemaMigrationStage
 		);
 		if ( $insertCurrent ) {
-			$dbw->newInsertQueryBuilder()
-				->insertInto( 'image' )
-				->row( $insertCurrent )
-				->caller( __METHOD__ )->execute();
+			if ( $migrationStage & SCHEMA_COMPAT_WRITE_OLD ) {
+				$dbw->newInsertQueryBuilder()
+					->insertInto( 'image' )
+					->row( $insertCurrent )
+					->caller( __METHOD__ )->execute();
+			}
 			if ( $migrationStage & SCHEMA_COMPAT_WRITE_NEW ) {
 				$dbw->newUpdateQueryBuilder()
 					->update( 'file' )
@@ -353,7 +355,7 @@ class LocalFileRestoreBatch {
 			}
 		}
 
-		if ( $insertBatch ) {
+		if ( $insertBatch && ( $migrationStage & SCHEMA_COMPAT_WRITE_OLD ) ) {
 			$dbw->newInsertQueryBuilder()
 				->insertInto( 'oldimage' )
 				->rows( $insertBatch )
