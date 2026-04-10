@@ -333,6 +333,7 @@ class Names {
 		'liv' => 'Līvõ kēļ', # Livonian
 		'ljp' => 'Lampung Api', # Lampung Api
 		'lki' => 'لەکی', # Laki
+		'lkt' => 'Lakȟótiyapi', # Lakota
 		'lld' => 'Ladin', # Ladin
 		'lmo' => 'lombard', # Lombard - T283423
 		'ln' => 'lingála', # Lingala
