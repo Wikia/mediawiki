@@ -547,7 +547,9 @@ const util = {
 	 * @return {boolean} Whether the subtitle was updated
 	 */
 	addSubtitle: function ( nodeOrHTMLString ) {
+		// Fandom-start: use Fandom subtitle selectors instead of #mw-content-subtitle
 		const subtitle = document.querySelector( '.page-header__page-subtitle, .page-header__subtitle' );
+		// Fandom-end
 		if ( !subtitle ) {
 			return false;
 		}
