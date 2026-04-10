@@ -24,7 +24,8 @@
 			"The Polish",
 			"WTM",
 			"Woytecr",
-			"Wpedzich"
+			"Wpedzich",
+			"Wawrzec"
 		]
 	},
 	"preferences": "Preferencje",
@@ -106,6 +107,7 @@
 	"emailauthenticated": "Twój adres e‐mail został potwierdzony $2 o $3.",
 	"allowemail": "Inni użytkownicy mogą przesyłać do mnie e‐maile",
 	"email-allow-new-users-label": "Zezwól na otrzymywanie e-maili od całkowicie nowych użytkowników",
+	"prefs-help-email-allow-new-users": "Włączenie tej opcji zezwoli użytkownikom niebędącym [[{{MediaWiki:grouppage-autoconfirmed}}|automatycznie zatwierdzonymi]] na wysyłanie ci e-maili.",
 	"tog-ccmeonemails": "Przesyłaj mi kopie wiadomości, które wysyłam do innych użytkowników",
 	"email-mutelist-label": "Zabroń tym użytkownikom kontaktowania się ze mną poprzez e-mail:",
 	"tog-enotifwatchlistpages": "Wyślij do mnie e‐mail, gdy strona lub plik z mojej listy obserwowanych zostaną zmodyfikowane",
@@ -158,7 +160,7 @@
 	"underline-always": "Zawsze",
 	"tog-showhiddencats": "Pokazuj ukryte kategorie",
 	"tog-showrollbackconfirmation": "Wyświetl komunikat potwierdzający kliknięcie linku wycofującego edycje",
-	"tog-forcesafemode": "Zawsze aktywuj [[mw:Manual:Safemode|tryb bezpieczny]]",
+	"tog-forcesafemode": "Zawsze aktywuj [[mw:Special:MyLanguage/Manual:Safemode|tryb bezpieczny]]",
 	"prefs-help-forcesafemode": "Wyłącz skrypty i style na wiki.",
 	"prefs-editing": "Edycja",
 	"prefs-description-editing": "Dostosuj sposób wprowadzania, śledzenia i przeglądania zmian.",

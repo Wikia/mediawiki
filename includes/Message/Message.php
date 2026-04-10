@@ -34,6 +34,7 @@ use MediaWiki\Page\PageReference;
 use MediaWiki\Page\PageReferenceValue;
 use MediaWiki\Parser\Parser;
 use MediaWiki\Parser\ParserOutput;
+use MediaWiki\Parser\Sanitizer;
 use MediaWiki\StubObject\StubUserLang;
 use MediaWiki\Title\Title;
 use RuntimeException;
@@ -338,11 +339,10 @@ class Message implements Stringable, MessageSpecifier, Serializable {
 		// Accept old serialization format for compatibility with pre-MessageParam stored values
 		$this->parameters = array_map( static function ( $param ) {
 			if ( is_array( $param ) ) {
-				$codec = MediaWikiServices::getInstance()->getJsonCodec();
 				if ( isset( $param['type'] ) ) {
-					return ListParam::newFromJsonArray( $codec, $param );
+					return ListParam::newFromJsonArray( $param );
 				} else {
-					return ScalarParam::newFromJsonArray( $codec, $param );
+					return ScalarParam::newFromJsonArray( $param );
 				}
 			} else {
 				return $param;
@@ -1042,7 +1042,7 @@ class Message implements Stringable, MessageSpecifier, Serializable {
 			// '⧼' is used instead of '<' to side-step any
 			// double-escaping issues.
 			// (Keep synchronised with mw.Message#toString in JS.)
-			return '⧼' . htmlspecialchars( $this->key ) . '⧽';
+			return '⧼' . Sanitizer::escapeCombiningChar( htmlspecialchars( $this->key ) ) . '⧽';
 		}
 
 		if ( in_array( $this->getLanguage()->getCode(), [ 'qqx', 'x-xss' ] ) ) {
@@ -1078,6 +1078,7 @@ class Message implements Stringable, MessageSpecifier, Serializable {
 		} elseif ( $format === self::FORMAT_ESCAPED ) {
 			$string = $this->transformText( $string );
 			$string = htmlspecialchars( $string, ENT_QUOTES, 'UTF-8', false );
+			$string = Sanitizer::escapeCombiningChar( $string );
 		}
 
 		# Raw parameter replacement
@@ -1467,6 +1468,7 @@ class Message implements Stringable, MessageSpecifier, Serializable {
 			}
 			$msg->isInterface = $this->isInterface;
 			$msg->language = $this->language;
+			$msg->userLangCallback = $this->userLangCallback;
 			$msg->useDatabase = $this->useDatabase;
 			$msg->contextPage = $this->contextPage;
 
@@ -1591,7 +1593,7 @@ class Message implements Stringable, MessageSpecifier, Serializable {
 			case self::FORMAT_BLOCK_PARSE:
 			case self::FORMAT_ESCAPED:
 			default:
-				return htmlspecialchars( $plaintext, ENT_QUOTES );
+				return Sanitizer::escapeCombiningChar( htmlspecialchars( $plaintext, ENT_QUOTES ) );
 		}
 	}
 

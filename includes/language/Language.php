@@ -36,6 +36,7 @@ use DateTime;
 use DateTimeImmutable;
 use DateTimeZone;
 use InvalidArgumentException;
+use Locale;
 use LocalisationCache;
 use MediaWiki\Config\Config;
 use MediaWiki\Context\RequestContext;
@@ -174,6 +175,12 @@ class Language implements Bcp47Code {
 	 * @var array|null
 	 */
 	private $overrideUcfirstCharacters;
+
+	/**
+	 * @var NumberFormatter|null
+	 * @noVarDump
+	 */
+	private $numberFormatter = null;
 
 	/**
 	 * @since 1.35
@@ -557,7 +564,7 @@ class Language implements Bcp47Code {
 			return false;
 		} else {
 			// Check what is in i18n files
-			$aliases = $this->localisationCache->getItem( $this->mCode, 'namespaceGenderAliases' );
+			$aliases = (array)$this->localisationCache->getItem( $this->mCode, 'namespaceGenderAliases' );
 			return count( $aliases ) > 0;
 		}
 	}
@@ -2578,7 +2585,12 @@ class Language implements Bcp47Code {
 	 * @return string The string with uppercase conversion applied to the first character
 	 */
 	public function ucfirst( $str ) {
-		$octetCode = ord( $str );
+		// T410920: ord() doesn't like an empty string, so just return early
+		if ( $str === '' ) {
+			return '';
+		}
+
+		$octetCode = ord( $str[0] );
 		// See https://en.wikipedia.org/wiki/ASCII#Printable_characters
 		if ( $octetCode < 96 ) {
 			// Assume this is an uppercase/uncased ASCII character
@@ -2624,7 +2636,12 @@ class Language implements Bcp47Code {
 	 * @return string The string with lowercase conversion applied to the first character
 	 */
 	public function lcfirst( $str ) {
-		$octetCode = ord( $str );
+		// T410920: ord() doesn't like an empty string, so just return early
+		if ( $str === '' ) {
+			return '';
+		}
+
+		$octetCode = ord( $str[0] );
 		// See https://en.wikipedia.org/wiki/ASCII#Printable_characters
 		if ( $octetCode < 96 ) {
 			// Assume this is an uppercase/uncased ASCII character
@@ -3124,37 +3141,39 @@ class Language implements Bcp47Code {
 	 * See $separatorTransformTable on MessageIs.php for
 	 * the , => . and . => , implementation.
 	 *
-	 * @param string|int|float $number Expected to be a pre-formatted (e.g. leading zeros, number
-	 *  of decimal places) numeric string. Any non-string will be cast to string.
+	 * @param string|int|float $number The numeric string to be formatted, or integer
+	 *  or a floating point number.
 	 * @return string
 	 */
 	public function formatNum( $number ) {
-		return $this->formatNumInternal( (string)$number, false, false );
+		return $this->formatNumInternal( $number, false, false );
 	}
 
 	/**
 	 * Internal implementation function, shared between formatNum and formatNumNoSeparators.
 	 *
-	 * @param string $number The stringification of a valid PHP number
+	 * @param string|int|float $number Expected to be a pre-formatted (e.g. leading zeros, number
+	 *  of decimal places) numeric string. Any non-string will be cast to string.
 	 * @param bool $noTranslate Whether to translate digits and separators
 	 * @param bool $noSeparators Whether to add separators
 	 * @return string
 	 */
-	private function formatNumInternal(
-		string $number, bool $noTranslate, bool $noSeparators
-	): string {
-		$translateNumerals = $this->config->get( MainConfigNames::TranslateNumerals );
+	private function formatNumInternal( $number, bool $noTranslate, bool $noSeparators ): string {
+		// From PHP 8.5, we can't cast NAN to string, and since the method
+		// accepts float, there's no way to exclude NAN, which is subtype.
+		// So handle it explicitly.
+		$number = is_float( $number ) && is_nan( $number ) ? 'NAN' : (string)$number;
 
 		if ( $number === '' ) {
 			return $number;
 		}
-		if ( $number === (string)NAN ) {
+		if ( $number === 'NAN' ) {
 			return $this->msg( 'formatnum-nan' )->text();
 		}
-		if ( $number === (string)INF ) {
+		if ( $number === 'INF' ) {
 			return "∞";
 		}
-		if ( $number === (string)-INF ) {
+		if ( $number === '-INF' ) {
 			return "\u{2212}∞";
 		}
 		if ( !is_numeric( $number ) ) {
@@ -3177,20 +3196,7 @@ class Language implements Bcp47Code {
 
 		if ( !$noSeparators ) {
 			$separatorTransformTable = $this->separatorTransformTable();
-			$digitGroupingPattern = $this->digitGroupingPattern();
-			$code = $this->getCode();
-			if ( !( $translateNumerals && $this->langNameUtils->isValidCode( $code ) ) ) {
-				$code = 'C'; // POSIX system default locale
-			}
-
-			if ( $digitGroupingPattern ) {
-				$fmt = new NumberFormatter(
-					$code, NumberFormatter::PATTERN_DECIMAL, $digitGroupingPattern
-				);
-			} else {
-				/** @suppress PhanParamTooFew Phan thinks this always requires 3 parameters, that's wrong */
-				$fmt = new NumberFormatter( $code, NumberFormatter::DECIMAL );
-			}
+			$fmt = $this->getNumberFormatter();
 
 			// minimumGroupingDigits can be used to suppress groupings below a certain value.
 			// This is used for languages such as Polish, where one would only write the grouping
@@ -3224,6 +3230,8 @@ class Language implements Bcp47Code {
 				// but it does not know all languages MW
 				// supports. Example: arq. Also, languages like pl have
 				// customisation. So manually set it.
+				$fmt = clone $fmt;
+
 				if ( $noTranslate ) {
 					$fmt->setSymbol(
 						NumberFormatter::DECIMAL_SEPARATOR_SYMBOL,
@@ -3258,7 +3266,7 @@ class Language implements Bcp47Code {
 		}
 
 		if ( !$noTranslate ) {
-			if ( $translateNumerals ) {
+			if ( $this->config->get( MainConfigNames::TranslateNumerals ) ) {
 				// This is often unnecessary: PHP's NumberFormatter will often
 				// do the digit transform itself (T267614)
 				$s = $this->digitTransformTable();
@@ -3286,13 +3294,13 @@ class Language implements Bcp47Code {
 	/**
 	 * Front-end for non-commafied formatNum
 	 *
-	 * @param string|int|float $number The string to be formatted, should be an integer
+	 * @param string|int|float $number The numeric string to be formatted, or integer
 	 *        or a floating point number.
 	 * @since 1.21
 	 * @return string
 	 */
 	public function formatNumNoSeparators( $number ) {
-		return $this->formatNumInternal( (string)$number, false, true );
+		return $this->formatNumInternal( $number, false, true );
 	}
 
 	/**
@@ -3301,16 +3309,16 @@ class Language implements Bcp47Code {
 	 */
 	public function parseFormattedNumber( $number ) {
 		if ( $number === $this->msg( 'formatnum-nan' )->text() ) {
-			return (string)NAN;
+			return "NAN";
 		}
 		if ( $number === "∞" ) {
-			return (string)INF;
+			return "INF";
 		}
 		// Accept either ASCII hyphen-minus or the unicode minus emitted by
 		// ::formatNum()
 		$number = strtr( $number, [ "\u{2212}" => '-' ] );
 		if ( $number === "-∞" ) {
-			return (string)-INF;
+			return "-INF";
 		}
 		$s = $this->digitTransformTable();
 		if ( $s ) {
@@ -4448,6 +4456,52 @@ class Language implements Bcp47Code {
 		return Html::rawElement( 'bdi', [ 'dir' => $this->getDir() ], $page ) .
 			$this->msg( 'word-separator' )->escaped() .
 			$this->msg( 'parentheses' )->rawParams( $details )->escaped();
+	}
+
+	private function getNumberFormatter(): NumberFormatter {
+		if ( $this->numberFormatter === null ) {
+			$digitGroupingPattern = $this->digitGroupingPattern();
+			$code = $this->getCode();
+			if ( !( $this->config->get( MainConfigNames::TranslateNumerals )
+				&& $this->langNameUtils->isValidCode( $code ) )
+			) {
+				$code = Locale::getDefault(); // POSIX system default locale
+			}
+
+			$fmt = $this->createNumberFormatter( $code, $digitGroupingPattern );
+			if ( !$fmt ) {
+				$fallbacks = $this->getFallbackLanguages();
+				foreach ( $fallbacks as $fallbackCode ) {
+					$fmt = $this->createNumberFormatter( $fallbackCode, $digitGroupingPattern );
+					if ( $fmt ) {
+						break;
+					}
+				}
+				if ( !$fmt ) {
+					throw new RuntimeException(
+						'Could not instance NumberFormatter for ' . $code . ' and all fallbacks'
+					);
+				}
+			}
+
+			$this->numberFormatter = $fmt;
+		}
+		return $this->numberFormatter;
+	}
+
+	private function createNumberFormatter( string $code, ?string $digitGroupingPattern ): ?NumberFormatter {
+		try {
+			if ( $digitGroupingPattern ) {
+				return new NumberFormatter(
+					$code, NumberFormatter::PATTERN_DECIMAL, $digitGroupingPattern
+				);
+			}
+			// @suppress PhanParamTooFew Phan thinks this always requires 3 parameters, that's wrong
+			return new NumberFormatter( $code, NumberFormatter::DECIMAL );
+		} catch ( \ValueError $_ ) {
+			// Value Errors are thrown since php8.4 for invalid locales
+			return null;
+		}
 	}
 
 	/**

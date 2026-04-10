@@ -23,7 +23,10 @@
 			"机智的小鱼君",
 			"沈澄心",
 			"铁桶",
-			"飞舞回堂前"
+			"飞舞回堂前",
+			"August.C",
+			"Leo768",
+			"臺灣象象"
 		]
 	},
 	"preferences": "偏好設定",
@@ -50,7 +53,7 @@
 	"prefs-help-realname": "真實姓名為選填欄位。\n若提供，真實姓名可能會用來作為您的作品的署名。",
 	"yourpassword": "密碼：",
 	"prefs-resetpass": "變更密碼",
-	"passwordtooshort": "密碼至少要{{PLURAL:$1|字元}}",
+	"passwordtooshort": "密碼至少要{{PLURAL:$1|$1字元}}",
 	"passwordtoolong": "密碼不能超過{{PLURAL:$1|1字元|$1字元}}。",
 	"password-substring-username-match": "您的密碼不能用在您的使用者名稱裡。",
 	"password-name-match": "您的密碼不可以跟使用者名稱相同。",
@@ -105,6 +108,7 @@
 	"emailauthenticated": "您的電子郵件地址已於 $2 $3 確認。",
 	"allowemail": "允許其他使用者向我傳送電子郵件",
 	"email-allow-new-users-label": "允許來自新使用者的電子郵件",
+	"prefs-help-email-allow-new-users": "啟用此選項將允許未達到[[{{MediaWiki:grouppage-autoconfirmed}}|自動確認使用者]]向您發送電子郵件。",
 	"tog-ccmeonemails": "我寄出郵件給其他使用者時，也寄給我一份副本",
 	"email-mutelist-label": "禁止這些使用者向我傳送電子郵件：",
 	"tog-enotifwatchlistpages": "當我的監視清單中的頁面或檔案有變更時，傳送電子郵件通知我",
@@ -157,7 +161,7 @@
 	"underline-always": "永遠使用",
 	"tog-showhiddencats": "顯示隱藏分類",
 	"tog-showrollbackconfirmation": "當點擊回退連結時顯示確認提示",
-	"tog-forcesafemode": "始終啟用[[mw:Manual:Safemode|安全模式]]",
+	"tog-forcesafemode": "始終啟用[[mw:Special:MyLanguage/Manual:Safemode|安全模式]]",
 	"prefs-help-forcesafemode": "停用透過站點內容提供的指令碼和樣式表。",
 	"prefs-editing": "編輯",
 	"prefs-description-editing": "自訂您做出、追蹤、審核編輯的方式。",

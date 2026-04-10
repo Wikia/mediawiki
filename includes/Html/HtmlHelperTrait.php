@@ -3,6 +3,7 @@
 namespace MediaWiki\Html;
 
 use Wikimedia\Assert\Assert;
+use Wikimedia\RemexHtml\Serializer\HtmlFormatter;
 use Wikimedia\RemexHtml\Serializer\SerializerNode;
 
 /**
@@ -23,6 +24,9 @@ trait HtmlHelperTrait {
 		parent::__construct( $options );
 		$this->shouldModifyCallback = $shouldModifyCallback;
 		$this->modifyCallback = $modifyCallback;
+		// Escape U+0338 (T387130)
+		'@phan-var HtmlFormatter $this';
+		$this->textEscapes["\u{0338}"] = '&#x338;';
 	}
 
 	public function element( SerializerNode $parent, SerializerNode $node, $contents ) {
@@ -30,7 +34,11 @@ trait HtmlHelperTrait {
 			$node = clone $node;
 			$node->attrs = clone $node->attrs;
 			$newNode = ( $this->modifyCallback )( $node );
-			Assert::parameterType( SerializerNode::class, $newNode, 'return value' );
+			Assert::parameterType( [ SerializerNode::class, 'string' ], $newNode, 'return value' );
+			if ( is_string( $newNode ) ) {
+				// Replace this element with an "outerHTML" string.
+				return $newNode;
+			}
 			return parent::element( $parent, $newNode, $contents );
 		} else {
 			return parent::element( $parent, $node, $contents );

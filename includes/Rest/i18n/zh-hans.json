@@ -14,7 +14,14 @@
 			"Tr jason",
 			"VulpesVulpes825",
 			"沈澄心",
-			"铁桶"
+			"铁桶",
+			"Administrator66",
+			"Kcx36",
+			"Lily9814",
+			"Mishidexfc",
+			"Peterxy12",
+			"WaitSpring",
+			"范"
 		]
 	},
 	"rest-prefix-mismatch": "请求的路径（$1）不在REST API基本路径（$2）中",
@@ -77,6 +84,7 @@
 	"rest-unsupported-target-format": "不支持请求的目标格式。",
 	"rest-parsoid-resource-exceeded": "超出资源限制",
 	"rest-parsoid-error": "Parsoid错误。",
+	"rest-parsoid-bad-render-id": "错误的Parsoid渲染ID：$1",
 	"rest-bad-stash-key": "错误的stash key。",
 	"rest-html-key-expected": "正文中应包含<var>html</var>键",
 	"rest-invalid-transform": "无效转换：$1到$2",

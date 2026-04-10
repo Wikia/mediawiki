@@ -303,6 +303,8 @@ return [
 			'ThumbnailNamespaces' => [
 				6,
 			],
+			'ThumbnailSteps' => null,
+			'ThumbnailStepsRatio' => null,
 			'ThumbnailBuckets' => null,
 			'ThumbnailMinimumBucketDistance' => 50,
 			'UploadThumbnailRenderMap' => [
@@ -969,7 +971,7 @@ return [
 			],
 			'RememberMe' => 'choose',
 			'ReauthenticateTime' => [
-				'default' => 300,
+				'default' => 3600,
 			],
 			'AllowSecuritySensitiveOperationIfCannotReauthenticate' => [
 				'default' => true,
@@ -1831,6 +1833,7 @@ return [
 			'AllowCrossOrigin' => false,
 			'RestAllowCrossOriginCookieAuth' => false,
 			'SessionSecret' => false,
+			'EnableUnsafeXsltOption' => false,
 			'CookieExpiration' => 2592000,
 			'ExtendedLoginCookieExpiration' => 15552000,
 			'CookieDomain' => '',
@@ -2467,8 +2470,6 @@ return [
 			],
 			'RestAPIAdditionalRouteFiles' => [
 			],
-			'RestSandboxSpecs' => [
-			],
 			'MaxShellMemory' => 307200,
 			'MaxShellFileSize' => 102400,
 			'MaxShellTime' => 180,
@@ -2632,6 +2633,14 @@ return [
 			'ImageLimits' => 'array',
 			'ThumbLimits' => 'array',
 			'ThumbnailNamespaces' => 'array',
+			'ThumbnailSteps' => [
+				'array',
+				'null',
+			],
+			'ThumbnailStepsRatio' => [
+				'number',
+				'null',
+			],
 			'ThumbnailBuckets' => [
 				'array',
 				'null',
@@ -2979,7 +2988,6 @@ return [
 			'CrossSiteAJAXdomainExceptions' => 'object',
 			'AllowedCorsHeaders' => 'array',
 			'RestAPIAdditionalRouteFiles' => 'array',
-			'RestSandboxSpecs' => 'object',
 			'ShellRestrictionMethod' => [
 				'string',
 				'boolean',
@@ -3414,27 +3422,6 @@ return [
 		],
 		'APIRequestLog' => [
 			'deprecated' => 'since 1.43; use api or api-request $wgDebugLogGroups channel',
-		],
-		'RestSandboxSpecs' => [
-			'additionalProperties' => [
-				'type' => 'object',
-				'properties' => [
-					'url' => [
-						'type' => 'string',
-						'format' => 'url',
-					],
-					'name' => [
-						'type' => 'string',
-					],
-					'msg' => [
-						'type' => 'string',
-						'description' => 'a message key',
-					],
-				],
-				'required' => [
-					'url',
-				],
-			],
 		],
 		'ShellboxUrls' => [
 			'additionalProperties' => [

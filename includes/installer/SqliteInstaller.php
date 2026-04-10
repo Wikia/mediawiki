@@ -157,7 +157,9 @@ class SqliteInstaller extends DatabaseInstaller {
 			}
 		}
 		# Put a .htaccess file in case the user didn't take our advice
-		file_put_contents( "$dir/.htaccess", "Require all denied\n" );
+		file_put_contents( "$dir/.htaccess",
+			"Require all denied\n" .
+			"Satisfy All\n" );
 		return Status::newGood();
 	}
 
@@ -332,7 +334,7 @@ EOT;
 		$module = DatabaseSqlite::getFulltextSearchModule();
 		$searchIndexSql = (string)$this->db->newSelectQueryBuilder()
 			->select( 'sql' )
-			->from( $this->db->addIdentifierQuotes( 'sqlite_master' ) )
+			->from( 'sqlite_master' )
 			->where( [ 'tbl_name' => $this->db->tableName( 'searchindex', 'raw' ) ] )
 			->caller( __METHOD__ )->fetchField();
 		$fts3tTable = ( stristr( $searchIndexSql, 'fts' ) !== false );

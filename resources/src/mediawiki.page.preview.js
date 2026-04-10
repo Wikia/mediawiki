@@ -212,7 +212,7 @@
 		if ( editable ) {
 			const $editLink = $baseLink.clone()
 				.attr( 'href', template.title.getUrl( { action: 'edit' } ) )
-				.append( mw.msg( canEdit ? 'editlink' : 'viewsourcelink' ) );
+				.append( mw.message( canEdit ? 'editlink' : 'viewsourcelink' ).escaped() );
 
 			const wordSep = mw.message( 'word-separator' ).escaped();
 			return getRestrictionsText( template.apiData.protection || [] )
@@ -282,7 +282,7 @@
 				( m ) => mw.message( m ).parse()
 			);
 			// There's no commaList in JS, so just join with commas (doesn't handle the last item).
-			return parenthesesWrap( localizedMessages.join( mw.msg( 'comma-separator' ) ) );
+			return parenthesesWrap( localizedMessages.join( mw.message( 'comma-separator' ).escaped() ) );
 		} );
 	}
 

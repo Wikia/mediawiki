@@ -36,7 +36,10 @@
 			"Z423x5c6",
 			"和平至上",
 			"捍粵者",
-			"星海"
+			"星海",
+			"Anterdc99",
+			"Shrubs",
+			"優枰"
 		]
 	},
 	"sunday": "星期日",
@@ -224,6 +227,7 @@
 	"grouppage-suppress": "{{ns:project}}:監督",
 	"right-createaccount": "建立新的用戶帳號",
 	"right-autocreateaccount": "使用外部用戶帳號自動登入",
+	"right-move-rootuserpages": "移動用戶母頁面",
 	"right-upload": "上載檔案",
 	"right-reupload-own": "覆蓋自己上載的現有檔案",
 	"right-suppressrevision": "檢視、隱藏與取消隱藏任何用戶對頁面的修訂",
@@ -243,6 +247,7 @@
 	"grant-highvolume": "大量操作（機械人）取用權",
 	"newuserlogpage": "用戶建立日誌",
 	"rightslog": "用戶權限日誌",
+	"action-move-rootuserpages": "移動用戶母頁面",
 	"action-block": "封鎖或解封此用戶的編輯權限",
 	"action-blockemail": "禁止用戶傳送電子郵件及解除該限制",
 	"recentchanges": "最近修改",
@@ -316,7 +321,7 @@
 	"anononlyblock": "僅限匿名用戶",
 	"empty-username": "沒有用戶名",
 	"contribslink": "貢獻",
-	"blocklogtext": "這是用戶的封禁與解禁操作的日誌記錄。\n自動封禁的 IP 位址不予包含。\n請參考 [[Special:BlockList|封禁清單]] 以檢視目前的封禁。",
+	"blocklogtext": "這是用戶的封鎖及取消封鎖動作的日誌記錄。自動封鎖的IP位址不予包含。請參考[[Special:BlockList|封鎖清單]]中的目前正在運作的阻止與封鎖。",
 	"semiprotectedpagemovewarning": "<strong>注意：</strong>本頁已受保護，只有自動確認用戶才可移動。\n以下是最近的紀錄：",
 	"tooltip-pt-tmpuserpage": "你的自動生成臨時用戶名",
 	"tooltip-pt-mytalk": "{{GENDER:|您的}}討論頁",

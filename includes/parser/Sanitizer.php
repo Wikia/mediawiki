@@ -512,8 +512,13 @@ class Sanitizer {
 			# * Disallow data attributes used by MediaWiki code
 			# * Ensure that the attribute is not namespaced by banning
 			#   colons.
+			# * Ensure attribute name will be accepted by the HTML
+			#   parser; see
+			#   https://github.com/whatwg/dom/issues/849#issuecomment-1007541209
+			# * Underscore and double-wide underscore (U+FF3F) is disallowed
+			#   here (but not in Parsoid): T407131
 			if ( (
-				!preg_match( '/^data-[^:]*$/i', $attribute ) &&
+				!preg_match( '|^data-[^:= \t\r\n/>\0_＿]*$|i', $attribute ) &&
 				!array_key_exists( $attribute, $allowed )
 			) || self::isReservedDataAttribute( $attribute ) ) {
 				continue;
@@ -858,7 +863,8 @@ class Sanitizer {
 			'RFC'  => '&#82;FC',
 			'PMID' => '&#80;MID',
 			'|'    => '&#124;',
-			'__'   => '&#95;_',
+			'_'    => '&#95;',
+			'＿'    => '&#xFF3F;', // Japanese magic words
 		] );
 
 		# Stupid hack
@@ -1038,6 +1044,12 @@ class Sanitizer {
 			$class ), '_' );
 	}
 
+	public static function escapeCombiningChar( string $html ): string {
+		return strtr( $html, [
+			"\u{0338}" => '&#x338;', # T387130
+		] );
+	}
+
 	/**
 	 * Given HTML input, escape with htmlspecialchars but un-escape entities.
 	 * This allows (generally harmless) entities like &#160; to survive.
@@ -1053,7 +1065,7 @@ class Sanitizer {
 		# hurt. Use ENT_SUBSTITUTE so that incorrectly truncated multibyte characters
 		# don't cause the entire string to disappear.
 		$html = htmlspecialchars( $html, ENT_QUOTES | ENT_SUBSTITUTE );
-		return $html;
+		return self::escapeCombiningChar( $html );
 	}
 
 	/**
@@ -1136,10 +1148,12 @@ class Sanitizer {
 	}
 
 	private static function normalizeWhitespace( string $text ): string {
-		return trim( preg_replace(
-			'/(?:\r\n|[\x20\x0d\x0a\x09])+/',
-			' ',
-			$text ) );
+		$normalized = preg_replace( '/[ \r\n\t]+/', ' ', $text );
+		if ( $normalized === null ) {
+			wfLogWarning( __METHOD__ . ': Failed to normalize whitespace: ' . preg_last_error() );
+			return '';
+		}
+		return trim( $normalized );
 	}
 
 	/**
@@ -1148,7 +1162,12 @@ class Sanitizer {
 	 * section links.
 	 */
 	public static function normalizeSectionNameWhitespace( string $section ): string {
-		return trim( preg_replace( '/[ _]+/', ' ', $section ) );
+		$normalized = preg_replace( '/[ _]+/', ' ', $section );
+		if ( $normalized === null ) {
+			wfLogWarning( __METHOD__ . ': Failed to normalize whitespace: ' . preg_last_error() );
+			return '';
+		}
+		return trim( $normalized );
 	}
 
 	/**
@@ -1292,7 +1311,9 @@ class Sanitizer {
 		if ( isset( $matches[1] ) ) {
 			return self::decodeEntity( $matches[1] );
 		} elseif ( isset( $matches[2] ) ) {
-			return self::decodeChar( intval( $matches[2] ) );
+			// Value is user provided string and may exceed native int bounds.
+			// phpcs:ignore Generic.PHP.NoSilencedErrors.Discouraged
+			return self::decodeChar( @intval( $matches[2] ) );
 		} elseif ( isset( $matches[3] ) ) {
 			$point = hexdec( $matches[3] );
 			// hexdec() might return a float if the string is too long

@@ -1,7 +1,9 @@
 {
 	"@metadata": {
 		"authors": [
-			"Jon Harald Søby"
+			"Jon Harald Søby",
+			"EdoAug",
+			"Laaknor"
 		]
 	},
 	"rest-prefix-mismatch": "Den forespurte stien ($1) var ikke i REST-API-ets grunnsti ($2)",
@@ -55,6 +57,7 @@
 	"rest-badtoken": "Den gitte CSRF-nøkkelen er ugyldig.",
 	"rest-badtoken-missing": "Parameteren <var>token</var> er påkrevd med mindre man bruker en CSRF-trygg autentiseringsmetode.",
 	"rest-badtoken-nosession": "CSRF-feil – ingen økt.",
+	"rest-mock-error": "Testfeil.",
 	"rest-specified-revision-unavailable": "Den angitte siderevisjonen er slettet eller sensurert.",
 	"rest-previous-revision-unavailable": "Kunne ikke finne tidligere sideversjon. Har siden blitt låst eller slettet?",
 	"rest-requires-content-type-header": "En Content-Type-header må angis med forespørselen.",
@@ -63,7 +66,23 @@
 	"rest-unsupported-target-format": "Det forespurte målformatet støttes ikke.",
 	"rest-parsoid-resource-exceeded": "Ressursgrense overskredet",
 	"rest-parsoid-error": "Parsoid-feil.",
+	"rest-parsoid-bad-render-id": "Ugyldig Paroid-rendrings-ID: $1",
 	"rest-bad-stash-key": "Ugyldig stash-nøkkel.",
 	"rest-html-key-expected": "Uventet <var>html</var>-nøkkel i brødteksten",
-	"rest-invalid-transform": "Ugyldig transformasjon: $1 til $2"
+	"rest-invalid-transform": "Ugyldig transformasjon: $1 til $2",
+	"rest-request-body-expected": "Forespørselsmetoden $1 forventer en forespørselstekst",
+	"rest-request-body-unaccepted": "Forespørselsmetoden $1 aksepterer ikke en forespørselstekst",
+	"rest-unsupported-transform-input": "Ustøttet inndata: $1",
+	"rest-bad-etag": "Ugyldig ETag: $1",
+	"rest-unsupported-profile-version": "Ustøttet profilversjon: $1",
+	"rest-parsoid-unsupported-media": "Ustøttet medietype",
+	"rest-missing-revision-html": "Mangler sideversjons-HTML",
+	"rest-missing-revision-html-content-type": "Innholdstypen til sideversjons-HTML-en mangler.",
+	"rest-unsupported-profile-conversion": "Vi vet ikke hvordan denne konverteringen kan gjøres.",
+	"rest-edit-conflict": "Redigeringskonflikt ($1)",
+	"rest-unknown-parsoid-transformation": "Ukjent transformering.",
+	"rest-target-variant-required": "Målvariant er påkrevd.",
+	"rest-unsupported-language-conversion": "Ustøttet språkkonvertering: $1 til $2",
+	"rest-unknown-content-model": "Ukjent innholdsmodell: $1",
+	"rest-page-bundle-validation-error": "PageBundle samsvarer ikke med contentVersion: $1"
 }

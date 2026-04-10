@@ -35,7 +35,12 @@
 			"Wladek92",
 			"Wyz",
 			"לערי ריינהארט",
-			"Mahabarata"
+			"Mahabarata",
+			"JLTRY",
+			"EmDashUser002",
+			"Abakar B",
+			"Escargot bleu",
+			"Serieminou"
 		]
 	},
 	"preferences": "Préférences",
@@ -117,6 +122,7 @@
 	"emailauthenticated": "Votre adresse de courriel a été confirmée le $2 à $3.",
 	"allowemail": "Autoriser les autres utilisateurs à m’envoyer des courriels",
 	"email-allow-new-users-label": "Autoriser les courriels émis par les nouveaux utilisateurs",
+	"prefs-help-email-allow-new-users": "L'activation de cette option permettra aux utilisateurs qui ne sont pas [[{{MediaWiki:grouppage-autoconfirmed}}|autoconfirmés]] de vous envoyer des e-mails.",
 	"tog-ccmeonemails": "M’envoyer une copie des courriels que j’envoie aux autres utilisateurs",
 	"email-mutelist-label": "Empêcher ces utilisateurs de m’envoyer des courriels :",
 	"tog-enotifwatchlistpages": "M’avertir par courriel lorsqu’une page ou un fichier de ma liste de suivi est modifié",
@@ -169,8 +175,8 @@
 	"underline-always": "Toujours",
 	"tog-showhiddencats": "Afficher les catégories cachées",
 	"tog-showrollbackconfirmation": "Afficher une demande de confirmation quand je clique sur un lien de révocation",
-	"tog-forcesafemode": "Toujours activer le [[mw:Manual:Safemode|mode sûreté]]",
-	"prefs-help-forcesafemode": "Désactiver sur les scripts et pages de style dans le wiki.",
+	"tog-forcesafemode": "Toujours activer le [[mw:Special:MyLanguage/Manual:Safemode|mode sûreté]]",
+	"prefs-help-forcesafemode": "Désactiver les scripts et pages de style dans le wiki.",
 	"prefs-editing": "Modification",
 	"prefs-description-editing": "Personnalisez la façon dont vous effectuez, suivez et révisez les modifications.",
 	"prefs-advancedediting": "Options générales",
