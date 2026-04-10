@@ -23,7 +23,7 @@
 	"editinguser": "Bezig met wijzigen van de gebruikersgroepen van gebruiker '''[[User:$1|$1]]''' $2",
 	"viewinguserrights": "Gebruikersgroepen bekijken van {{GENDER:$1|gebruiker}} <strong>[[User:$1|$1]]</strong> $2",
 	"userrights-editusergroup": "{{GENDER:$1|Gebruikersgroepen}} wijzigen",
-	"userrights-viewusergroup": "Toon {{GENDER:$1|gebruikersgroepen}}",
+	"userrights-viewusergroup": "{{GENDER:$1|Gebruikersgroepen}} bekijken",
 	"saveusergroups": "{{GENDER:$1|Gebruikersgroepen}} opslaan",
 	"userrights-groupsmember": "Lid van:",
 	"userrights-groupsmember-auto": "Impliciet lid van:",

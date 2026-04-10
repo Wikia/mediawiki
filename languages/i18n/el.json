@@ -3326,7 +3326,7 @@
 	"namespaceinfo-heading-canonical": "Κανονικό όνομα",
 	"namespaceinfo-heading-local": "Τοπικό όνομα",
 	"namespaceinfo-heading-info": "Περιγραφή και ιδιότητες",
-	"namespaceinfo-heading-aliases": "Αλλώνυμα",
+	"namespaceinfo-heading-aliases": "Ψευδώνυμα",
 	"namespaceinfo-description-custom": "Προσαρμοσμένος ονοματοχώρος «$1»",
 	"namespaceinfo-description-custom-talk": "Σελίδες συζήτησης που σχετίζονται με τον ονοματοχώρο $1 (ID $2)",
 	"namespaceinfo-description-ns-2": "Εικονικός ονοματοχώρος για εικόνες",

@@ -256,5 +256,6 @@
 	"exif-digitalsourcetype-softwareimage": "پوستغالي له خوا جوړ شوی",
 	"exif-digitalsourcetype-digitalart": "د ديجيټل وسيلو کارولو سره انسانانو له خوا جوړ شوی",
 	"exif-digitalsourcetype-digitalcreation": "رسنۍ د انسانان له خوا د نامصنوعي ځيرکتيا توکو کارولو سره جوړه شوې",
+	"exif-digitalsourcetype-datadrivenmedia": "د اومتوکو د ډيجيټل رسنۍ استازيتوب د انساني خپرونو يا پنځونې له لارې",
 	"exif-digitalsourcetype-screencapture": "ښيښه نيونه"
 }
