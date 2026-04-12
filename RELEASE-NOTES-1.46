@@ -1081,6 +1081,8 @@ because of Phabricator reports.
   Inject the suitable context language, falling back to RequestContext.
 * Overriding Action::getArticle now emits deprecation warnings; overriding
   was deprecated in 1.35.
+* The global function wfGetUrlUtils(), deprecated in 1.43, now emits
+  deprecation warnings. Access the UrlUtils service instead.
 * …
 
 === Other changes in 1.46 ===

@@ -361,11 +361,12 @@ function wfAppendQuery( $url, $query ) {
 }
 
 /**
- * @deprecated since 1.43; get a UrlUtils from services, or construct your own
+ * @deprecated since 1.43; get a UrlUtils from services, or construct your own. Warnings since 1.46.
  * @internal
  * @return UrlUtils from services if initialized, otherwise make one from globals
  */
 function wfGetUrlUtils(): UrlUtils {
+	wfDeprecated( __FUNCTION__, '1.43' );
 	global $wgServer, $wgCanonicalServer, $wgInternalServer, $wgRequest, $wgHttpsPort,
 		$wgUrlProtocols;
 
