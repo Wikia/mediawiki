@@ -96,11 +96,11 @@ if ( !defined( 'MW_ENTRY_POINT' ) ) {
 	define( 'MW_ENTRY_POINT', 'unknown' );
 }
 
-// The $IP variable is defined for use by LocalSettings.php.
-// It is made available as a global variable for backwards compatibility.
-//
-// Source code should use the MW_INSTALL_PATH constant instead.
-global $IP;
+/**
+ * @internal For read-only use in LocalSettings.php.
+ *
+ * Source code should use the MW_INSTALL_PATH constant instead (T56483).
+ */
 $IP = wfDetectInstallPath(); // ensures MW_INSTALL_PATH is defined
 
 /**
