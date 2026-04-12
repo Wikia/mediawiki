@@ -26,7 +26,10 @@ class FileAwareNodeVisitor extends PhpParser\NodeVisitorAbstract {
 	/** @inheritDoc */
 	public function enterNode( PhpParser\Node $node ) {
 		$retVal = parent::enterNode( $node );
-		$node->filename = $this->currentFile;
+		// TODO: Make this work without dynamic property (T423054).
+		// "Warning: Creation of dynamic property PhpParser\Node\Stmt\Namespace_::$filename is deprecated"
+		// phpcs:ignore Generic.PHP.NoSilencedErrors.Discouraged
+		@( $node->filename = $this->currentFile );
 		return $retVal;
 	}
 
