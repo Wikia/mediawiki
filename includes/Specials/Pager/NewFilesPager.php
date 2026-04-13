@@ -86,6 +86,7 @@ class NewFilesPager extends RangeChronologicalPager {
 			$fields = [
 				$nameField,
 				$timestampField,
+				'fr_id',
 				'actor_user',
 				'actor_name'
 			];
