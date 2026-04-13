@@ -41,7 +41,7 @@ class CleanupSpam extends Maintenance {
 	}
 
 	public function execute() {
-		global $IP, $wgLocalDatabases;
+		global $wgLocalDatabases;
 
 		$username = wfMessage( 'spambot_username' )->text();
 		$user = User::newSystemUser( $username );
@@ -81,7 +81,7 @@ class CleanupSpam extends Maintenance {
 					if ( $count ) {
 						$found = true;
 						$cmd = wfShellWikiCmd(
-							"$IP/maintenance/cleanupSpam.php",
+							MW_INSTALL_PATH . '/maintenance/cleanupSpam.php',
 							[ '--wiki', $wikiId, $spec ]
 						);
 						// phpcs:ignore MediaWiki.Usage.ForbiddenFunctions.passthru

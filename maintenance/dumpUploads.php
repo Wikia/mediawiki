@@ -41,8 +41,7 @@ By default, outputs relative paths against the parent directory of $wgUploadDire
 	}
 
 	public function execute() {
-		global $IP;
-		$this->mBasePath = $this->getOption( 'base', $IP );
+		$this->mBasePath = $this->getOption( 'base', MW_INSTALL_PATH );
 		$shared = false;
 		$sharedSupplement = false;
 

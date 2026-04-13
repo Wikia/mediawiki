@@ -32,8 +32,6 @@ define( 'MEDIAWIKI_INSTALL', true );
 class CommandLineInstaller extends Maintenance {
 	public function __construct() {
 		parent::__construct();
-		global $IP;
-
 		$this->addDescription( "CLI-based MediaWiki installation and configuration.\n" .
 			"Default options are indicated in parentheses.\n" .
 			"If no options are provided, the script will run in interactive mode." );
@@ -68,7 +66,7 @@ class CommandLineInstaller extends Maintenance {
 		$this->addOption( 'dbssl', 'Connect to the database over SSL' );
 		$this->addOption( 'dbport', 'The database port; only for PostgreSQL (5432)', false, true );
 		$this->addOption( 'dbname', 'The database name (my_wiki)', false, true );
-		$this->addOption( 'dbpath', 'The path for the SQLite DB ($IP/data)', false, true );
+		$this->addOption( 'dbpath', 'The path for the SQLite DB (MW_INSTALL_PATH/data)', false, true );
 		$this->addOption( 'dbprefix', 'Optional database table name prefix', false, true );
 		$this->addOption( 'installdbuser', 'The user to use for installing (root)', false, true );
 		$this->addOption( 'installdbpass', 'The password for the DB user to install as.', false, true );
@@ -80,7 +78,7 @@ class CommandLineInstaller extends Maintenance {
 			false,
 			true
 		);
-		$this->addOption( 'confpath', "Path to write LocalSettings.php to ($IP)", false, true );
+		$this->addOption( 'confpath', 'Path to write LocalSettings.php to (' . MW_INSTALL_PATH . ')', false, true );
 		$this->addOption( 'dbschema', 'The schema for the MediaWiki DB in '
 			. 'PostgreSQL (mediawiki)', false, true );
 
@@ -113,8 +111,6 @@ class CommandLineInstaller extends Maintenance {
 
 	/** @inheritDoc */
 	public function execute() {
-		global $IP;
-
 		if ( $this->hasOption( 'help' ) ) {
 			$this->maybeHelp();
 			return;
@@ -148,7 +144,7 @@ class CommandLineInstaller extends Maintenance {
 			$dbPath = $dbType == 'sqlite' ?
 				$this->prompt(
 					'Enter the path for the SQLite DB (advised to be outside the web root):',
-					"$IP/data"
+					MW_INSTALL_PATH . '/data'
 				) :
 				null;
 			$dbName = $this->prompt( 'Enter the name of the database:', 'my_wiki' );
@@ -207,7 +203,7 @@ class CommandLineInstaller extends Maintenance {
 			if ( !$status->isGood() ) {
 				return false;
 			}
-			$installer->writeConfigurationFile( $this->getOption( 'confpath', $IP ) );
+			$installer->writeConfigurationFile( $this->getOption( 'confpath', MW_INSTALL_PATH ) );
 			$installer->showMessage(
 				'config-install-success',
 				$installer->getVar( 'wgServer' ),

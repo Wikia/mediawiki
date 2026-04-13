@@ -277,10 +277,9 @@ class GenerateCollationData extends Maintenance {
 
 		print "Out of order: $numOutOfOrder / " . count( $headerChars ) . "\n";
 
-		global $IP;
 		$writer = new StaticArrayWriter();
 		file_put_contents(
-			"$IP/lanuages/data/first-letters-root.php",
+			MW_INSTALL_PATH . '/lanuages/data/first-letters-root.php',
 			$writer->create( $headerChars, 'File created by generateCollationData.php' )
 		);
 		echo "first-letters-root: file written.\n";

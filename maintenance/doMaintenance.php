@@ -39,7 +39,7 @@ if ( !$maintClass || !class_exists( $maintClass ) ) {
 // Define the MediaWiki entrypoint
 define( 'MEDIAWIKI', true );
 
-$IP = wfDetectInstallPath();
+$IP = wfDetectInstallPath(); // ensures MW_INSTALL_PATH is defined
 require_once "$IP/includes/AutoLoader.php";
 
 $runner = new MaintenanceRunner();

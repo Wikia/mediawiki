@@ -536,8 +536,6 @@ class MaintenanceRunner {
 	 * @return void
 	 */
 	public function defineSettings() {
-		global $IP;
-
 		if ( $this->parameters->hasOption( 'conf' ) ) {
 			// Define the constant instead of directly setting $settingsFile
 			// to ensure consistency. wfDetectLocalSettingsFile() will return
@@ -548,7 +546,7 @@ class MaintenanceRunner {
 				$this->fatalError( "\nConfig file " . MW_CONFIG_FILE . " was not found or is not readable.\n\n" );
 			}
 		}
-		$settingsFile = wfDetectLocalSettingsFile( $IP );
+		$settingsFile = wfDetectLocalSettingsFile( MW_INSTALL_PATH );
 
 		if ( $this->parameters->hasOption( 'wiki' ) ) {
 			$wikiName = $this->parameters->getOption( 'wiki' );

@@ -717,13 +717,14 @@ TEXT
 	}
 
 	protected function openSpawn(): bool {
-		global $IP;
-
 		$wiki = WikiMap::getCurrentWikiId();
 		if ( count( $this->php ) == 2 ) {
 			$mwscriptpath = $this->php[1];
 		} else {
-			$mwscriptpath = "$IP/../multiversion/MWScript.php";
+			// FIXME: Avoid this hardcoded wmf-config reference.
+			// Perhaps refactor the below by using wfShellWikiCmd or use the
+			// 'wrapper' option which is already injected for this purpose.
+			$mwscriptpath = MW_INSTALL_PATH . '/../multiversion/MWScript.php';
 		}
 		if ( file_exists( $mwscriptpath ) ) {
 			$cmd = implode( " ",
@@ -738,7 +739,7 @@ TEXT
 				array_map( Shell::escape( ... ),
 					[
 						$this->php[0],
-						"$IP/maintenance/fetchText.php",
+						MW_INSTALL_PATH . '/maintenance/fetchText.php',
 						'--wiki', $wiki ] ) );
 		}
 		$spec = [

@@ -126,8 +126,6 @@ class MergeMessageFileList extends Maintenance {
 	 * @return array List of absolute extension paths
 	 */
 	private function readFile( string $fileName ): array {
-		$IP = MW_INSTALL_PATH;
-
 		$files = [];
 		$fileLines = file( $fileName );
 		if ( $fileLines === false ) {
@@ -140,8 +138,8 @@ class MergeMessageFileList extends Maintenance {
 		foreach ( $fileLines as $extension ) {
 			$extension = trim( preg_replace( '/#.*/', '', $extension ) );
 			if ( $extension !== '' ) {
-				# Paths may use the string $IP to be substituted by the actual value
-				$extension = str_replace( '$IP', $IP, $extension );
+				# Paths may use a $IP placeholder string which we substitute here
+				$extension = str_replace( '$IP', MW_INSTALL_PATH, $extension );
 				if ( !str_ends_with( $extension, '.json' ) ) {
 					$this->error( "Extension {$extension} does not end with .json " .
 						"(PHP entry points are no longer supported by this script)" );
@@ -157,13 +155,10 @@ class MergeMessageFileList extends Maintenance {
 	}
 
 	private function generateMessageFileList( array $setupFiles ): void {
-		$IP = MW_INSTALL_PATH;
-
 		$outputFile = $this->getOption( 'output' );
 		$quiet = $this->hasOption( 'quiet' );
 
 		$queue = [];
-
 		foreach ( $setupFiles as $fileName ) {
 			if ( (string)$fileName === '' ) {
 				continue;
@@ -201,11 +196,10 @@ class MergeMessageFileList extends Maintenance {
 			'$wgMessagesDirs = ' . var_export( $vars['wgMessagesDirs'], true ) . ";\n\n";
 
 		$dirs = [
-			$IP,
+			MW_INSTALL_PATH,
 			dirname( __DIR__ ),
-			realpath( $IP )
+			realpath( MW_INSTALL_PATH )
 		];
-
 		foreach ( $dirs as $dir ) {
 			$s = preg_replace( "/'" . preg_quote( $dir, '/' ) . "([^']*)'/", '"$IP\1"', $s );
 		}
