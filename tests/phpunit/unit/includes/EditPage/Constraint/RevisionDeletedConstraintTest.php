@@ -6,8 +6,10 @@
 
 use MediaWiki\EditPage\Constraint\EditConstraint;
 use MediaWiki\EditPage\Constraint\RevisionDeletedConstraint;
+use MediaWiki\Page\Article;
 use MediaWiki\Revision\RevisionStoreRecord;
 use MediaWiki\Title\Title;
+use MediaWiki\User\User;
 
 /**
  * Tests the RevisionDeletedConstraint

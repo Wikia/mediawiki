@@ -1,7 +1,9 @@
 <?php
 
+use MediaWiki\Context\RequestContext;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Navigation\CodexPagerNavigationBuilder;
+use MediaWiki\Output\OutputPage;
 use MediaWiki\Page\PageReferenceValue;
 
 /**

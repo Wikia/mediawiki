@@ -1,5 +1,7 @@
 <?php
 
+use MediaWiki\Media\GIFHandler;
+
 /**
  * @group Media
  */

@@ -2,6 +2,8 @@
 
 use MediaWiki\FileRepo\File\File;
 use MediaWiki\MainConfigNames;
+use MediaWiki\Media\BitmapHandler;
+use MediaWiki\Media\MediaTransformError;
 
 /**
  * Tests related to auto rotation.

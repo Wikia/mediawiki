@@ -1,5 +1,7 @@
 <?php
 
+use MediaWiki\Media\PNGMetadataExtractor;
+
 /**
  * @group Media
  * @covers \MediaWiki\Media\PNGMetadataExtractor

@@ -1,5 +1,7 @@
 <?php
 
+use MediaWiki\Autoload\ClassCollector;
+
 /**
  * @group Autoload
  * @covers \MediaWiki\Autoload\ClassCollector

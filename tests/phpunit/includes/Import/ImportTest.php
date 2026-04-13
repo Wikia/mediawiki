@@ -1,5 +1,6 @@
 <?php
 
+use MediaWiki\Import\ImportStringSource;
 use MediaWiki\Title\ForeignTitle;
 use MediaWiki\Title\Title;
 use MediaWiki\User\User;

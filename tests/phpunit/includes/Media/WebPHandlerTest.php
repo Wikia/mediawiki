@@ -1,5 +1,7 @@
 <?php
 
+use MediaWiki\Media\WebPHandler;
+
 /**
  * @covers \MediaWiki\Media\WebPHandler
  */

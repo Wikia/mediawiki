@@ -3,6 +3,8 @@
 use MediaWiki\Cache\BacklinkCache;
 use MediaWiki\Content\WikitextContent;
 use MediaWiki\Exception\MWException;
+use MediaWiki\Language\MessageCache;
+use MediaWiki\Language\MessageLocalizer;
 use MediaWiki\Language\RawMessage;
 use MediaWiki\Linker\LinkTarget;
 use MediaWiki\MainConfigNames;

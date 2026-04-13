@@ -1,5 +1,6 @@
 <?php
 
+use MediaWiki\Search\SearchNearMatchResultSet;
 use MediaWiki\Title\Title;
 
 class SearchNearMatchResultSetTest extends PHPUnit\Framework\TestCase {

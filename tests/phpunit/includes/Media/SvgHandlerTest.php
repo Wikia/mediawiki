@@ -2,6 +2,8 @@
 
 use MediaWiki\FileRepo\File\File;
 use MediaWiki\MainConfigNames;
+use MediaWiki\Media\SvgHandler;
+use MediaWiki\Media\SVGReader;
 use Wikimedia\TestingAccessWrapper;
 
 /**

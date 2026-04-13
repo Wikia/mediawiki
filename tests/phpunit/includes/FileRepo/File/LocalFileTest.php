@@ -11,6 +11,7 @@ use MediaWiki\FileRepo\File\LocalFile;
 use MediaWiki\FileRepo\File\OldLocalFile;
 use MediaWiki\FileRepo\LocalRepo;
 use MediaWiki\MainConfigNames;
+use MediaWiki\Media\ImageHandler;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Page\Event\PageCreatedEvent;
 use MediaWiki\Page\Event\PageLatestRevisionChangedEvent;

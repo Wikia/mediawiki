@@ -5,14 +5,14 @@ declare( strict_types = 1 );
 namespace Wikimedia\Tests\FileBackend;
 
 use InvalidArgumentException;
-use LockManager;
 use MediaWikiUnitTestCase;
 use PHPUnit\Framework\MockObject\MockObject;
 use Psr\Log\NullLogger;
-use ScopedLock;
 use StatusValue;
 use Wikimedia\FileBackend\FileBackend;
 use Wikimedia\FileBackend\FSFile\TempFSFileFactory;
+use Wikimedia\LockManager\LockManager;
+use Wikimedia\LockManager\ScopedLock;
 use Wikimedia\ScopedCallback;
 use Wikimedia\TestingAccessWrapper;
 

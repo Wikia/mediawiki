@@ -2,7 +2,6 @@
 
 namespace MediaWiki\Tests\Storage;
 
-use ArrayUtils;
 use MediaWiki\CommentStore\CommentStoreComment;
 use MediaWiki\Config\ServiceOptions;
 use MediaWiki\Content\Content;
@@ -48,6 +47,7 @@ use MediaWikiIntegrationTestCase;
 use MockTitleTrait;
 use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\MockObject\MockObject;
+use Wikimedia\ArrayUtils\ArrayUtils;
 use Wikimedia\ObjectCache\BagOStuff;
 use Wikimedia\Rdbms\Platform\ISQLPlatform;
 use Wikimedia\TestingAccessWrapper;

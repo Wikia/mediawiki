@@ -1,6 +1,7 @@
 <?php
 
 use MediaWiki\Content\WikitextContent;
+use MediaWiki\Deferred\DeferredUpdates;
 use MediaWiki\Json\JsonCodec;
 use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\MainConfigNames;

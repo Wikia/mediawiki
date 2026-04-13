@@ -4,6 +4,8 @@ use MediaWiki\Content\CssContent;
 use MediaWiki\Content\JsonContent;
 use MediaWiki\Content\TextContent;
 use MediaWiki\Content\WikitextContent;
+use MediaWiki\Diff\IncompatibleDiffTypesException;
+use MediaWiki\Diff\SlotDiffRenderer;
 use Wikimedia\Assert\ParameterTypeException;
 use Wikimedia\TestingAccessWrapper;
 

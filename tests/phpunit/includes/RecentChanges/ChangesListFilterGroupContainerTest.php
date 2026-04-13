@@ -6,7 +6,11 @@ use MediaWiki\MainConfigNames;
 use MediaWiki\RecentChanges\ChangesListBooleanFilterGroup;
 use MediaWiki\RecentChanges\ChangesListFilterGroup;
 use MediaWiki\RecentChanges\ChangesListFilterGroupContainer;
+use MediaWiki\RecentChanges\ChangesListStringOptionsFilterGroup;
 use MediaWiki\Request\FauxRequest;
+use MediaWiki\Specials\SpecialRecentChanges;
+use MediaWiki\User\User;
+use Wikimedia\ArrayUtils\ArrayUtils;
 use Wikimedia\TestingAccessWrapper;
 
 /**

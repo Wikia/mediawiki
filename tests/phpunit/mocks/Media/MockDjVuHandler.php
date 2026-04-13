@@ -4,6 +4,11 @@
  * @license GPL-2.0-or-later
  */
 
+use MediaWiki\Media\DjVuHandler;
+use MediaWiki\Media\MediaTransformError;
+use MediaWiki\Media\ThumbnailImage;
+use MediaWiki\Media\TransformParameterError;
+
 /**
  * Fake handler for DjVu images.
  *

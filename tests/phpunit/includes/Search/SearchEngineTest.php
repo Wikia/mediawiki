@@ -3,6 +3,12 @@
 use MediaWiki\Content\WikitextContent;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Search\ISearchResultSet;
+use MediaWiki\Search\ResultAugmentor;
+use MediaWiki\Search\ResultSetAugmentor;
+use MediaWiki\Search\SearchEngine;
+use MediaWiki\Search\SearchEngineFactory;
+use MediaWiki\Search\SearchIndexField;
+use MediaWiki\Search\SearchIndexFieldDefinition;
 use MediaWiki\Search\SearchResult;
 
 /**

@@ -1,6 +1,7 @@
 <?php
 
 use MediaWiki\Search\ISearchResultSet;
+use MediaWiki\Search\SearchEngine;
 use MediaWiki\Search\SearchResult;
 
 class MockSearchEngine extends SearchEngine {

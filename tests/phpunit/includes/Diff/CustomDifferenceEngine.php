@@ -1,6 +1,7 @@
 <?php
 
 use MediaWiki\Content\Content;
+use MediaWiki\Diff\DifferenceEngine;
 
 class CustomDifferenceEngine extends DifferenceEngine {
 

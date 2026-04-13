@@ -1,5 +1,8 @@
 <?php
 
+use MediaWiki\Search\SearchIndexField;
+use MediaWiki\Search\SearchIndexFieldDefinition;
+
 /**
  * @group Search
  * @covers \MediaWiki\Search\SearchIndexFieldDefinition

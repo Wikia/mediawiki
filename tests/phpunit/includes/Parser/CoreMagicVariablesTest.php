@@ -1,6 +1,7 @@
 <?php
 namespace MediaWiki\Tests\Parser;
 
+use MediaWiki\Language\MessageCache;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Parser\Parser;
 use MediaWiki\Parser\ParserOptions;
@@ -263,7 +264,7 @@ class CoreMagicVariablesTest extends MediaWikiIntegrationTestCase {
 	public function testUserLanguageViaInt() {
 		$this->overrideConfigValue( MainConfigNames::ParserEnableUserLanguage, false );
 
-		$messageCache = $this->createMock( \MessageCache::class );
+		$messageCache = $this->createMock( MessageCache::class );
 		$messageCache->method( 'get' )
 			->with( 'ulmsg' )
 			->willReturn( '{{USERLANGUAGE}}' );

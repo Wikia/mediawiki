@@ -3,6 +3,9 @@
 use MediaWiki\FileRepo\File\File;
 use MediaWiki\FileRepo\FileRepo;
 use MediaWiki\MainConfigNames;
+use MediaWiki\Media\BitmapHandler;
+use MediaWiki\Media\JpegHandler;
+use MediaWiki\Media\ThumbnailImage;
 use MediaWiki\Page\PageIdentityValue;
 use MediaWiki\Title\TitleValue;
 use MediaWiki\WikiMap\WikiMap;

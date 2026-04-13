@@ -1,6 +1,12 @@
 <?php
 
 use MediaWiki\Config\HashConfig;
+use MediaWiki\Export\DumpFileOutput;
+use MediaWiki\Export\WikiExporter;
+use MediaWiki\Export\XmlDumpWriter;
+use MediaWiki\Import\ImportSource;
+use MediaWiki\Import\ImportStringSource;
+use MediaWiki\Import\WikiImporter;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Tests\Maintenance\DumpAsserter;

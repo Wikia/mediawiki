@@ -6,6 +6,7 @@
 
 use MediaWiki\EditPage\Constraint\AccidentalRecreationConstraint;
 use MediaWiki\EditPage\Constraint\EditConstraint;
+use MediaWiki\Logging\LogFormatterFactory;
 use MediaWiki\Title\Title;
 use Wikimedia\Rdbms\IConnectionProvider;
 use Wikimedia\Rdbms\IReadableDatabase;

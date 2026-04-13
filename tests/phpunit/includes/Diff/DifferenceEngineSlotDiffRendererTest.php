@@ -1,6 +1,7 @@
 <?php
 
 use MediaWiki\Content\ContentHandler;
+use MediaWiki\Diff\DifferenceEngineSlotDiffRenderer;
 use MediaWiki\Output\OutputPage;
 
 /**

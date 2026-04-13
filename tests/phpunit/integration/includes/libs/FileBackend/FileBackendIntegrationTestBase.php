@@ -9,6 +9,8 @@ use Wikimedia\FileBackend\FileBackend;
 use Wikimedia\FileBackend\FSFile\FSFile;
 use Wikimedia\FileBackend\FSFile\TempFSFile;
 use Wikimedia\FileBackend\FSFileBackend;
+use Wikimedia\LockManager\LockManager;
+use Wikimedia\LockManager\ScopedLock;
 use Wikimedia\Timestamp\TimestampFormat as TS;
 
 abstract class FileBackendIntegrationTestBase extends MediaWikiIntegrationTestCase {

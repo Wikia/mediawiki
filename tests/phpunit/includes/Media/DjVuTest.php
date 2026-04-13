@@ -1,6 +1,9 @@
 <?php
 
 use MediaWiki\MainConfigNames;
+use MediaWiki\Media\DjVuHandler;
+use MediaWiki\Media\TrivialMediaHandlerState;
+use MediaWiki\Tests\Common\Parser\DjVuSupport;
 
 /**
  * @group Media

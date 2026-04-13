@@ -1,5 +1,7 @@
 <?php
 
+use MediaWiki\ObjectCache\SqlBagOStuff;
+
 /**
  * @group BagOStuff
  * @group Database

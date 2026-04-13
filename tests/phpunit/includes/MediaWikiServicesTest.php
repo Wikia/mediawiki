@@ -6,8 +6,10 @@ use MediaWiki\Config\HashConfig;
 use MediaWiki\Hook\MediaWikiServicesHook;
 use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\HookContainer\StaticHookRegistry;
+use MediaWiki\Import\OldRevisionImporter;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Search\SearchEngine;
 use Wikimedia\Services\DestructibleService;
 use Wikimedia\Services\SalvageableService;
 

@@ -1,5 +1,7 @@
 <?php
 
+use MediaWiki\Search\SearchEngine;
+use MediaWiki\Search\SearchSuggestionSet;
 use MediaWiki\Title\Title;
 
 /**

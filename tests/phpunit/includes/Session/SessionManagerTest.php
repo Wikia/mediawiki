@@ -3,7 +3,6 @@
 namespace MediaWiki\Tests\Session;
 
 use DummySessionProvider;
-use IDBAccessObject;
 use InvalidArgumentException;
 use MediaWiki\Config\HashConfig;
 use MediaWiki\Context\RequestContext;
@@ -33,6 +32,7 @@ use ReflectionClass;
 use stdClass;
 use TestLogger;
 use UnexpectedValueException;
+use Wikimedia\Rdbms\IDBAccessObject;
 use Wikimedia\ScopedCallback;
 use Wikimedia\Stats\StatsFactory;
 use Wikimedia\TestingAccessWrapper;

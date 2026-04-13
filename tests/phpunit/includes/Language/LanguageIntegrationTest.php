@@ -23,7 +23,7 @@ use MediaWiki\Registration\ExtensionRegistry;
 use MediaWiki\Tests\Unit\DummyServicesTrait;
 use MediaWiki\Tests\Unit\Language\LanguageNameUtilsTestTrait;
 use MediaWiki\Title\NamespaceInfo;
-use MediaWiki\User\StaticUserOptionsLookup;
+use MediaWiki\User\Options\StaticUserOptionsLookup;
 use MediaWiki\User\UserIdentityValue;
 use MediaWiki\Utils\MWTimestamp;
 use Wikimedia\TestingAccessWrapper;

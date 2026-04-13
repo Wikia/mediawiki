@@ -5,6 +5,7 @@
 
 use MediaWiki\Config\ServiceOptions;
 use MediaWiki\Http\HttpRequestFactory;
+use MediaWiki\Http\MWHttpRequest;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Status\Status;
 use PHPUnit\Framework\MockObject\MockObject;

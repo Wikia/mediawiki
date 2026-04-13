@@ -1,5 +1,8 @@
 <?php
 
+use MediaWiki\Media\Jpeg2000Handler;
+use MediaWiki\Media\TrivialMediaHandlerState;
+
 /**
  * @covers \MediaWiki\Media\Jpeg2000Handler
  */

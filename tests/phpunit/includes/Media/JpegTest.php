@@ -1,6 +1,8 @@
 <?php
 
 use MediaWiki\MainConfigNames;
+use MediaWiki\Media\ExifBitmapHandler;
+use MediaWiki\Media\JpegHandler;
 
 /**
  * @group Media

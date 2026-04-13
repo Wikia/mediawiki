@@ -1,5 +1,7 @@
 <?php
 
+use MediaWiki\Autoload\AutoloadGenerator;
+
 /**
  * @group Autoload
  * @coversNothing

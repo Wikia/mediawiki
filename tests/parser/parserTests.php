@@ -15,8 +15,13 @@ require_once __DIR__ . '/../../maintenance/Maintenance.php';
 use MediaWiki\Maintenance\Maintenance;
 use MediaWiki\Settings\SettingsBuilder;
 use MediaWiki\Specials\SpecialVersion;
-use MediaWiki\Tests\AnsiTermColorer;
-use MediaWiki\Tests\DummyTermColorer;
+use MediaWiki\Tests\Common\Parser\AnsiTermColorer;
+use MediaWiki\Tests\Common\Parser\DbTestPreviewer;
+use MediaWiki\Tests\Common\Parser\DbTestRecorder;
+use MediaWiki\Tests\Common\Parser\DummyTermColorer;
+use MediaWiki\Tests\Common\Parser\MultiTestRecorder;
+use MediaWiki\Tests\Common\Parser\ParserTestPrinter;
+use MediaWiki\Tests\Common\Parser\ParserTestRunner;
 use Wikimedia\Parsoid\Utils\ScriptUtils;
 
 define( 'MW_AUTOLOAD_TEST_CLASSES', true );

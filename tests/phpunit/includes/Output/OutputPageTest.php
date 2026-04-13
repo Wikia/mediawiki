@@ -9,6 +9,7 @@ use MediaWiki\Language\ILanguageConverter;
 use MediaWiki\Language\Language;
 use MediaWiki\Language\LanguageCode;
 use MediaWiki\Language\LanguageConverterFactory;
+use MediaWiki\Language\MessageLocalizer;
 use MediaWiki\Language\RawMessage;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Output\OutputPage;

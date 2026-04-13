@@ -6,9 +6,9 @@ use MediaWiki\Context\RequestContext;
 use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\Linker\LinkRenderer;
 use MediaWiki\Page\LinkBatchFactory;
-use MediaWiki\Pager\DeletedContribsPager;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Revision\RevisionStore;
+use MediaWiki\Specials\Pager\DeletedContribsPager;
 use MediaWiki\Title\NamespaceInfo;
 use MediaWiki\Title\Title;
 use MediaWiki\User\User;
@@ -20,7 +20,7 @@ use Wikimedia\TestingAccessWrapper;
 
 /**
  * @group Database
- * @covers \MediaWiki\Pager\DeletedContribsPager
+ * @covers \MediaWiki\Specials\Pager\DeletedContribsPager
  */
 class DeletedContribsPagerTest extends MediaWikiIntegrationTestCase {
 	private static User $user;

@@ -2,6 +2,7 @@
 
 use MediaWiki\Config\ServiceOptions;
 use MediaWiki\Logger\NullSpi;
+use MediaWiki\ObjectCache\ObjectCacheFactory;
 use Wikimedia\ObjectCache\HashBagOStuff;
 use Wikimedia\Stats\StatsFactory;
 use Wikimedia\Telemetry\NoopTracer;

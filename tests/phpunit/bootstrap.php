@@ -14,6 +14,7 @@
 use MediaWiki\HookContainer\HookRunner;
 use MediaWiki\MainConfigSchema;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Profiler\Profiler;
 use MediaWiki\Registration\ExtensionProcessor;
 use MediaWiki\Registration\ExtensionRegistry;
 use PHPUnit\TextUI\CliArguments\Builder;

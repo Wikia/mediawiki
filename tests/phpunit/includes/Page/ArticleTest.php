@@ -14,6 +14,7 @@ use MediaWiki\Status\Status;
 use MediaWiki\Tests\Parser\ParserCacheTestBase;
 use MediaWiki\Title\Title;
 use MediaWiki\User\User;
+use Wikimedia\ObjectCache\HashBagOStuff;
 
 /**
  * @group Database

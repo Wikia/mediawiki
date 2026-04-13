@@ -1,5 +1,7 @@
 <?php
 
+use MediaWiki\Media\IPTC;
+
 /**
  * @covers \MediaWiki\Media\IPTC
  * @group Media

@@ -3,6 +3,7 @@
 use MediaWiki\Context\RequestContext;
 use MediaWiki\Page\Event\PageHistoryVisibilityChangedEvent;
 use MediaWiki\Revision\RevisionRecord;
+use MediaWiki\RevisionDelete\RevisionDeleter;
 use MediaWiki\Tests\ExpectCallbackTrait;
 use PHPUnit\Framework\Assert;
 

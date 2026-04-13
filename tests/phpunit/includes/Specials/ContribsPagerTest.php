@@ -7,11 +7,11 @@ use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\Linker\LinkRenderer;
 use MediaWiki\Page\LinkBatchFactory;
 use MediaWiki\Page\PageIdentityValue;
-use MediaWiki\Pager\ContribsPager;
 use MediaWiki\Pager\IndexPager;
 use MediaWiki\Permissions\SimpleAuthority;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Revision\RevisionStore;
+use MediaWiki\Specials\Pager\ContribsPager;
 use MediaWiki\Tests\User\TempUser\TempUserTestTrait;
 use MediaWiki\Title\NamespaceInfo;
 use MediaWiki\Title\Title;
@@ -24,7 +24,7 @@ use Wikimedia\TestingAccessWrapper;
 
 /**
  * @group Database
- * @covers \MediaWiki\Pager\ContribsPager
+ * @covers \MediaWiki\Specials\Pager\ContribsPager
  * @covers \MediaWiki\Pager\ContributionsPager
  */
 class ContribsPagerTest extends MediaWikiIntegrationTestCase {

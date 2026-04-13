@@ -2,7 +2,11 @@
 
 use MediaWiki\Maintenance\Maintenance;
 use MediaWiki\Settings\SettingsBuilder;
-use MediaWiki\Tests\AnsiTermColorer;
+use MediaWiki\Tests\Common\Parser\AnsiTermColorer;
+use MediaWiki\Tests\Common\Parser\ParserTestResult;
+use MediaWiki\Tests\Common\Parser\ParserTestRunner;
+use MediaWiki\Tests\Common\Parser\TestFileEditor;
+use MediaWiki\Tests\Common\Parser\TestRecorder;
 use Wikimedia\Diff\Diff;
 use Wikimedia\Diff\UnifiedDiffFormatter;
 use Wikimedia\Parsoid\ParserTests\Test as ParserTest;

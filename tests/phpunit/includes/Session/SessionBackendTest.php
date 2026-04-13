@@ -4,7 +4,6 @@ namespace MediaWiki\Tests\Session;
 
 use BadMethodCallException;
 use DummySessionProvider;
-use HashBagOStuff;
 use InvalidArgumentException;
 use MediaWiki\Config\Config;
 use MediaWiki\Config\HashConfig;
@@ -24,6 +23,7 @@ use MediaWiki\User\User;
 use MediaWikiIntegrationTestCase;
 use Psr\Log\NullLogger;
 use UnexpectedValueException;
+use Wikimedia\ObjectCache\HashBagOStuff;
 use Wikimedia\ScopedCallback;
 use Wikimedia\Stats\StatsFactory;
 use Wikimedia\TestingAccessWrapper;

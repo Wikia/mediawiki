@@ -1,11 +1,11 @@
 <?php
 
 use MediaWiki\Actions\HistoryAction;
+use MediaWiki\Actions\Pager\HistoryPager;
 use MediaWiki\Context\RequestContext;
 use MediaWiki\Output\OutputPage;
 use MediaWiki\Page\Article;
 use MediaWiki\Page\WikiPage;
-use MediaWiki\Pager\HistoryPager;
 use MediaWiki\Request\FauxRequest;
 use MediaWiki\Revision\MutableRevisionRecord;
 use MediaWiki\Title\Title;
@@ -94,7 +94,7 @@ class HistoryPagerTest extends MediaWikiIntegrationTestCase {
 	}
 
 	/**
-	 * @covers \MediaWiki\Pager\HistoryPager::fixQueryOffset
+	 * @covers \MediaWiki\Actions\Pager\HistoryPager::fixQueryOffset
 	 */
 	public function testQueryOffset() {
 		$offset = [ 'offset' => '20251105123000' ];
@@ -105,7 +105,7 @@ class HistoryPagerTest extends MediaWikiIntegrationTestCase {
 	}
 
 	/**
-	 * @covers \MediaWiki\Pager\HistoryPager::fixQueryOffset
+	 * @covers \MediaWiki\Actions\Pager\HistoryPager::fixQueryOffset
 	 */
 	public function testQueryOffsetMultiple() {
 		$offset = [ 'offset' => '20251105123000|123' ];
@@ -117,7 +117,7 @@ class HistoryPagerTest extends MediaWikiIntegrationTestCase {
 	}
 
 	/**
-	 * @covers \MediaWiki\Pager\HistoryPager::getBody
+	 * @covers \MediaWiki\Actions\Pager\HistoryPager::getBody
 	 */
 	public function testGetBodyEmpty() {
 		$pager = $this->getHistoryPager( [] );
@@ -127,7 +127,7 @@ class HistoryPagerTest extends MediaWikiIntegrationTestCase {
 	}
 
 	/**
-	 * @covers \MediaWiki\Pager\HistoryPager::getBody
+	 * @covers \MediaWiki\Actions\Pager\HistoryPager::getBody
 	 */
 	public function testGetBodyOneHeading() {
 		$pager = $this->getHistoryPager(
@@ -152,7 +152,7 @@ class HistoryPagerTest extends MediaWikiIntegrationTestCase {
 	}
 
 	/**
-	 * @covers \MediaWiki\Pager\HistoryPager::getBody
+	 * @covers \MediaWiki\Actions\Pager\HistoryPager::getBody
 	 */
 	public function testGetBodyTwoHeading() {
 		$pagerData = [
@@ -197,7 +197,7 @@ class HistoryPagerTest extends MediaWikiIntegrationTestCase {
 	}
 
 	/**
-	 * @covers \MediaWiki\Pager\HistoryPager::getBody
+	 * @covers \MediaWiki\Actions\Pager\HistoryPager::getBody
 	 */
 	public function testGetBodyLastItem() {
 		$pagerData = [

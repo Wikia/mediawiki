@@ -3,6 +3,7 @@
 use MediaWiki\Block\UserBlockTarget;
 use MediaWiki\Context\RequestContext;
 use MediaWiki\HookContainer\HookContainer;
+use MediaWiki\Interwiki\Interwiki;
 use MediaWiki\Interwiki\InterwikiLookup;
 use MediaWiki\Linker\LinkTarget;
 use MediaWiki\MainConfigNames;

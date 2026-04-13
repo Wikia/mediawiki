@@ -13,11 +13,11 @@ use MediaWiki\Context\RequestContext;
 use MediaWiki\Linker\LinkRenderer;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Page\LinkBatchFactory;
-use MediaWiki\Pager\BlockListPager;
 use MediaWiki\Permissions\SimpleAuthority;
 use MediaWiki\Permissions\UltimateAuthority;
 use MediaWiki\Request\FauxRequest;
 use MediaWiki\SpecialPage\SpecialPageFactory;
+use MediaWiki\Specials\Pager\BlockListPager;
 use MediaWiki\Utils\MWTimestamp;
 use MediaWikiIntegrationTestCase;
 use Wikimedia\Rdbms\FakeResultWrapper;
@@ -28,7 +28,7 @@ use Wikimedia\Timestamp\TimestampFormat as TS;
 
 /**
  * @group Database
- * @covers \MediaWiki\Pager\BlockListPager
+ * @covers \MediaWiki\Specials\Pager\BlockListPager
  */
 class BlockListPagerTest extends MediaWikiIntegrationTestCase {
 

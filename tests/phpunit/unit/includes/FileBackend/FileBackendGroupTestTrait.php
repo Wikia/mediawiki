@@ -2,6 +2,7 @@
 
 // phpcs:disable MediaWiki.Commenting.FunctionComment.MissingDocumentationPublic -- Test traits are not excluded
 
+use MediaWiki\Deferred\DeferredUpdates;
 use MediaWiki\FileBackend\FileBackendGroup;
 use MediaWiki\FileBackend\LockManager\LockManagerGroupFactory;
 use MediaWiki\FileRepo\LocalRepo;

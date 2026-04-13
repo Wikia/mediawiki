@@ -7,6 +7,7 @@ use MediaWiki\Permissions\PermissionStatus;
 use MediaWiki\RecentChanges\RecentChange;
 use MediaWiki\Tests\Unit\Permissions\MockAuthorityTrait;
 use MediaWiki\User\UserIdentity;
+use MediaWiki\Utils\MWTimestamp;
 
 /**
  * @group Database

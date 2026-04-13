@@ -1,5 +1,6 @@
 <?php
 
+use MediaWiki\Http\MWHttpRequest;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Skin\SkinTemplate;

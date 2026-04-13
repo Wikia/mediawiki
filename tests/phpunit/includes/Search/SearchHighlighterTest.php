@@ -1,5 +1,7 @@
 <?php
 
+use MediaWiki\Search\SearchHighlighter;
+
 /**
  * @group Search
  */
@@ -9,7 +11,7 @@ class SearchHighlighterTest extends \MediaWikiIntegrationTestCase {
 	 * @covers \MediaWiki\Search\SearchHighlighter::highlightSimple
 	 */
 	public function testHighlightSimple( string $wikiText, string $searchTerm, string $expectedOutput, int $contextChars ) {
-		$highlighter = new \SearchHighlighter( false );
+		$highlighter = new SearchHighlighter( false );
 		$actual = $highlighter->highlightSimple( $wikiText, [ $searchTerm ], 1, $contextChars );
 		$this->assertEquals( $expectedOutput, $actual );
 	}

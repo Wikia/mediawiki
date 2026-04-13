@@ -11,7 +11,7 @@ use MediaWiki\Page\Article;
 use MediaWiki\Request\FauxRequest;
 use MediaWiki\Request\WebRequest;
 use MediaWiki\Title\Title;
-use MediaWiki\User\StaticUserOptionsLookup;
+use MediaWiki\User\Options\StaticUserOptionsLookup;
 use MediaWiki\User\User;
 use MediaWikiIntegrationTestCase;
 

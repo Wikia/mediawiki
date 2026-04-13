@@ -1,6 +1,7 @@
 <?php
 
 use MediaWiki\MainConfigNames;
+use MediaWiki\Search\StringPrefixSearch;
 use MediaWiki\Title\Title;
 
 /**

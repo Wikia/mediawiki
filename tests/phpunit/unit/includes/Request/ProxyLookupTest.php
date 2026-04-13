@@ -9,6 +9,7 @@ namespace MediaWiki\Tests\Unit;
 use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\Request\ProxyLookup;
 use MediaWikiUnitTestCase;
+use Wikimedia\ObjectCache\BagOStuff;
 use Wikimedia\ObjectCache\HashBagOStuff;
 
 /**
@@ -107,7 +108,7 @@ class ProxyLookupTest extends MediaWikiUnitTestCase {
 	public function testCaching() {
 		$hookContainer = $this->createNoOpMock( HookContainer::class );
 
-		$cache = $this->createMock( \BagOStuff::class );
+		$cache = $this->createMock( BagOStuff::class );
 		$cacheData = [];
 		$cache->method( 'makeGlobalKey' )
 			->willReturn( 'test-key' );
@@ -133,7 +134,7 @@ class ProxyLookupTest extends MediaWikiUnitTestCase {
 		$this->assertTrue( $proxyLookup1->isConfiguredProxy( '127.0.0.1' ) );
 
 		// Second ProxyLookup instance should use cached IPSet
-		$cache2 = $this->createMock( \BagOStuff::class );
+		$cache2 = $this->createMock( BagOStuff::class );
 		$cache2->method( 'makeGlobalKey' )
 			->willReturn( 'test-key' );
 		$cache2->expects( $this->once() )

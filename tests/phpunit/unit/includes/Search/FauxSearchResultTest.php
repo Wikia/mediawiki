@@ -2,6 +2,7 @@
 
 use MediaWiki\FileRepo\File\File;
 use MediaWiki\Revision\MutableRevisionRecord;
+use MediaWiki\Search\FauxSearchResult;
 
 /**
  * @group Search

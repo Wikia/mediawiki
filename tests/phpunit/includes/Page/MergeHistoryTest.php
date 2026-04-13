@@ -1,8 +1,12 @@
 <?php
 
 use MediaWiki\CommentStore\CommentStoreComment;
+use MediaWiki\Content\Content;
+use MediaWiki\Content\JavaScriptContent;
+use MediaWiki\Content\WikitextContent;
 use MediaWiki\Context\RequestContext;
 use MediaWiki\Linker\LinkTarget;
+use MediaWiki\Logging\DatabaseLogEntry;
 use MediaWiki\Logging\LogEntry;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MainConfigSchema;
@@ -20,6 +24,7 @@ use MediaWiki\Tests\Recentchanges\ChangeTrackingUpdateSpyTrait;
 use MediaWiki\Tests\Search\SearchUpdateSpyTrait;
 use MediaWiki\Tests\Unit\Permissions\MockAuthorityTrait;
 use MediaWiki\Title\Title;
+use MediaWiki\Title\TitleValue;
 use MediaWiki\Utils\MWTimestamp;
 use Wikimedia\Rdbms\IDBAccessObject;
 use Wikimedia\TestingAccessWrapper;

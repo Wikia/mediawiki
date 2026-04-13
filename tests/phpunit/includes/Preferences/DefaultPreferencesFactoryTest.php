@@ -22,6 +22,7 @@ use MediaWiki\Request\FauxRequest;
 use MediaWiki\Session\SessionId;
 use MediaWiki\Skin\Skin;
 use MediaWiki\Skin\SkinFactory;
+use MediaWiki\Specials\Forms\PreferencesFormOOUI;
 use MediaWiki\Tests\Session\TestUtils;
 use MediaWiki\Tests\Unit\DummyServicesTrait;
 use MediaWiki\Title\NamespaceInfo;

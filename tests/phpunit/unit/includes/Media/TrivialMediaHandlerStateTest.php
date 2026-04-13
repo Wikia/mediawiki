@@ -1,5 +1,7 @@
 <?php
 
+use MediaWiki\Media\TrivialMediaHandlerState;
+
 /**
  * @covers \MediaWiki\Media\TrivialMediaHandlerState
  */

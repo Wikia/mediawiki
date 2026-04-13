@@ -2,6 +2,7 @@
 
 use MediaWiki\Logging\LogPage;
 use MediaWiki\MainConfigNames;
+use MediaWiki\RCFeed\RCFeed;
 use MediaWiki\RecentChanges\RecentChange;
 
 /**

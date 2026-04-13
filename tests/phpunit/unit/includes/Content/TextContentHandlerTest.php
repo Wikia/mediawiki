@@ -1,6 +1,9 @@
 <?php
 
 use MediaWiki\Content\TextContentHandler;
+use MediaWiki\Search\SearchEngine;
+use MediaWiki\Search\SearchIndexField;
+use MediaWiki\Search\SearchIndexFieldDefinition;
 
 /**
  * @group ContentHandler

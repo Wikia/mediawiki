@@ -1,5 +1,6 @@
 <?php
 
+use MediaWiki\Interwiki\Interwiki;
 use MediaWiki\MainConfigNames;
 use Wikimedia\Rdbms\Platform\ISQLPlatform;
 

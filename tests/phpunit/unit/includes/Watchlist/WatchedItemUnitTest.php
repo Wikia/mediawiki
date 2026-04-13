@@ -1,5 +1,6 @@
 <?php
 
+use MediaWiki\Language\MessageLocalizer;
 use MediaWiki\Message\Message;
 use MediaWiki\Page\PageReferenceValue;
 use MediaWiki\User\UserIdentityValue;

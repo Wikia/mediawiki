@@ -1,6 +1,7 @@
 <?php
 
 use MediaWiki\HTMLForm\HTMLForm;
+use MediaWiki\Specials\FormFields\Licenses;
 
 /**
  * @covers \MediaWiki\Specials\FormFields\Licenses

@@ -1,8 +1,10 @@
 <?php
 
 use MediaWiki\Context\RequestContext;
+use MediaWiki\Import\ImportStreamSource;
 use MediaWiki\MainConfigNames;
 use MediaWiki\RecentChanges\RecentChange;
+use MediaWiki\Specials\Helpers\ImportReporter;
 use MediaWiki\Tests\User\TempUser\TempUserTestTrait;
 use Wikimedia\Timestamp\ConvertibleTimestamp;
 

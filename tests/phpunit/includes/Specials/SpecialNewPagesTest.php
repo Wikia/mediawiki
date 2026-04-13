@@ -19,7 +19,7 @@ use Wikimedia\Parsoid\Utils\DOMUtils;
 /**
  * @group Database
  * @covers \MediaWiki\Specials\SpecialNewPages
- * @covers \MediaWiki\Pager\NewPagesPager
+ * @covers \MediaWiki\Specials\Pager\NewPagesPager
  */
 class SpecialNewPagesTest extends SpecialPageTestBase {
 

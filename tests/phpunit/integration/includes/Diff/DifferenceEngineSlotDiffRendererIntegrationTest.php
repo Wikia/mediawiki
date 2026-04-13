@@ -1,5 +1,6 @@
 <?php
 
+use MediaWiki\Diff\DifferenceEngineSlotDiffRenderer;
 use MediaWiki\MainConfigNames;
 
 /**

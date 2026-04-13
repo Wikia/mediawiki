@@ -3,6 +3,8 @@
 use MediaWiki\Content\ContentHandler;
 use MediaWiki\Content\ContentSerializationException;
 use MediaWiki\Content\UnknownContentModelException;
+use MediaWiki\Import\ImportableOldRevisionImporter;
+use MediaWiki\Import\WikiRevision;
 use MediaWiki\Page\Event\PageCreatedEvent;
 use MediaWiki\Page\Event\PageLatestRevisionChangedEvent;
 use MediaWiki\Page\PageIdentity;

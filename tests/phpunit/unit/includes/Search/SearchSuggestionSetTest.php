@@ -1,5 +1,8 @@
 <?php
 
+use MediaWiki\Search\SearchSuggestion;
+use MediaWiki\Search\SearchSuggestionSet;
+
 /**
  * @license GPL-2.0-or-later
  */

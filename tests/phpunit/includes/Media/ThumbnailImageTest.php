@@ -2,6 +2,7 @@
 
 use MediaWiki\FileRepo\File\UnregisteredLocalFile;
 use MediaWiki\FileRepo\FileRepo;
+use MediaWiki\Media\ThumbnailImage;
 use Wikimedia\FileBackend\FileBackend;
 
 /**

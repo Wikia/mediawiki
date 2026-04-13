@@ -1,6 +1,7 @@
 <?php
 
 use MediaWiki\Context\RequestContext;
+use MediaWiki\Language\MessageLocalizer;
 use MediaWiki\Language\MessageParser;
 use MediaWiki\Language\RawMessage;
 use MediaWiki\Message\Message;

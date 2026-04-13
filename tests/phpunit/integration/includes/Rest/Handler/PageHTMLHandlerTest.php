@@ -4,9 +4,9 @@ namespace MediaWiki\Tests\Rest\Handler;
 
 use Exception;
 use MediaWiki\Deferred\DeferredUpdates;
-use MediaWiki\Hook\ParserLogLinterDataHook;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Page\WikiPage;
+use MediaWiki\Parser\Hook\ParserLogLinterDataHook;
 use MediaWiki\Rest\Handler\PageHTMLHandler;
 use MediaWiki\Rest\HttpException;
 use MediaWiki\Rest\LocalizedHttpException;

@@ -2,7 +2,7 @@
 namespace MediaWiki\Tests\Specials\Pager;
 
 use MediaWiki\Context\RequestContext;
-use MediaWiki\Pager\ImageListPager;
+use MediaWiki\Specials\Pager\ImageListPager;
 use MediaWikiIntegrationTestCase;
 use UnexpectedValueException;
 
@@ -17,7 +17,7 @@ use UnexpectedValueException;
  */
 class ImageListPagerTest extends MediaWikiIntegrationTestCase {
 	/**
-	 * @covers \MediaWiki\Pager\ImageListPager::formatValue
+	 * @covers \MediaWiki\Specials\Pager\ImageListPager::formatValue
 	 */
 	public function testFormatValuesThrowException() {
 		$services = $this->getServiceContainer();
@@ -41,7 +41,7 @@ class ImageListPagerTest extends MediaWikiIntegrationTestCase {
 	}
 
 	/**
-	 * @covers \MediaWiki\Pager\ImageListPager::formatValue
+	 * @covers \MediaWiki\Specials\Pager\ImageListPager::formatValue
 	 */
 	public function testFormatValues_img_timestamp() {
 		$services = $this->getServiceContainer();
@@ -64,7 +64,7 @@ class ImageListPagerTest extends MediaWikiIntegrationTestCase {
 	}
 
 	/**
-	 * @covers \MediaWiki\Pager\ImageListPager::formatValue
+	 * @covers \MediaWiki\Specials\Pager\ImageListPager::formatValue
 	 */
 	public function testFormatValues_img_size() {
 		$services = $this->getServiceContainer();
@@ -107,7 +107,7 @@ class ImageListPagerTest extends MediaWikiIntegrationTestCase {
 	}
 
 	/**
-	 * @covers \MediaWiki\Pager\ImageListPager::formatValue
+	 * @covers \MediaWiki\Specials\Pager\ImageListPager::formatValue
 	 */
 	public function testFormatValues_count() {
 		$services = $this->getServiceContainer();

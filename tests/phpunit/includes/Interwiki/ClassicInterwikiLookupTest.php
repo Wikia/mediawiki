@@ -2,6 +2,7 @@
 
 use MediaWiki\Config\ServiceOptions;
 use MediaWiki\Interwiki\ClassicInterwikiLookup;
+use MediaWiki\Interwiki\Interwiki;
 use MediaWiki\MainConfigNames;
 use MediaWiki\WikiMap\WikiMap;
 use Wikimedia\ObjectCache\WANObjectCache;

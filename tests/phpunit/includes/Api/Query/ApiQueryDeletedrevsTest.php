@@ -2,10 +2,10 @@
 
 namespace MediaWiki\Tests\Api\Query;
 
+use MediaWiki\Content\WikitextContent;
 use MediaWiki\Tests\Api\ApiTestCase;
 use MediaWiki\Title\Title;
 use MediaWiki\User\User;
-use WikitextContent;
 
 /**
  * @group API

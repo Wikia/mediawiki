@@ -2,8 +2,6 @@
 
 namespace MediaWiki\Tests\Content;
 
-use DifferenceEngine;
-use DifferenceEngineSlotDiffRenderer;
 use MediaWiki\Content\ContentHandler;
 use MediaWiki\Content\CssContentHandler;
 use MediaWiki\Content\JavaScriptContentHandler;
@@ -15,6 +13,10 @@ use MediaWiki\Content\ValidationParams;
 use MediaWiki\Content\WikitextContent;
 use MediaWiki\Content\WikitextContentHandler;
 use MediaWiki\Context\RequestContext;
+use MediaWiki\Diff\DifferenceEngine;
+use MediaWiki\Diff\DifferenceEngineSlotDiffRenderer;
+use MediaWiki\Diff\SlotDiffRenderer;
+use MediaWiki\Diff\TextSlotDiffRenderer;
 use MediaWiki\Language\Language;
 use MediaWiki\Language\LanguageNameUtils;
 use MediaWiki\Linker\LinkRenderer;
@@ -32,8 +34,6 @@ use MediaWiki\Tests\Mocks\Content\DummyContentHandlerForTesting;
 use MediaWiki\Title\Title;
 use MediaWiki\Title\TitleFactory;
 use MediaWikiIntegrationTestCase;
-use SlotDiffRenderer;
-use TextSlotDiffRenderer;
 use Throwable;
 use Wikimedia\TestingAccessWrapper;
 use Wikimedia\UUID\GlobalIdGenerator;

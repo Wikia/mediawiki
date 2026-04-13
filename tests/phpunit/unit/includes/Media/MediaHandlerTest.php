@@ -1,5 +1,7 @@
 <?php
 
+use MediaWiki\Media\MediaHandler;
+
 /**
  * @group Media
  * @covers \MediaWiki\Media\MediaHandler

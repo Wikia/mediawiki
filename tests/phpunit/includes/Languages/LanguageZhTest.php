@@ -1,9 +1,9 @@
 <?php
 namespace MediaWiki\Tests\Languages;
 
+use MediaWiki\Diff\TextSlotDiffRenderer;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Tests\Language\LanguageClassesTestCase;
-use TextSlotDiffRenderer;
 
 /**
  * @covers \MediaWiki\Languages\LanguageZh

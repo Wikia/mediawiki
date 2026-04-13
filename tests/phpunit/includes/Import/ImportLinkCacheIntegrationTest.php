@@ -1,6 +1,8 @@
 <?php
 
 use MediaWiki\Context\RequestContext;
+use MediaWiki\Import\ImportStreamSource;
+use MediaWiki\Specials\Helpers\ImportReporter;
 use MediaWiki\Status\Status;
 use MediaWiki\Title\Title;
 use Wikimedia\Rdbms\IDBAccessObject;

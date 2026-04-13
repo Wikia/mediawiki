@@ -1,5 +1,7 @@
 <?php
 
+use MediaWiki\Media\XCFHandler;
+
 /**
  * @group Media
  */

@@ -2,6 +2,7 @@
 
 declare( strict_types = 1 );
 
+use MediaWiki\Http\MWHttpRequest;
 use MediaWiki\Http\MwHttpRequestToResponseInterfaceAdapter;
 use Psr\Http\Message\StreamInterface;
 

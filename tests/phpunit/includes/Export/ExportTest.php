@@ -4,6 +4,8 @@ use MediaWiki\Content\Content;
 use MediaWiki\Content\ContentHandler;
 use MediaWiki\Content\Renderer\ContentParseParams;
 use MediaWiki\Content\TextContent;
+use MediaWiki\Export\DumpStringOutput;
+use MediaWiki\Export\WikiExporter;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Page\PageIdentity;
 use MediaWiki\Parser\ParserOutput;

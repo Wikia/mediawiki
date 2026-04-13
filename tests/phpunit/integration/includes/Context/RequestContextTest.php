@@ -14,9 +14,9 @@ use MediaWiki\Skin\Skin;
 use MediaWiki\Skin\SkinFallback;
 use MediaWiki\Title\Title;
 use MediaWiki\User\Options\StaticUserOptionsLookup;
+use MediaWiki\User\Options\UserOptionsLookup;
 use MediaWiki\User\User;
 use MediaWiki\User\UserIdentityValue;
-use MediaWiki\User\UserOptionsLookup;
 use MediaWikiIntegrationTestCase;
 
 /**

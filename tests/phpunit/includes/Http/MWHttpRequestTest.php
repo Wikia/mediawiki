@@ -1,5 +1,6 @@
 <?php
 
+use MediaWiki\Http\MWHttpRequest;
 use MediaWiki\MediaWikiServices;
 use Wikimedia\Http\TelemetryHeadersInterface;
 use Wikimedia\TestingAccessWrapper;

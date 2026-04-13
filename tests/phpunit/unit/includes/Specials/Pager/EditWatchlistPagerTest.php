@@ -3,22 +3,26 @@
 use MediaWiki\Context\IContextSource;
 use MediaWiki\Context\RequestContext;
 use MediaWiki\HookContainer\HookRunner;
+use MediaWiki\Language\Language;
 use MediaWiki\Navigation\CodexPagerNavigationBuilder;
 use MediaWiki\Output\OutputPage;
 use MediaWiki\Page\LinkBatchFactory;
 use MediaWiki\Page\PageIdentity;
-use MediaWiki\Pager\EditWatchlistPager;
 use MediaWiki\Request\FauxRequest;
+use MediaWiki\Request\WebRequest;
+use MediaWiki\Specials\Pager\EditWatchlistPager;
 use MediaWiki\Title\NamespaceInfo;
 use MediaWiki\Title\Title;
 use MediaWiki\User\UserIdentity;
+use MediaWiki\Watchlist\WatchedItem;
+use MediaWiki\Watchlist\WatchedItemStore;
 use MediaWiki\Watchlist\WatchedItemStoreInterface;
 use MediaWiki\Watchlist\WatchlistLabel;
 use Wikimedia\Rdbms\FakeResultWrapper;
 use Wikimedia\Rdbms\IReadableDatabase;
 
 /**
- * @covers \MediaWiki\Pager\EditWatchlistPager
+ * @covers \MediaWiki\Specials\Pager\EditWatchlistPager
  */
 class EditWatchlistPagerTest extends MediaWikiUnitTestCase {
 

@@ -10,6 +10,7 @@
 
 use MediaWiki\HookContainer\HookRunner;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Registration\ExtensionRegistry;
 use PHPUnit\Util\Xml\Loader as XmlLoader;
 
 require_once __DIR__ . '/../../vendor/autoload.php';

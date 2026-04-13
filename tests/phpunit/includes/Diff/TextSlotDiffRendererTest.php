@@ -3,8 +3,10 @@
 use MediaWiki\Content\ContentHandler;
 use MediaWiki\Content\TextContent;
 use MediaWiki\Context\RequestContext;
+use MediaWiki\Diff\IncompatibleDiffTypesException;
 use MediaWiki\Diff\TextDiffer\ManifoldTextDiffer;
 use MediaWiki\Diff\TextDiffer\Wikidiff2TextDiffer;
+use MediaWiki\Diff\TextSlotDiffRenderer;
 use MediaWiki\Tests\Diff\TextDiffer\TextDifferData;
 use MediaWiki\Tests\Mocks\Content\DummyContentHandlerForTesting;
 use MediaWiki\Tests\Mocks\Content\DummyNonTextContentHandler;

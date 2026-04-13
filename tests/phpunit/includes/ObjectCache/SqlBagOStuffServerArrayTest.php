@@ -1,6 +1,7 @@
 <?php
 
 use MediaWiki\MediaWikiServices;
+use MediaWiki\ObjectCache\SqlBagOStuff;
 use Wikimedia\TestingAccessWrapper;
 
 /**

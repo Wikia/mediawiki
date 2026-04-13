@@ -7,9 +7,11 @@ use MediaWiki\Page\PageProps;
 use MediaWiki\Page\PageReferenceValue;
 use MediaWiki\RecentChanges\RecentChange;
 use MediaWiki\RecentChanges\RecentChangeStore;
+use MediaWiki\Registration\ExtensionRegistry;
 use MediaWiki\Title\Title;
 use MediaWiki\User\UserIdentity;
 use MediaWiki\User\UserIdentityValue;
+use MediaWiki\Utils\MWTimestamp;
 
 /**
  * @group Database

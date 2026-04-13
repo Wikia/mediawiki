@@ -6,6 +6,7 @@
  * @license GPL-2.0-or-later
  */
 
+use MediaWiki\Search\SearchSuggestionSet;
 use MediaWiki\Title\Title;
 
 class SearchSuggestionSetIntegrationTest extends MediaWikiIntegrationTestCase {

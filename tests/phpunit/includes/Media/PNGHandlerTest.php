@@ -1,5 +1,7 @@
 <?php
 
+use MediaWiki\Media\PNGHandler;
+
 /**
  * @group Media
  */

@@ -1,6 +1,8 @@
 <?php
 
 use MediaWiki\Cache\GenderCache;
+use MediaWiki\Title\TitleValue;
+use MediaWiki\User\User;
 use Wikimedia\TestingAccessWrapper;
 
 /**

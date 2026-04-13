@@ -19,6 +19,7 @@ use MediaWiki\EditPage\SpamChecker;
 use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\Language\Language;
 use MediaWiki\Logger\Spi;
+use MediaWiki\Logging\LogFormatterFactory;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Page\RedirectLookup;
 use MediaWiki\Permissions\RateLimiter;

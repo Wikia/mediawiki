@@ -2,6 +2,7 @@
 
 use MediaWiki\Html\TemplateParser;
 use MediaWiki\MainConfigNames;
+use MediaWiki\Utils\FileContentsHasher;
 use Wikimedia\ObjectCache\BagOStuff;
 use Wikimedia\ObjectCache\EmptyBagOStuff;
 

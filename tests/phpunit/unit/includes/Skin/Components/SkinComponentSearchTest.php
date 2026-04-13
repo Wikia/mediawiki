@@ -1,6 +1,7 @@
 <?php
 
 use MediaWiki\Config\HashConfig;
+use MediaWiki\Language\MessageLocalizer;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Message\Message;
 use MediaWiki\Skin\Components\SkinComponentSearch;

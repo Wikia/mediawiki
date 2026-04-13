@@ -8,8 +8,6 @@ namespace MediaWiki\Tests\Common\Parser;
 
 use MediaWiki\Parser\Sanitizer;
 use MediaWiki\Shell\Shell;
-use MediaWiki\Tests\AnsiTermColorer;
-use MediaWiki\Tests\DummyTermColorer;
 use Wikimedia\Parsoid\ParserTests\Test as ParserTest;
 use Wikimedia\Parsoid\ParserTests\TestMode as ParserTestMode;
 

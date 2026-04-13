@@ -2,6 +2,9 @@
 
 use MediaWiki\Config\HashConfig;
 use MediaWiki\Content\UnknownContentModelException;
+use MediaWiki\Import\ImportSource;
+use MediaWiki\Import\ImportStringSource;
+use MediaWiki\Import\WikiImporter;
 use MediaWiki\MainConfigNames;
 
 /**

@@ -1,5 +1,7 @@
 <?php
 
+use MediaWiki\Media\GIFMetadataExtractor;
+
 /**
  * @group Media
  */

@@ -8,6 +8,8 @@ use GuzzleHttp\Middleware;
 use GuzzleHttp\Psr7\MultipartStream;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\Response;
+use MediaWiki\Http\GuzzleHttpRequest;
+use MediaWiki\Http\MWCallbackStream;
 
 /**
  * class for tests of GuzzleHttpRequest

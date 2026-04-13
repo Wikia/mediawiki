@@ -5,6 +5,8 @@
  */
 
 use PHPUnit\Framework\TestCase;
+use Wikimedia\ObjectCache\BagOStuff;
+use Wikimedia\ObjectCache\EmptyBagOStuff;
 use Wikimedia\ObjectCache\HashBagOStuff;
 use Wikimedia\Rdbms\ChronologyProtector;
 use Wikimedia\Rdbms\ILoadBalancer;

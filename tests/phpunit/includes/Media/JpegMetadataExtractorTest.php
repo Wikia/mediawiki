@@ -1,4 +1,8 @@
 <?php
+
+use MediaWiki\Media\InvalidJpegException;
+use MediaWiki\Media\JpegMetadataExtractor;
+
 /**
  * @todo Could use a test of extended XMP segments. Hard to find programs that
  * create example files, and creating my own in vim probably wouldn't

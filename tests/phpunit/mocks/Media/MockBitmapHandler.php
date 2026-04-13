@@ -1,8 +1,11 @@
 <?php
+
 /**
  * @license GPL-2.0-or-later
  * @ingroup Media
  */
+
+use MediaWiki\Media\BitmapHandler;
 
 /**
  * Fake handler for Bitmap images.

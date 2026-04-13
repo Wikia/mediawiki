@@ -1,6 +1,8 @@
 <?php
 
 use MediaWiki\MainConfigNames;
+use MediaWiki\Media\Exif;
+use MediaWiki\Media\JpegMetadataExtractor;
 use Wikimedia\TestingAccessWrapper;
 
 /**

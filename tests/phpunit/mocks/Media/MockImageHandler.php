@@ -8,6 +8,8 @@
  */
 
 use MediaWiki\FileRepo\File\File;
+use MediaWiki\Media\ImageHandler;
+use MediaWiki\Media\ThumbnailImage;
 
 /**
  * Mock handler for images.

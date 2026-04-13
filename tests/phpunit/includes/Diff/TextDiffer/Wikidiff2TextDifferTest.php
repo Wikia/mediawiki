@@ -3,6 +3,7 @@
 use MediaWiki\Context\RequestContext;
 use MediaWiki\Diff\TextDiffer\TextDiffer;
 use MediaWiki\Diff\TextDiffer\Wikidiff2TextDiffer;
+use MediaWiki\Diff\TextSlotDiffRenderer;
 use MediaWiki\Tests\Diff\TextDiffer\TextDifferData;
 use Wikimedia\TestingAccessWrapper;
 

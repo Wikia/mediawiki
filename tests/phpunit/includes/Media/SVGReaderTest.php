@@ -1,5 +1,8 @@
 <?php
 
+use MediaWiki\Media\InvalidSVGException;
+use MediaWiki\Media\SVGReader;
+
 /**
  * @group Media
  * @covers \MediaWiki\Media\SVGReader

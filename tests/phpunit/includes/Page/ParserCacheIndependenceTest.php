@@ -1,11 +1,15 @@
 <?php
 
+use MediaWiki\Deferred\DeferredUpdates;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Page\ParserOutputAccess;
+use MediaWiki\Parser\ParserCache;
 use MediaWiki\Parser\ParserCacheFactory;
+use MediaWiki\Parser\ParserOptions;
 use MediaWiki\Tests\Parser\ParserCacheTestBase;
 use MediaWiki\Tests\Parser\TrackerWrapper;
 use MediaWiki\Tests\Parser\TrackingParserCache;
+use Wikimedia\ObjectCache\HashBagOStuff;
 
 /**
  * @group Database
