@@ -119,6 +119,7 @@
 	"right-editprotected": "Sunting laman yang dilindungi ({{int:restriction-level-sysop}})",
 	"right-editsemiprotected": "Sunting laman yang dilindungi ({{int:restriction-level-autoconfirmed}})",
 	"right-editcontentmodel": "Menyunting model kandungan laman",
+	"right-createwithcontentmodel": "Cipta laman dengan model kandungan bukan lalai",
 	"right-editinterface": "Menyunting antara muka pengguna",
 	"right-editusercss": "Menyunting fail CSS pengguna lain",
 	"right-edituserjson": "Menyunting fail JSON pengguna lain",

@@ -2196,6 +2196,7 @@
 	"watchlistlabels-editwatchlist-dialog-unassign": "Quitar",
 	"watchlistlabels-list-wrapper": "[[Special:WatchlistLabels|Etiquetas]]: $1",
 	"watchlistlabels-watchaction-label": "Etiquetas de lista de seguimiento",
+	"watchlistlabels-editpage-nolabels": "No tienes ninguna [[Special:WatchlistLabels|etiqueta de lista de seguimiento]].",
 	"watchlist-filters-labels-title": "Etiquetas",
 	"watchlist-filters-labels-list-title": "Etiquetas de lista de seguimiento",
 	"watchlist-filters-tag-prefix-labels-inverted": "<strong>no</strong> =$1",

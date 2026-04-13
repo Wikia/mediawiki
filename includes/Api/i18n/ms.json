@@ -10,6 +10,7 @@
 	},
 	"apihelp-main-param-action": "Tindakan mana untuk dilakukan.",
 	"apihelp-main-param-format": "Format output.",
+	"apihelp-main-param-assertuser": "Sahkan pengguna semasa ialah pengguna yang dinamakan.",
 	"apihelp-main-param-uselang": "Bahasa yang digunakan untuk terjemahan mesej. <kbd>[[Special:ApiHelp/query+siteinfo|action=query&meta=siteinfo&siprop=languages]]</kbd> mengembalikan senarai kod bahasa. Anda boleh menetapkan <kbd>user</kbd> untuk menggunakan pilihan bahasa pengguna semasa atau <kbd>content</kbd> untuk menggunakan bahasa kandungan wiki ini.",
 	"apihelp-main-paramvalue-errorformat-wikitext": "Wikiteks dinyahhurai.",
 	"apihelp-block-summary": "Sekat pengguna.",
