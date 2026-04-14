@@ -335,6 +335,8 @@ because of Phabricator reports.
   have been removed.
 * ContentHandler::checkModelID() and AbstractContent::checkModelID() now
   throw UnexpectedContentModelException instead of deprecated MWException.
+* The mediawiki.ui.checkbox module, deprecated in 1.41 and unused, was removed.
+  Instead, use Codex modules.
 * The mediawiki.ui.radio module, deprecated in 1.41 and unused, was removed.
   Instead, use Codex modules.
 * Less mixin 'mediawiki.mixins.animation.less', deprecated in 1.39, was removed.
