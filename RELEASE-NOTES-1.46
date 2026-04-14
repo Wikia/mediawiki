@@ -1091,6 +1091,8 @@ because of Phabricator reports.
   was deprecated in 1.35.
 * The global function wfGetUrlUtils(), deprecated in 1.43, now emits
   deprecation warnings. Access the UrlUtils service instead.
+* RecentChange::newLogEntry, RecentChange::notifyNew and
+  RecentChange::notifyEdit, deprecated in 1.45, now emit warnings.
 * …
 
 === Other changes in 1.46 ===

@@ -506,6 +506,7 @@ class RecentChange implements Taggable {
 	 * @since 1.36 Added $editResult parameter
 	 * @deprecated since 1.45, use RecentChangeFactory::createEditRecentChange() instead to create
 	 * the log entry, then use RecentChangeFactory::insertRecentChange() to insert it into the database.
+	 * Hard-deprecated in 1.46.
 	 *
 	 * @param string $timestamp
 	 * @param PageIdentity $page
@@ -531,6 +532,7 @@ class RecentChange implements Taggable {
 		$bot, $ip = '', $oldSize = 0, $newSize = 0, $newId = 0, $patrol = 0,
 		$tags = [], ?EditResult $editResult = null
 	) {
+		wfDeprecated( __METHOD__, '1.45' );
 		$rc = MediaWikiServices::getInstance()->getRecentChangeFactory()
 			->createEditRecentChange(
 				$timestamp, $page, $minor, $user, $comment, $oldId,
@@ -547,6 +549,7 @@ class RecentChange implements Taggable {
 	 *
 	 * @deprecated since 1.45, use RecentChangeFactory::createNewPageRecentChange() instead to create
 	 * the log entry, then use RecentChangeFactory::insertRecentChange() to insert it into the database.
+	 * Hard-deprecated in 1.46.
 	 *
 	 * @param string $timestamp
 	 * @param PageIdentity $page
@@ -567,6 +570,7 @@ class RecentChange implements Taggable {
 		$page, $minor, $user, $comment, $bot,
 		$ip = '', $size = 0, $newId = 0, $patrol = 0, $tags = []
 	) {
+		wfDeprecated( __METHOD__, '1.45' );
 		$rc = MediaWikiServices::getInstance()->getRecentChangeFactory()
 			->createNewPageRecentChange(
 				$timestamp, $page, $minor, $user, $comment, $bot,
@@ -577,7 +581,8 @@ class RecentChange implements Taggable {
 	}
 
 	/**
-	 * @deprecated since 1.45, use RecentChangeFactory::createLogRecentChange() instead
+	 * @deprecated since 1.45, use RecentChangeFactory::createLogRecentChange() instead.
+	 * Hard-deprecated in 1.46.
 	 *
 	 * @param string $timestamp
 	 * @param PageReference $logPage
@@ -603,6 +608,7 @@ class RecentChange implements Taggable {
 		$type, $action, $target, $logComment, $params, $newId = 0, $actionCommentIRC = '',
 		$revId = 0, $isPatrollable = false, $forceBotFlag = null
 	) {
+		wfDeprecated( __METHOD__, '1.45' );
 		return MediaWikiServices::getInstance()->getRecentChangeFactory()
 			->createLogRecentChange(
 				$timestamp, $logPage, $user, $actionComment, $ip,
