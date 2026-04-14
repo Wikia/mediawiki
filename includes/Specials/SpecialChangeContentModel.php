@@ -60,6 +60,12 @@ class SpecialChangeContentModel extends FormSpecialPage {
 	 */
 	private $oldRevision;
 
+	private string $oldContentModel;
+
+	private bool $titleExisted;
+
+	private string $newContentModel;
+
 	/** @inheritDoc */
 	protected function setParameter( $par ) {
 		$par = $this->getRequest()->getVal( 'pagetitle', $par );
@@ -95,15 +101,15 @@ class SpecialChangeContentModel extends FormSpecialPage {
 
 		if ( $this->title ) {
 			$form->setFormIdentifier( 'modelform' );
+			if ( $this->title->exists() ) {
+				// T120576
+				$form->setSubmitTextMsg( 'changecontentmodel-submit' );
+			} else {
+				$form->setSubmitTextMsg( 'changecontentmodel-create-submit' );
+			}
+			$this->getOutput()->addBacklinkSubtitle( $this->title );
 		} else {
 			$form->setFormIdentifier( 'titleform' );
-		}
-
-		// T120576
-		$form->setSubmitTextMsg( 'changecontentmodel-submit' );
-
-		if ( $this->title ) {
-			$this->getOutput()->addBacklinkSubtitle( $this->title );
 		}
 	}
 
@@ -145,6 +151,23 @@ class SpecialChangeContentModel extends FormSpecialPage {
 	}
 
 	/** @inheritDoc */
+	protected function preHtml() {
+		if ( $this->title ) {
+			// Checking permissions is handled by checkPermissions above
+			if ( $this->title->exists() ) {
+				$msg = $this->msg( 'changecontentmodel-editing', $this->title->getPrefixedText() );
+			} else {
+				$msg = $this->msg( 'changecontentmodel-create', $this->title->getPrefixedText() );
+			}
+		} elseif ( !$this->permissionManager->userHasRight( $this->getUser(), 'editcontentmodel' ) ) {
+			$msg = $this->msg( 'changecontentmodel-create-only' );
+		} else {
+			$msg = $this->msg( 'changecontentmodel-edit' );
+		}
+		return $msg->parseAsBlock();
+	}
+
+	/** @inheritDoc */
 	protected function getFormFields() {
 		$fields = [
 			'pagetitle' => [
@@ -154,6 +177,8 @@ class SpecialChangeContentModel extends FormSpecialPage {
 				'default' => $this->par,
 				'label-message' => 'changecontentmodel-title-label',
 				'validation-callback' => $this->validateTitle( ... ),
+				// If you need to enter a non-existing page then don't show autocomplete for existing ones ...
+				'suggestions' => $this->permissionManager->userHasRight( $this->getUser(), 'editcontentmodel' ),
 			],
 		];
 		if ( $this->title ) {
@@ -236,6 +261,9 @@ class SpecialChangeContentModel extends FormSpecialPage {
 	/** @inheritDoc */
 	public function onSubmit( array $data ) {
 		$this->title = Title::newFromText( $data['pagetitle'] );
+		$this->titleExisted = $this->title->exists();
+		$this->oldContentModel = $this->title->getContentModel();
+		$this->newContentModel = $data['model'];
 		$page = $this->wikiPageFactory->newFromTitle( $this->title );
 
 		$changer = $this->contentModelChangeFactory->newContentModelChange(
@@ -263,8 +291,20 @@ class SpecialChangeContentModel extends FormSpecialPage {
 
 	public function onSuccess() {
 		$out = $this->getOutput();
-		$out->setPageTitleMsg( $this->msg( 'changecontentmodel-success-title' ) );
-		$out->addWikiMsg( 'changecontentmodel-success-text', $this->title->getPrefixedText() );
+		if ( $this->titleExisted ) {
+			$out->setPageTitleMsg( $this->msg( 'changecontentmodel-success-title' ) );
+			$out->addWikiMsg( 'changecontentmodel-success-text',
+				$this->title->getPrefixedText(),
+				ContentHandler::getLocalizedName( $this->oldContentModel, $this->getLanguage() ),
+				ContentHandler::getLocalizedName( $this->newContentModel, $this->getLanguage() )
+			);
+		} else {
+			$out->setPageTitleMsg( $this->msg( 'changecontentmodel-create-success-title' ) );
+			$out->addWikiMsg( 'changecontentmodel-create-success-text',
+				$this->title->getPrefixedText(),
+				ContentHandler::getLocalizedName( $this->newContentModel, $this->getLanguage() )
+			);
+		}
 	}
 
 	/**
