@@ -1041,7 +1041,8 @@ because of Phabricator reports.
 * All skins are now required to declare the menus they render in their
   skin definition (per T409774). In future this will allow for
   skin optimizations. BaseTemplate::getPersonalTools was also
-  deprecated (T422975).
+  deprecated as was calls by BaseTemplate::get to
+  personal_tools and content_actions. Please see migration guide at T416652.
 * Passing null to the $output parameter of FeedUtils::checkFeedOutput is now
   deprecated and emits deprecation warnings.
 * The HtmlCacheUpdater service has been renamed to HTMLCacheUpdater (T419427).

@@ -334,6 +334,7 @@ class SkinTemplate extends Skin {
 		$content_actions = $this->buildContentActionUrls( $content_navigation );
 		$tpl->set( 'content_navigation', $content_navigation );
 		$tpl->set( 'content_actions', $content_actions );
+		$tpl->deprecate( 'content_actions', '1.46' );
 
 		$tpl->set( 'sidebar', $this->buildSidebar() );
 		$tpl->set( 'nav_urls', $this->buildNavUrls() );
