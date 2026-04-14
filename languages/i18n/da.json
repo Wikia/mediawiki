@@ -1373,7 +1373,7 @@
 	"upload-maxfilesize": "Maksimal filstørrelse: $1",
 	"upload-description": "Filbeskrivelse",
 	"upload-options": "Oplægningsindstillinger",
-	"watchthisupload": "Overvåg filen",
+	"watchthisupload": "Overvåg denne fil",
 	"filewasdeleted": "En fil med dette navn er tidligere blevet uploadet og efterfølgende slettet.\nDu bør kontrollere $1, før du fortsætter med at uploade den igen.",
 	"filename-thumb-name": "Dette ser ud som navnet på en miniaturebillede (thumbnail). Undlad venligst at lægge miniaturer tilbage op på den samme wiki. Ellers ret venligst filnavnet, sådan at det giver mere mening og ikke har samme præfiks som en miniature.",
 	"filename-bad-prefix": "Navnet på filen du er ved at lægge op begynder med <strong>\"$1\"</strong>. Dette er et ikkebeskrivende navn, der typisk er skabt automatisk af et digitalkamera. Vær venlig at vælge et mere beskrivende navn på dit billede.",

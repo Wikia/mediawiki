@@ -212,6 +212,7 @@
 	"prefs-editwatchlist": "تعديل قائمة المراقبة",
 	"prefs-editwatchlist-label": "عدل قائمة مراقبتك:",
 	"prefs-editwatchlistlabels-label": "عدّل تسميات قائمة المراقبة:",
+	"prefs-managewatchlistlabels": "عرض وإدارة تصنيفات قائمة المراقبة الخاصة بك",
 	"prefs-editwatchlist-edit": "اعرض واحذف عناوين من قائمة مراقبتك",
 	"prefs-editwatchlist-raw": "عدل قائمة المراقبة الخام",
 	"prefs-editwatchlist-clear": "امسح قائمة المراقبة",

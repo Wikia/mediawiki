@@ -2342,6 +2342,7 @@
 	"ipaddressorusername": "IP adresi, kullanıcı adı veya engel kimliği:",
 	"ipbreason": "Gerekçe:",
 	"ipbreason-dropdown": "* Genel engelleme nedenleri\n** Yanlış bilgi ekleme\n** Sayfalardan içerik çıkarma\n** Dış sitelere istenmeyen bağlantı verme\n** Sayfalara mantıksız/anlaşılmaz içerik ekleme\n** Tehdit niteliğinde davranış/taciz",
+	"ipbreason-indef-dropdown": "* Sık rastlanan süresiz engel nedenleri\n** Harici sitelere bağlantı içeren spam gönderileri\n** Birden fazla hesabı kötüye kullanma\n** Uygunsuz kullanıcı adı",
 	"ipb-hardblock": "Bu IP adresi üzerinden giriş yapan kullanıcıları engelle",
 	"ipbcreateaccount": "Hesap oluşturma",
 	"ipbemailban": "E-posta gönderme",

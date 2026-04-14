@@ -32,6 +32,7 @@
 			"Ryuu",
 			"Tark",
 			"Trooper57",
+			"Vlad5250",
 			"Walesson"
 		]
 	},
@@ -328,7 +329,7 @@
 	"listgrouprights-restrictedgroups-op-or": "Deve atender a pelo menos um dos seguintes requisitos: $1",
 	"listgrouprights-restrictedgroups-op-xor": "Deve atender exatamente a um dos seguintes requisitos: $1",
 	"listgrouprights-restrictedgroups-op-nand": "Não deve atender a nenhum dos seguintes critérios: $1",
-	"listgrouprights-restrictedgroups-cond-age": "A conta do usuário foi criada há pelo menos 1 dólar",
+	"listgrouprights-restrictedgroups-cond-age": "A conta do usuário foi criada há pelo menos $1",
 	"listgrouprights-restrictedgroups-cond-emailconfirmed": "O usuário confirmou seu endereço de e-mail",
 	"listgrouprights-restrictedgroups-cond-isip": "O usuário usa o endereço IP: $1",
 	"listgrouprights-restrictedgroups-cond-ipinrange": "O usuário utiliza um endereço IP que está no intervalo: $1",
