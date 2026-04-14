@@ -4,6 +4,9 @@ namespace MediaWiki\Tests\Specials;
 
 use MediaWiki\Exception\ErrorPageError;
 use MediaWiki\Exception\PermissionsError;
+use MediaWiki\FileRepo\File\File;
+use MediaWiki\FileRepo\LocalRepo;
+use MediaWiki\FileRepo\RepoGroup;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Request\FauxRequest;
 use MediaWiki\Title\Title;
@@ -349,24 +352,219 @@ class SpecialMovePageTest extends SpecialPageTestBase {
 		$this->assertStringContainsString( '(movepage-moved-noredirect)', $html );
 	}
 
-	// TODO: Some workflows not covered by tests:
-	// (many of these should have separate cases depending on whether the user can override the warnings)
-	// Depending on target page contents:
-	// - Moving over a redirect pointing to another page
-	// - Moving the talk page over a redirect pointing to another page
-	// - Moving over a shared repo file
-	// - Moving over an existing page where the deletion fails
-	// - Moving over an existing page where the deletion succeeds, but then the move fails
-	// Depending on target title:
-	// - Moving from subject to talk namespace with talk/subpages
-	// - Moving from talk to subject namespace with talk/subpages
-	// Depending on related page protection levels:
-	// - Moving when the old title is protected against moving
-	// - Moving when a subpage of the old title is protected against moving
-	// - Moving when the talk page of the old title is protected against moving
-	// - Moving when the destination page or its talk page is protected against creation
-	// Involving subpages:
-	// - Moving with subpages where talk doesn't exist but talk subpages do
-	// - Moving with subpages where target's subpages already exist
-	// - Moving with subpages where subpage title max length is exceeded
+	public function testMoveOverRedirectToOtherPage() {
+		$this->assertStatusGood( $this->editPage( 'A', 'a' ) );
+		$this->assertStatusGood( $this->editPage( 'Talk:A', 'atalk' ) );
+		$this->assertStatusGood( $this->editPage( 'B', '#REDIRECT [[C]]' ) );
+
+		// Users without permissions can not move over an existing page
+		[ $html ] = $this->postSpecialMovePage( $this->getTestUser()->getUser(), 'A', 'B' );
+		$this->assertStringContainsString( '(redirectexists: B)', $html );
+
+		// Users with permissions can move over an existing page after seeing a warning and confirming a checkbox
+		[ $html ] = $this->postSpecialMovePage( $this->getTestSysop()->getUser(), 'A', 'B' );
+		$this->assertStringContainsString( '(delete_redirect_and_move_text: B)', $html );
+		// And a separate warning for the talk page ...
+		$this->assertStatusGood( $this->editPage( 'Talk:B', '#REDIRECT [[Talk:C]]' ) );
+		[ $html ] = $this->postSpecialMovePage( $this->getTestSysop()->getUser(), 'A', 'B', [
+			'wpMovetalk' => 1
+		] );
+		$this->assertStringContainsString( '(delete_redirect_and_move_text_2: B, Talk:B)', $html );
+
+		[ $html ] = $this->postSpecialMovePage( $this->getTestSysop()->getUser(), 'A', 'B', [
+			'wpDeleteAndMove' => 1,
+			'wpMovetalk' => 1
+		] );
+		$this->assertStringContainsString( '(movepage-moved-noredirect)', $html );
+		$this->assertPageContent( 'B', 'a' );
+		$this->assertPageContent( 'Talk:B', 'atalk' );
+	}
+
+	public function testMoveProtectionSubpage() {
+		$this->overrideConfigValue( MainConfigNames::NamespacesWithSubpages, [
+			NS_MAIN => true,
+		] );
+		$this->assertStatusGood( $this->editPage( 'A', 'a' ) );
+
+		$wikiPage = $this->getExistingTestPage( 'A/B' );
+		$this->assertStatusGood( $wikiPage->doUpdateRestrictions(
+			[ 'edit' => 'sysop', 'move' => 'sysop' ], [], $cascade, '', $this->getTestSysop()->getUser()
+		) );
+
+		// Users without permissions can not move the subpage and it will say it failed to move the subpage
+		[ $html ] = $this->postSpecialMovePage( $this->getTestUser()->getUser(), 'A', 'B', [
+			'wpMovesubpages' => 1
+		] );
+		$this->assertStringContainsString( '(movepage-page-unmoved', $html );
+	}
+
+	public function testMoveProtectionTalk() {
+		$this->assertStatusGood( $this->editPage( 'A', 'a' ) );
+
+		$wikiPage = $this->getExistingTestPage( 'Talk:A' );
+		$this->assertStatusGood( $wikiPage->doUpdateRestrictions(
+			[ 'edit' => 'sysop', 'move' => 'sysop' ], [], $cascade, '', $this->getTestSysop()->getUser()
+		) );
+		// Users without permissions can't move the talk page
+		[ $html ] = $this->postSpecialMovePage( $this->getTestUser()->getUser(), 'A', 'B', [
+			'wpMovetalk' => 1,
+		] );
+		$this->assertStringContainsString( '(cannotmovetalk', $html );
+		// They can move without the talk page
+		[ $html ] = $this->postSpecialMovePage( $this->getTestUser()->getUser(), 'A', 'B' );
+		$this->assertStringContainsString( '(movepage-moved-redirect)', $html );
+	}
+
+	public function testMoveProtectionTalkSysop() {
+		$this->assertStatusGood( $this->editPage( 'A', 'a' ) );
+
+		$wikiPage = $this->getExistingTestPage( 'Talk:A' );
+		$this->assertStatusGood( $wikiPage->doUpdateRestrictions(
+			[ 'edit' => 'sysop', 'move' => 'sysop' ], [], $cascade, '', $this->getTestSysop()->getUser()
+		) );
+		// Users with permissions can move a protected page after seeing a warning
+		[ $html ] = $this->getSpecialMovePage( $this->getTestSysop()->getUser(), 'A', [
+			'wpMovetalk' => 1
+		] );
+		$this->assertStringContainsString( '(protectedtalkpagemovewarning)', $html );
+		[ $html ] = $this->postSpecialMovePage( $this->getTestSysop()->getUser(), 'A', 'B',
+			[ 'wpMovetalk' => 1 ]
+		);
+		$this->assertStringContainsString( '(movepage-moved-noredirect)', $html );
+		$this->assertStringContainsString( '(movepage-page-moved', $html ); // The talk page was moved
+	}
+
+	public function testCreateProtection() {
+		$this->assertStatusGood( $this->editPage( 'A', 'a' ) );
+		$this->assertStatusGood( $this->editPage( 'Talk:A', 'atalk' ) );
+
+		$wikiPage = $this->getNonExistingTestPage( 'Talk:B' );
+		$this->assertStatusGood( $wikiPage->doUpdateRestrictions(
+			[ 'create' => 'sysop' ], [], $cascade, '', $this->getTestSysop()->getUser()
+		) );
+		$wikiPage = $this->getNonExistingTestPage( 'B' );
+		$this->assertStatusGood( $wikiPage->doUpdateRestrictions(
+			[ 'create' => 'sysop' ], [], $cascade, '', $this->getTestSysop()->getUser()
+		) );
+		// Users with permissions can move a protected page after seeing a warning
+		[ $html ] = $this->postSpecialMovePage( $this->getTestSysop()->getUser(), 'A', 'B' );
+		$this->assertStringContainsString( '(protectedpagemovecreatewarning)', $html );
+		$this->assertStringContainsString( '(protectedpagemovetalkcreatewarning)', $html );
+		[ $html ] = $this->postSpecialMovePage( $this->getTestSysop()->getUser(), 'A', 'B',
+			[ 'wpMovetalk' => 1, 'wpMoveOverProtection' => 1 ]
+		);
+		$this->assertStringContainsString( '(movepage-moved-noredirect)', $html );
+		$this->assertStringContainsString( '(movepage-page-moved', $html ); // The talk page was moved
+	}
+
+	public function testMoveExistingSubpages() {
+		$this->overrideConfigValue( MainConfigNames::NamespacesWithSubpages, [
+			NS_MAIN => true,
+		] );
+		// Already existing subpages don't follow any kind of deleteAndMove checks - they just fall straight to unmoved
+		$this->assertStatusGood( $this->editPage( 'A', 'a' ) );
+		$this->assertStatusGood( $this->editPage( 'A/b', 'ab' ) );
+		$this->assertStatusGood( $this->editPage( 'B/b', 'bb' ) );
+		[ $html ] = $this->postSpecialMovePage( $this->getTestSysop()->getUser(), 'A', 'B', [
+			'wpDeleteAndMove' => 1,
+			'wpMovesubpages' => 1
+		] );
+		$this->assertStringContainsString( '(movepage-page-exists', $html );
+	}
+
+	public function testMoveLongTitle() {
+		$this->overrideConfigValue( MainConfigNames::NamespacesWithSubpages, [
+			NS_MAIN => true,
+		] );
+		$this->assertStatusGood( $this->editPage( 'A', 'a' ) );
+		$long = str_repeat( "a", 150 );
+		$this->assertStatusGood( $this->editPage( "A/$long", 'along' ) );
+		[ $html ] = $this->postSpecialMovePage( $this->getTestSysop()->getUser(), 'A', "B$long", [
+			'wpMovesubpages' => 1,
+		] );
+		$this->assertStringContainsString( '(movepage-page-unmoved', $html );
+		$this->assertPageContent( "A/$long", 'along' );
+		$this->assertPageContent( "B$long", 'a' );
+	}
+
+	public function testMoveTalkSubpages() {
+		$this->assertStatusGood( $this->editPage( 'A', 'a' ) );
+		$this->assertStatusGood( $this->editPage( 'Talk:A/b', 'ab' ) );
+		[ $html ] = $this->postSpecialMovePage( $this->getTestSysop()->getUser(), 'A', 'B', [
+			'wpMovesubpages' => 1,
+			'wpMovetalk' => 1,
+		] );
+		$this->assertStringContainsString( '(movepage-page-moved', $html );
+		$this->assertPageContent( 'Talk:B/b', 'ab' );
+	}
+
+	public function testMoveSubjectToTalk() {
+		$this->assertStatusGood( $this->editPage( 'A', 'a' ) );
+		$this->assertStatusGood( $this->editPage( 'Talk:A', 'atalk' ) );
+		[ $html ] = $this->postSpecialMovePage( $this->getTestSysop()->getUser(), 'A', 'Talk:B', [
+			'wpMovesubpages' => 1,
+			'wpMovetalk' => 1
+		] );
+		// The talk page silently isn't moved
+		$this->assertStringNotContainsString( '(movepage-page-moved', $html );
+		$this->assertPageContent( 'Talk:B', 'a' );
+	}
+
+	public function testFailedDelete() {
+		$this->setTemporaryHook( 'ArticleDelete', static fn () => false );
+		$this->assertStatusGood( $this->editPage( 'A', 'a' ) );
+		$this->assertStatusGood( $this->editPage( 'B', 'b' ) );
+		[ $html ] = $this->postSpecialMovePage( $this->getTestSysop()->getUser(), 'A', 'B', [
+			'wpDeleteAndMove' => 1,
+		] );
+		$this->assertStringContainsString( '(delete-hook-aborted)', $html );
+	}
+
+	public function testFailedMoveAfterDelete() {
+		$this->setTemporaryHook( 'TitleMove', static function ( $old, $new, $user, $reason, $status ) {
+			$status->fatal( 'nope' );
+		} );
+		$this->assertStatusGood( $this->editPage( 'A', 'a' ) );
+		$this->assertStatusGood( $this->editPage( 'B', 'b' ) );
+		[ $html ] = $this->postSpecialMovePage( $this->getTestSysop()->getUser(), 'A', 'B', [
+			'wpDeleteAndMove' => 1,
+		] );
+		$this->assertStringContainsString( '(nope)', $html );
+		// As documentation of how the code behaves only; this result is unideal
+		// especially since it doesn't warn you that the deletion happened
+		$this->assertFalse( Title::newFromText( 'B' )->exists() );
+	}
+
+	public function testMoveOverShared() {
+		// Setup enough mocks to make MovePage think a file exists
+		// and not throw exceptions from the bowels of the editing system
+		$mockFile = $this->createMock( File::class );
+		$mockFile->method( 'isLocal' )->willReturn( false );
+		$mockFile->method( 'getRedirected' )->willReturn( null );
+		$mockFile2 = $this->createMock( File::class );
+		$mockFile2->method( 'exists' )->willReturn( false );
+		$mockRepoGroup = $this->createMock( RepoGroup::class );
+		$mockRepoGroup->method( 'findFile' )->willReturn( $mockFile );
+		$mockLocalRepo = $this->createMock( LocalRepo::class );
+		$mockLocalRepo->method( 'findFile' )->willReturn( false );
+		$mockLocalRepo->method( 'newFile' )->willReturn( $mockFile2 );
+		$mockRepoGroup->method( 'getLocalRepo' )->willReturn( $mockLocalRepo );
+		$this->setService( 'RepoGroup', $mockRepoGroup );
+		$this->assertStatusGood( $this->editPage( 'File:A.png', 'a' ) );
+
+		$customUser = $this->getTestUser()->getUser();
+		$this->getServiceContainer()->getPermissionManager()->overrideUserRightsForTesting( $customUser, [ 'edit', 'move', 'movefile' ] );
+		[ $html ] = $this->postSpecialMovePage( $customUser, 'File:A.png', 'File:B.png' );
+		$this->assertStringContainsString( '(file-exists-sharedrepo', $html );
+
+		$this->getServiceContainer()->getPermissionManager()->overrideUserRightsForTesting( $customUser, [ 'edit', 'move', 'movefile', 'reupload-shared', 'createpage' ] );
+		[ $html ] = $this->postSpecialMovePage( $customUser, 'File:A.png', 'File:B.png' );
+		$this->assertStringContainsString( '(move-over-sharedrepo', $html );
+
+		[ $html ] = $this->postSpecialMovePage( $customUser, 'File:A.png', 'File:B.png', [
+			'wpMoveOverSharedFile' => true
+		] );
+		$this->assertStringContainsString( '(movepage-moved-redirect)', $html );
+		$this->assertPageContent( 'File:B.png', 'a' );
+	}
 }
