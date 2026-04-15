@@ -1093,6 +1093,7 @@ because of Phabricator reports.
   deprecation warnings. Access the UrlUtils service instead.
 * RecentChange::newLogEntry, RecentChange::notifyNew and
   RecentChange::notifyEdit, deprecated in 1.45, now emit warnings.
+* Calling SpecialPageFactory::getUsablePages without context was deprecated.
 * …
 
 === Other changes in 1.46 ===

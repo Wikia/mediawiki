@@ -1587,11 +1587,18 @@ class SpecialPageFactory {
 	 *
 	 * @param User $user User object to check permissions provided
 	 * @param IContextSource|null $context Context object, since 1.45
+	 *     Passing null was deprecated in 1.46.
 	 * @return array<string,SpecialPage>
 	 */
 	public function getUsablePages( User $user, ?IContextSource $context = null ): array {
 		$pages = [];
-		$context ??= RequestContext::getMain();
+		if ( !$context ) {
+			wfDeprecatedMsg(
+				'Calling SpecialPageFactory::getUsablePages without context was deprecated in 1.46.',
+				'1.46'
+			);
+			$context = RequestContext::getMain();
+		}
 		foreach ( $this->getPageList() as $name => $_ ) {
 			$page = $this->getPage( $name );
 			if ( $page ) { // not null
