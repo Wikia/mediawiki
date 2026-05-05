@@ -146,17 +146,12 @@ class ContributionsSpecialPage extends IncludableSpecialPage {
 		$target = $par ?? $request->getVal( 'target', '' );
 		'@phan-var string $target'; // getVal does not return null here
 
-		// Normalize underscores that may be present in the target parameter
-		// if it was passed in as a path param, rather than a query param
-		// where HTMLForm may have already performed preprocessing (T372444).
-		$target = $this->userNameUtils->getCanonical( $target, UserNameUtils::RIGOR_NONE );
-
 		$this->opts['deletedOnly'] = $request->getBool( 'deletedOnly' );
 
-		// Explicitly check for false or empty string as this needs to account
-		// for the rare case where the target parameter is '0' which is a valid
+		// Explicitly check for empty string as this needs to account for
+		// the rare case where the target parameter is '0' which is a valid
 		// target but resolves to false in boolean context (T379515).
-		if ( $target === false || $target === '' ) {
+		if ( $target === '' ) {
 			$out->addHTML( $this->getForm( $this->opts ) );
 
 			return;
@@ -226,7 +221,10 @@ class ContributionsSpecialPage extends IncludableSpecialPage {
 			return;
 		}
 		$out->addSubtitle( $this->contributionsSub( $userObj, $target ) );
-		$out->setPageTitleMsg( $this->msg( $this->getResultsPageTitleMessageKey( $userObj ), $target ) );
+		$out->setPageTitleMsg(
+			$this->msg( $this->getResultsPageTitleMessageKey( $userObj ) )
+				->rawParams( Html::element( 'bdi', [], $target ) )
+		);
 
 		# For IP ranges, we want the contributionsSub, but not the skin-dependent
 		# links under 'Tools', which may include irrelevant links like 'Logs'.
@@ -333,23 +331,19 @@ class ContributionsSpecialPage extends IncludableSpecialPage {
 				}
 				$work = new PoolCounterWorkViaCallback( 'Special' . $this->mName, $poolKey, [
 					'doWork' => function () use ( $pager, $out, $target ) {
-						if ( !$pager->getNumRows() ) {
-							$out->addWikiMsg( 'nocontribs', $target );
-						} else {
-							# Show a message about replica DB lag, if applicable
-							$lag = $pager->getDatabase()->getSessionLagStatus()['lag'];
-							if ( $lag > 0 ) {
-								$out->showLagWarning( $lag );
-							}
-
-							$output = $pager->getBody();
-							if ( !$this->including() ) {
-								$output = $pager->getNavigationBar() .
-									$output .
-									$pager->getNavigationBar();
-							}
-							$out->addHTML( $output );
+						# Show a message about replica DB lag, if applicable
+						$lag = $pager->getDatabase()->getSessionLagStatus()['lag'];
+						if ( $lag > 0 ) {
+							$out->showLagWarning( $lag );
 						}
+
+						$output = $pager->getBody();
+						if ( !$this->including() ) {
+							$output = $pager->getNavigationBar() .
+								$output .
+								$pager->getNavigationBar();
+						}
+						$out->addHTML( $output );
 					},
 					'error' => function () use ( $out ) {
 						$msg = $this->getUser()->isAnon()
@@ -746,7 +740,7 @@ class ContributionsSpecialPage extends IncludableSpecialPage {
 			'title',
 		];
 
-		foreach ( $this->opts as $name => $value ) {
+		foreach ( $pagerOptions as $name => $value ) {
 			if ( in_array( $name, $skipParameters ) ) {
 				continue;
 			}
@@ -758,10 +752,10 @@ class ContributionsSpecialPage extends IncludableSpecialPage {
 			];
 		}
 
-		$target = $this->opts['target'] ?? '';
+		$target = $pagerOptions['target'] ?? '';
 		$fields['target'] = $this->getTargetField( $target );
 
-		$ns = $this->opts['namespace'] ?? null;
+		$ns = $pagerOptions['namespace'] ?? null;
 		$fields['namespace'] = [
 			'type' => 'namespaceselect',
 			'label' => $this->msg( 'namespace' )->text(),

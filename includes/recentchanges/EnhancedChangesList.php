@@ -355,7 +355,11 @@ class EnhancedChangesList extends ChangesList {
 
 		$type = $rcObj->mAttribs['rc_type'];
 		$data = [];
-		$lineParams = [ 'targetTitle' => $rcObj->getTitle() ];
+		$titleText = $rcObj->getTitle();
+		if ( !ChangesList::userCan( $rcObj, RevisionRecord::DELETED_TEXT, $this->getAuthority() ) ) {
+			$titleText = $this->msg( 'rev-deleted-event' );
+		}
+		$lineParams = [ 'targetTitle' => $titleText ];
 
 		$classes = [ 'mw-enhanced-rc' ];
 		if ( $rcObj->watched ) {
@@ -726,11 +730,16 @@ class EnhancedChangesList extends ChangesList {
 			$line .= "\u{00A0}" . $data['timestampLink'];
 			unset( $data['timestampLink'] );
 		}
+
+		$titleText = $rcObj->getTitle();
+		if ( !ChangesList::userCan( $rcObj, RevisionRecord::DELETED_TEXT, $this->getAuthority() ) ) {
+			$titleText = $this->msg( 'rev-deleted-event' )->escaped();
+		}
 		$line .= "\u{00A0}</td>";
 		$line .= Html::openElement( 'td', [
 			'class' => 'mw-changeslist-line-inner',
 			// Used for reliable determination of the affiliated page
-			'data-target-page' => $rcObj->getTitle(),
+			'data-target-page' => $titleText,
 		] );
 
 		// everything else: makes it easier for extensions to add or remove data
@@ -808,10 +817,33 @@ class EnhancedChangesList extends ChangesList {
 
 		$blockOut = '';
 		foreach ( $this->rc_cache as $block ) {
-			if ( count( $block ) < 2 ) {
-				$blockOut .= $this->recentChangesBlockLine( array_shift( $block ) );
-			} else {
-				$blockOut .= $this->recentChangesBlockGroup( $block );
+			$visibleBlock = [];
+			$hiddenBlock = [];
+
+			// T398706: Filter the block to prevent leaking hidden usernames
+			foreach ( $block as $rcObj ) {
+				if ( static::isDeleted( $rcObj, RevisionRecord::DELETED_USER ) ) {
+					$hiddenBlock[] = $rcObj;
+				} else {
+					$visibleBlock[] = $rcObj;
+				}
+			}
+
+			$visibleCount = count( $visibleBlock );
+
+			if ( $visibleCount > 0 ) {
+				$blockOut .= $visibleCount > 1 ?
+					$this->recentChangesBlockGroup( $visibleBlock ) :
+					$this->recentChangesBlockLine( array_shift( $visibleBlock ) );
+
+			}
+
+			$hiddenCount = count( $hiddenBlock );
+
+			if ( $hiddenCount > 0 ) {
+				$blockOut .= $hiddenCount > 1 ?
+					$this->recentChangesBlockGroup( $hiddenBlock ) :
+					$this->recentChangesBlockLine( array_shift( $hiddenBlock ) );
 			}
 		}
 

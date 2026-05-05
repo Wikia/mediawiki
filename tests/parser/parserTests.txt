@@ -1095,6 +1095,31 @@ wgRawHtml=1
 </span></p>
 !! end
 
+!! test
+T406391: HTML entities in raw text elements
+!! options
+wgRawHtml=1
+!! wikitext
+<html>
+<script>console.log("&");</script>
+<style>a::before { content: "&"; }</style>
+</html>
+A normal & should be encoded
+!! html/php
+<p>
+<script>console.log("&");</script>
+<style>a::before { content: "&"; }</style>
+
+A normal &amp; should be encoded
+</p>
+!! html/parsoid
+<p><span typeof="mw:Extension/html" about="#mwt2" data-mw='{"name":"html","attrs":{},"body":{"extsrc":"\n&lt;script>console.log(\"&amp;\");&lt;/script>\n&lt;style>a::before { content: \"&amp;\"; }&lt;/style>\n"}}'>
+</span><script about="#mwt2">console.log("&");</script><span about="#mwt2">
+</span><style about="#mwt2">a::before { content: "&"; }</style><span about="#mwt2">
+</span>
+A normal &amp; should be encoded</p>
+!! end
+
 !! article
 Test
 !! text
@@ -2795,6 +2820,32 @@ subpage
 </p>
 !! html/parsoid
 <p><a rel="mw:WikiLink" href="./User:Test/123#a" class="mw-selflink-fragment" data-parsoid='{"stx":"piped","a":{"href":"./User:Test/123#a"},"sa":{"href":"#a"}}'>b</a></p>
+!! end
+
+!! test
+Purely hash wikilink on file page
+!! options
+title=[[File:Foobar.jpg]]
+!! wikitext
+[[#a|b]]
+!! html/php
+<p><a href="#a">b</a>
+</p>
+!! html/parsoid
+<p><a rel="mw:WikiLink" href="./File:Foobar.jpg#a" class="mw-selflink-fragment" data-parsoid='{"stx":"piped","a":{"href":"./File:Foobar.jpg#a"},"sa":{"href":"#a"}}'>b</a></p>
+!! end
+
+!! test
+Purely hash wikilink on category page
+!! options
+title=[[Category:Foobar]]
+!! wikitext
+[[#a|b]]
+!! html/php
+<p><a href="#a">b</a>
+</p>
+!! html/parsoid
+<p><a rel="mw:WikiLink" href="./Category:Foobar#a" class="mw-selflink-fragment" data-parsoid='{"stx":"piped","a":{"href":"./Category:Foobar#a"},"sa":{"href":"#a"}}'>b</a></p>
 !! end
 
 !! test
@@ -5328,46 +5379,6 @@ b}}
 </span><table about="#mwt3" data-parsoid='{"stx":"html"}'></table><span about="#mwt3">
 
 </span><p about="#mwt3">b</p>
-!! end
-
-!! test
-Parsoid: Merge double tds (T52603)
-!! wikitext
-{|
-|{{1x|{{!}} foo}}
-|}
-!! html/php
-<table>
-<tbody><tr>
-<td>foo
-</td></tr></tbody></table>
-!! html/parsoid
-<table><tbody>
-<tr><td about="#mwt1" typeof="mw:Transclusion" data-mw='{"parts":["|",{"template":{"target":{"wt":"1x","href":"./Template:1x"},"params":{"1":{"wt":"{{!}} foo"}},"i":0}}]}'> foo</td></tr>
-</tbody></table>
-!! end
-
-!! test
-Parsoid: Merge double tds in nested transclusion content (T52603)
-!! wikitext
-{{1x|<div>}}
-{|
-|{{1x|{{!}} foo}}
-|}
-{{1x|</div>}}
-!! html/php
-<div>
-<table>
-<tbody><tr>
-<td>foo
-</td></tr></tbody></table>
-</div>
-!! html/parsoid
-<div about="#mwt1" typeof="mw:Transclusion" data-mw='{"parts":[{"template":{"target":{"wt":"1x","href":"./Template:1x"},"params":{"1":{"wt":"<div>"}},"i":0}},"\n{|\n|",{"template":{"target":{"wt":"1x","href":"./Template:1x"},"params":{"1":{"wt":"{{!}} foo"}},"i":1}},"\n|}\n",{"template":{"target":{"wt":"1x","href":"./Template:1x"},"params":{"1":{"wt":"</div>"}},"i":2}}]}'>
-<table><tbody>
-<tr><td data-mw='{"parts":["|"]}'> foo</td></tr>
-</tbody></table>
-</div>
 !! end
 
 !! article
@@ -9176,7 +9187,7 @@ wgFragmentMode=[ "html5", "legacy" ]
 !! wikitext
 <span id="æ: v">byte</span>[[#æ: v|backlink]]
 !! html/php
-<p><span id="æ:_v">byte</span><a href="#æ:_v">backlink</a>
+<p><span id="æ:&#95;v">byte</span><a href="#æ:_v">backlink</a>
 </p>
 !! html/parsoid
 <p><span id="æ:_v" data-parsoid='{"stx":"html","a":{"id":"æ:_v"},"sa":{"id":"æ: v"}}'>byte</span><a rel="mw:WikiLink" href="./Main_Page#æ:_v" class="mw-selflink-fragment" data-parsoid='{"stx":"piped","a":{"href":"./Main_Page#æ:_v"},"sa":{"href":"#æ: v"}}'>backlink</a></p>
@@ -9189,7 +9200,7 @@ wgFragmentMode=[ "legacy" ]
 !! wikitext
 <span id="æ: v">byte</span>[[#æ: v|backlink]]
 !! html/php
-<p><span id=".C3.A6:_v">byte</span><a href="#.C3.A6:_v">backlink</a>
+<p><span id=".C3.A6:&#95;v">byte</span><a href="#.C3.A6:_v">backlink</a>
 </p>
 !! end
 
@@ -11104,7 +11115,7 @@ parsoid={ "modes": ["wt2html","html2html"], "normalizePhp": true }
 <dt>This is an okay multi-codepoint HTML5 entity</dt>
 <dd>&#8766;&#819;</dd>
 <dt>This are valid wikitext-specific entities</dt>
-<dd>&rlm; &rlm;</dd>
+<dd>&#8207; &#8207;</dd>
 <dt>Highest valid characters</dt>
 <dd>&#x10fffd; &#x10fffe; &#x10ffff;</dd></dl>
 !! end
@@ -12060,7 +12071,7 @@ comment local title=[[Main Page]]
 !! wikitext
 /* [[A link]] */
 !! html/php
-<span class="autocomment"><a href="#A_link">→<bdi dir="ltr">&#91;[A link]]</bdi></a></span>
+<span class="autocomment"><a href="#A_link">→<bdi dir="ltr">&#91;&#91;A link&#93;&#93;</bdi></a></span>
 !! end
 
 !! test
@@ -12149,7 +12160,7 @@ Id starting with underscore
 !! wikitext
 <div id="_ref"></div>
 !! html/*
-<div id="_ref"></div>
+<div id="&#95;ref"></div>
 !! end
 
 !! test
@@ -12528,7 +12539,7 @@ HTML5 data attributes
 !! html/php
 <p><span data-foo="bar">Baz</span>
 </p>
-<p data-abc-def_hij="">Quuz</p>
+<p>Quuz</p>
 !! html/parsoid
 <p><span data-foo="bar" data-parsoid='{"stx":"html"}'>Baz</span></p>
 <p data-abc-def_hij="" data-parsoid='{"stx":"html"}'>Quuz</p>

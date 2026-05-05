@@ -1,7 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"ऐक्टिवेटेड्"
+			"ऐक्टिवेटेड्",
+			"SaldırganSincap"
 		]
 	},
 	"sunday": "एतवार",
@@ -64,7 +65,7 @@
 	"hidden-categories": "{{PLURAL:$1|लुकाएल श्रेणी|लुकाएल श्रेणीसभ}}",
 	"hidden-category-category": "लुकावल श्रेणी",
 	"category-subcat-count": "{{PLURAL:$2|ई श्रेणीमे खाली निम्नलिखित उपवर्ग हे ।|ई श्रेणीके कुल $2 मे से {{PLURAL:$1|उपश्रेणी।|$1 उपश्रेणीसभ}} निम्नलिखित हे ।}}",
-	"category-subcat-count-limited": "ई श्रेणीमे निम्न {{PLURAL:$1|उपश्रेणी हे|$1 उपश्रेणी हे}}।",
+	"category-subcat-count-limited": "ई श्रेणीमे निम्न {{PLURAL:$1|उपश्रेणी हे|$1 उपश्रेणी हे}} ।",
 	"category-article-count": "{{PLURAL:$2|ई श्रेणीमे खाली निम्नलिखित पन्ना हे ।|ई श्रेणीके कुल $2 मे से {{PLURAL:$1|ई पन्ना निम्नलिखित हे|$1 पन्ना निम्नलिखित हे}} ।}}",
 	"category-article-count-limited": "निम्न {{PLURAL:$1|पन्ना|$1 पन्ना}} ई वर्गमे हे ।",
 	"category-file-count": "{{PLURAL:$2|ई श्रेणीमे खाली निम्नलिखित सञ्चिका हे ।|ई श्रेणीके कुल $2 मे से {{PLURAL:$1|ई सञ्चिका निम्नलिखित हे|$1 सञ्चिका निम्नलिखित हे}} ।}}",
@@ -286,7 +287,7 @@
 	"virus-scanfailed": "जाँच बिफल (कोड $1)",
 	"virus-unknownscanner": "अज्ञात विषाणु निरोधक:",
 	"logouttext": "<strong>अखनि अपने खातासे बाहरे ही ।</strong>\n\nध्यानदी कि ब्राउजर् कैस् खाली न करेतक कुछ पन्ना ओइसने लौक सकहे जैसे अपनेके सम्प्रबेसित करेपर ऊ लौकहे ।",
-	"logging-out-notify": "अपनेके खातासे बाहरे कैल जाइतहे, तनी प्रतिक्षा करी ।",
+	"logging-out-notify": "अपनेके खातासे बाहिरे कैल जाइत हे । तनी प्रतिक्षा करहु ।",
 	"logout-failed": "अखनि प्रस्थान न कैल जा सकहे: $1",
 	"cannotlogoutnow-title": "अखनि प्रस्थान न कैल जा सकहे",
 	"cannotlogoutnow-text": "$1 उपयोग करैत खन्नि प्रस्थान न कैल जा सकहे ।",
@@ -362,6 +363,7 @@
 	"userlogin-authpopup-cancel": "निरस्त करी",
 	"loginsuccesstitle": "सम्प्रवेश भेल",
 	"loginsuccess": "'''अपने {{SITENAME}} मे \"$1\" के रूपमे सम्प्रवेश कैली ।'''",
+	"mailmypassword": "कूटशब्द परिवर्तित करहु",
 	"cannotchangeemail": "ई विकिपर खाता ई-पत्र पता न बदलल जा सकत ।",
 	"emaildisabled": "ई जालस्थान ई-पत्र न पेठा सकत ।",
 	"accountcreated": "खाता निर्मित",
@@ -482,7 +484,7 @@
 	"newarticletext": "अपने ऐसन पन्नापर ऐलीहे जे अखनितक बनावल न गेलीहे ।\nई पन्नाके बनावेला नीचेके डिब्बामे लिखेला आरम्भकरी (आउ जानकारीला [$1 सहायतापन्ना] देखी) ।\nयदि अपने हियाँ गलती से ऐलहीहे त अपन ब्राउजरके '<strong>पीछे</strong>' बटन दबावी ।",
 	"anontalkpagetext": "----\n<em>ई बार्ता पन्ना ऊ अनाम सदस्सला हे जे अखनी खाता न खोलकै हे वा खाताके प्रयोग न करहे ।</em>\nएहीसे उनखा पहचानेला हमनीके उनखर सङ्ख्यात्मक आईपी पता प्रयोग करे पड़ल ।\nऐसन आईपी पता केत्तो सदस्यला एके हो सकहे ।\nयदि अपने एगो अनाम सदस्य ही आउ अपनेके लगहे जे अपनेके बारेमे अप्रासङ्गिक टिप्पणी कैल गेलीहे त कृपया [[Special:CreateAccount|खाता बनावी]] वा [[Special:UserLogin|खातेमे प्रवेश करी]] ताकि दोसर अनाम सदस्यमे से अपनेके अलिगे से पहचानल जा सके ।",
 	"noarticletext": "अखनी ई पन्नापर कौनो सामग्री न हे।\nअपने दुसरो पन्नामे [[Special:Search/{{PAGENAME}}|ई शीर्षकके खोज]] कर सकही,\n<span class=\"plainlinks\">[{{fullurl:{{#Special:Log}}|page={{FULLPAGENAMEE}}}} सम्बन्धित लॉग खोज सकही],\nन त ई पन्नाके [{{fullurl:{{FULLPAGENAME}}|action=edit}} बना] सकही</span> ।",
-	"noarticletext-nopermission": "अखनि ई पन्नापर कौनो सामग्री न हे ।\nअपने दोसरो पन्नामे [[Special:Search/{{PAGENAME}}|ई शीर्षकके खोज]] कर सकही,\n<span class=\"plainlinks\">[{{fullurl:{{#Special:Log}}|page={{FULLPAGENAMEE}}}} सम्बन्धित लॉग खोज सकही], किन्तु अपनेके ई बनावेके अनुमति न हे ।",
+	"noarticletext-nopermission": "अखनि ई पन्नापर कौनो सामग्री न हे ।\nअपने दोसरो पन्नामे [[Special:Search/{{PAGENAME}}|ई शीर्षकके खोज]] कर सकही,\n<span class=\"plainlinks\">[{{fullurl:{{#Special:Log}}|page={{FULLPAGENAMEE}}}} सम्बन्धित लॉग खोज सकही]</span>, किन्तु अपनेके ई बनावेके अनुमति न हे ।",
 	"userpage-userdoesnotexist-view": "सदस्यखाता \"$1\" ई विकिपर पञ्जीकृत न हे ।",
 	"updated": "(अद्यतनीत)",
 	"note": "<strong>सूचना::</strong>",
@@ -1199,6 +1201,7 @@
 	"searchsuggest-search": "{{SITENAME}} मे खोजहू",
 	"searchsuggest-containing": "ई सबवाला पन्ना खोजहू",
 	"duration-days": "$1 {{PLURAL:$1|दिन}}",
+	"nstab-mainpage": "मुख्यपन्ना",
 	"blockedtext-made-by": "खण्ड $1 द्वारा बनावल गेलीहल ।",
 	"blockedtext-reason-comment": "देल गेल कारण <em>$1</em> हे ।",
 	"blockedtext-start-time": "खण्डके आरम्भ: $1",

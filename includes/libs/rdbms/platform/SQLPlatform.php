@@ -90,7 +90,7 @@ class SQLPlatform implements ISQLPlatform {
 	public function addIdentifierQuotes( $s ) {
 		if ( strcspn( $s, "\0\"`'." ) !== strlen( $s ) ) {
 			throw new DBLanguageError(
-				"Identifier must not contain quote, dot or null characters"
+				"Identifier must not contain quote, dot or null characters: got '$s'"
 			);
 		}
 		$quoteChar = $this->getIdentifierQuoteChar();
@@ -1027,15 +1027,24 @@ class SQLPlatform implements ISQLPlatform {
 			throw new InvalidArgumentException( "Table must be a string or Subquery" );
 		}
 
-		if ( $alias === false || $alias === $table ) {
+		if ( $alias === false ) {
 			if ( $table instanceof Subquery ) {
 				throw new InvalidArgumentException( "Subquery table missing alias" );
 			}
-
-			return $quotedTable;
+			$quotedTableWithAnyAlias = $quotedTable;
+		} elseif (
+			$alias === $table &&
+			(
+				str_contains( $alias, '.' ) ||
+				$this->tableName( $alias, 'raw' ) === $table
+			)
+		) {
+			$quotedTableWithAnyAlias = $quotedTable;
 		} else {
-			return $quotedTable . ' ' . $this->addIdentifierQuotes( $alias );
+			$quotedTableWithAnyAlias = $quotedTable . ' ' . $this->addIdentifierQuotes( $alias );
 		}
+
+		return $quotedTableWithAnyAlias;
 	}
 
 	public function tableName( string $name, $format = 'quoted' ) {
@@ -1167,7 +1176,7 @@ class SQLPlatform implements ISQLPlatform {
 	 * This method is useful for TEMPORARY table tracking. In MySQL, temp tables with identical
 	 * names can co-exist on different databases, which can be done via CREATE and USE. Note
 	 * that SQLite/PostgreSQL do not allow changing the database within a session. This method
-	 * omits the schema identifier for several reasons:
+	 * omits the schema identifier and set it to empty string for several reasons:
 	 *   - MySQL/MariaDB do not support schemas at all.
 	 *   - SQLite/PostgreSQL put all TEMPORARY tables in the same schema (TEMP and pgtemp,
 	 *     respectively). When these engines resolve a table reference, they first check for
@@ -1182,13 +1191,13 @@ class SQLPlatform implements ISQLPlatform {
 	 *
 	 * @internal only to be used inside rdbms library
 	 * @param string $table Table name
-	 * @return array{0:string|null,1:string} (unquoted database name, unquoted prefixed table name)
+	 * @return array{0:string,1:string} (unquoted database name, unquoted prefixed table name)
 	 */
 	public function getDatabaseAndTableIdentifier( string $table ) {
 		$components = $this->qualifiedTableComponents( $table );
 		switch ( count( $components ) ) {
 			case 1:
-				return [ $this->currentDomain->getDatabase(), $components[0] ];
+				return [ $this->currentDomain->getDatabase() ?? '', $components[0] ];
 			case 2:
 				return $components;
 			default:

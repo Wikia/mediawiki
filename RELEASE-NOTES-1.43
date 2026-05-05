@@ -4,10 +4,391 @@ PHP 8.1 workboard: https://phabricator.wikimedia.org/tag/php_8.1_support/
 PHP 8.2 workboard: https://phabricator.wikimedia.org/tag/php_8.2_support/
 PHP 8.3 workboard: https://phabricator.wikimedia.org/tag/php_8.3_support/
 PHP 8.4 workboard: https://phabricator.wikimedia.org/tag/php_8.4_support/
+PHP 8.5 workboard: https://phabricator.wikimedia.org/tag/php_8.5_support/
+
+== MediaWiki 1.43.8 ==
+
+This is a maintenance release of the MediaWiki 1.43 branch.
+
+=== Changes since 1.43.7 ===
+* Fixed backport issues.
+
+== MediaWiki 1.43.7 ==
+
+This is a security and maintenance release of the MediaWiki 1.43 branch.
+
+=== Changes since 1.43.6 ===
+* Localisation updates.
+* (T386108) Upgrade pear/pear-core-minimal to v1.10.17.
+* (T412194) Upgrading justinrainbow/json-schema (5.3.0 => 5.3.1).
+* (T413538) MultiHttpClient: Remove curl_close() call.
+* (T413545) Upgrading wikimedia/parsoid (v0.20.4 => v0.20.5).
+* (T411213) Updated wikimedia/less.php from 5.1.2 to 5.5.0.
+* (T413565) Search: Replace deprecated SplObjectStorage methods.
+* Mime: Change mime type video/x-matroska to video/matroska.
+* Fix incorrect uses of ScopedCallback objects.
+* profiler: Correct function types documentation.
+* (T413582) ShellboxClientFactory: Handle $service being null in getUrl().
+* (T413672) EtcdConfigTest: Add return value for some MultiHttpClient mocks.
+* (T413675) DBConnRefTest: Add a temporary variable for return value in
+  testRoleExceptions.
+* (T413580) LanguageCodeTest: Remove unnecessary null assertion.
+* Allow wikimedia/testing-access-wrapper ^4.0.0.
+* Logging: Handle possible null as type for LogPage.
+* (T411019) Logging: Set default for log type on dropdown via LogEventsList.
+* (T413690) libs: Fix closure detection in MemoizedCallable.
+* (T378563) [BlockManager] Don't assume autoblocks have ::getParentBlockId.
+* (T378563) Fix bug in BlockManager::getUniqueBlocks.
+* (T413923) Don't use null offsets in BlockManager::getUniqueBlocks.
+* SiteConfiguration: Optimize processSetting for default-only case.
+* SiteConfiguration: Use \array_key_exists().
+* SiteConfiguration: Use use function syntax.
+* Config: Use use function array_key_exists some more.
+* (T413924, T413925) tests: PHP 8.5 compatibility in AuthManager tests.
+* (T381842) Fix core contributions special page tests for legacy Vector.
+* (T380518) ContributionsSpecialPage: Call IndexPager::getBody if no results.
+* (T385876) Improve direction of user name used in title in
+  Special:Contributions.
+* (T413573) [php8.4] Use DOMCompat::innerHTML() instead of Element::nodeValue.
+* build: Upgrade PHPUnit from 9.6.19 to 9.6.21.
+* (T413673) tests: Fix PHP8.5 error when casting float(INF) as integer.
+* (T414355) Fix PHP 8.5 deprecation warnings in IcuCollation.
+* (T413674) ParamValidator: Suppress cast warning in IntegerDef.
+* (T413577) Parser: Ignore long user provided int in
+  Sanitizer::decodeCharReferences.
+* (T413576) Rdbms: Get strings from SQLPlatform::getDatabaseAndTableIdentifier.
+* (T413579) Site: Handle non-stored Site objects in SiteList.
+* (T413920) tests: Mock some functions in OutputPageTest.
+* (T413926) Do not attempt to get handler for unknown file types.
+* (T413919) tests: Use real TitleFormatter in LinkBatchTest.
+* (T413930) User: Add fallback 'default' to User::getDatePreference.
+* (T413934) JobQueueGroup: avoid PHP 8.5 deprecation from null array offsets.
+* (T413922) Rdbms: Handle null from DatabaseDomain::getDatabase in
+  LBFactoryMulti.
+* (T413901) Media: Remove deprecated imagedestroy.
+* (T413931) tests: Set module name in ApiBaseTest::doGetParameterFromSettings.
+* rdbms::assertTransactionRoundStage: Show transaction name if available.
+* (T414350) Language: Handle NAN coercion to string in formatting numbers.
+* (T414336) Disable process timeout for Composer phpunit script.
+* (T413575) libs>XhprofData: Handle use of NULLs as array keys for PHP8.5.
+* tests: Use TestingAccessWrapper to run some protected or private methods.
+* (T406744) tests: Don't use ReflectionProperty::setAccessible(), it's a no-op
+  now.
+* tests: Improve mocked ParserOptions in ParsoidOutputAccessTest.
+* (T415443) Upgrading mck89/peast (v1.16.3 => v1.17.4).
+* Update guzzlehttp/guzzle to 7.9.3.
+* (T414196) Upgraded guzzlehttp/guzzle.
+* (T413918) tests: Mock value for RangeChronologicalPager::getTimestampField.
+* (T413921) LinksUpdate: Handle nullable el_to_path column in
+  ExternalLinksUpdate.
+* (T413926) Upload: Do not attempt to get handler for unknown file types.
+* File: Ensure mime type is set for LocalFile::getMimeType.
+* (T413917) Specials: Use empty string as missing type on
+  Special:RevisionDelete.
+* (T415723) Updated phpunit/phpunit from 9.6.21 to 9.6.33.
+* Update phpunit/phpunit from 9.6.33 to 9.6.34.
+* Update wikimedia/parsoid to 0.20.6 and wikimedia/remex-html to 4.1.2.
+* (T416050) Update psy/psysh to ^0.12.19.
+* FileRepo: Add 'userAgent' option in ForeignAPIRepo for wgForeignFileRepos.
+* (T417390) mediawiki.util: Don't throw in addSubtitle if the skin lacks a
+  subtitle.
+* (T413545) Update wikimedia/parsoid to 0.20.7.
+* Make MessageValue JsonCodecable instead of JsonDeserializable.
+* Forward-compatibility patch for MessageValue serialization hints.
+* [tests] Add forward-compatibility alias for JsonDeserializableSubClass.
+* (T367584) JsonCodec/ParserCache: Forward-compatibility test cases.
+* (T414884) PostgresInstaller: Handle null password in openConnectionToAnyDB.
+* Forward compatibility with ParserOutput::getTitle().
+* (T360589) Introduce thumbnail steps.
+* (T360589) media: Make SvgHandler respect physicalWidth when building URL for
+  thumb.
+* (T414805, T418745, T418346) WebPHandler: Allow the original being served on
+  the web.
+* (T411013) mediawiki.util: Add adjustThumbWidthForSteps for step sizing in JS.
+* (T411013) mediawiki.util,FileRepo: Improve adjustThumbWidthForSteps test
+  coverage.
+* (T411125) Round to original file width if there is no steep between that &
+  requested.
+* (T411125) File: Allow scaling up vectorized images to larger sizes.
+* (T360589, T415598) Move handling of ThumbnailSteps to media handlers.
+* (T416518) Disable Composer audit.block-insecure option.
+* (T419183) ParserOutputFlags: add HAS_SLOT_HEADERS.
+* (T419479) sql: Mark pl_target_id as non-nullable in abstract schema.
+* (T329183, T417691) Clarify documentation for action=query&list=tags.
+* (T391524) EditPage: Handle MWException when serializing the preloaded
+  content.
+* (T417819) ParserOutputFlags: Back-port new flags added in 1.46 for
+  forward compat.
+* (T382566) Installer: Fix db type radio button.
+* (T384147, CVE-2026-34092) SECURITY: Block UI elements in 'tools'-sidebar
+  shows presence of an autoblocked IP.
+* (T410429, CVE-2026-34088) SECURITY: RecentChanges entries expose suppressed
+  content via generated log page html.
+* (T411305, CVE-2026-34091) SECURITY: User localization leaked by AbuseFilter
+  + EventStream.
+* (T411366, CVE-2026-34090) SECURITY: Suggested investigations: Handle
+  suppressed usernames.
+* (T414547, CVE-2026-34093) SECURITY: Special:UserRights allows viewing user
+  rights from private wiki.
+* (T416090, CVE-2026-34094) SECURITY: Customized help link for page protection
+  indicator is relative to subpage name, because the link target is missing the
+  "/wiki/" prefix.
+* (T419192, CVE-2026-34095) SECURITY: action=raw with Special:Mypage subpage
+  title responds with "Content-Type) SECURITY: text/html" on
+  ctype=text/javascript request.
+
+== MediaWiki 1.43.6 ==
+
+This is a security and maintenance release of the MediaWiki 1.43 branch.
+
+=== Changes since 1.43.5 ===
+* Localisation updates.
+* (T394396) Revert "SECURITY: Escape rawElement $content".
+* (T394059) DeduplicateStyles: Only transform possible style nodes.
+* UserGroupManager: Use MainConfigNames::PrivilegedGroups rather than
+  string literal.
+* (T406391) RemexCompatFormatter: Don't encode HTML entities in raw-text
+  elements.
+* (T402438) api: Allow ApiResult to override imagerepository key in
+  prop=imageinfo.
+* ParserOutput: Add default values for JSON deserialization.
+* (T355853, T407172) Make the login and signup forms wider.
+* (T292868) Forward-compatibility: allow output flags to be serialized in
+  `OutputFlags`.
+* ResourceLoader: Update cssjanus/cssjanus to wikimedia/cssjanus.
+* (T85085) Improve CSS checking in SVG filter.
+* (T405064) Fix the premature loop exit in Parser.cleanUpTocLine.
+* (T407289) i18n: deprecate double-underscore magic words which don't start/end
+  with __.
+* i18n: all behavior switches should start/end with __ (part 2).
+* (T407289) i18n: Remove deprecated behavior switches without underscores in
+  et/sh-latn/vep.
+* (T407770) Add symfony/polyfill-php84 and symfony/polyfill-php85.
+* maintenance/getConfiguration.php: Fix null warning and serialize error.
+* (T328605) ApiParse: Introduce prop=tocdata as replacement for prop=sections.
+* (T406283) ApiSandbox: Use POST when we have long URL.
+* (T401987, T401995, CVE-2025-67484) SECURITY: Disable xslt option by default.
+* (T410913) SpecialVersion: Fix "Cannot use bool as array" warning.
+* (T410928) resourceloader: Fix null offset in ClientHtml module sorting.
+* (T410934) Remove noop xml_parser_free() calls.
+* (T410920) Language: Prevent passing '' to ord() in ucfirst().
+* (T410912) Language: Fix "ord(): Providing a string that is not one byte long
+  is deprecated."
+* (T410912) MessageCache: Fix "ord(): Providing a string that is not one byte
+  long is deprecated."
+* (T410920) Language: Prevent passing '' to ord() in lcfirst().
+* (T410963) Upgrade wikimedia/xmp-reader from 0.9.4 to 0.10.2.
+* (T411016) Upgrading wikimedia/cldr-plural-rule-parser (v2.0.0 => v3.0.0).
+* (T411075) Api: Initialise reference variable.
+* (T411018) IndexPager: Set '' as default value for 'order'.
+* (T410914) Language: Fix PHP 8.5 warnings for NAN/INF string coercion in
+  formatNumInternal.
+* (T410914) Language: Fix PHP 8.5 warnings for NAN/INF string coercion in
+  parseFormattedNumber.
+* (T338103, T411214) ApiResult: Fix "ord(): Providing a string that is not one
+  byte long is deprecated."
+* (T356544) Replace uses of Xml::fieldset(), deprecated since 1.42.
+* (T393790) htmlform: Fix rendering contents for cloner fields.
+* (T391882) HTMLFormFieldCloner: Fix multiple bugs related to conditional
+  states.
+* (T406374) htmlform: Load ooui before infusing field cloner buttons.
+* (T411199) initEditCount: Fix count for users with no edits.
+* (T411827) SpecialPageFactory: Handle resolveAlias() returning null in
+  getPage() and exists().
+* (T411968) Installer: Do not use null as array offset.
+* Add support for HTTP/3 in MultiHttpClient.
+* (T295568) mediawiki.jqueryMsg: Support self-closing HTML tags.
+* (T411968) EditResultBuilder: Do not use null as array offset.
+* Add http/3 to runMulti in MultiHttpClient
+* (T406639, CVE-2025-67477) SECURITY: Escape word-separator message in
+  Special:ApiSandbox.
+* (T406664, CVE-2025-67475) SECURITY: Escape square brackets in autocomment
+  links.
+* (T385403, CVE-2025-67478) SECURITY: Always escape commas in mail
+  encoded-words.
+* (T407131, CVE-2025-67479) SECURITY: Sanitizer: disallow underscore and wide
+  underscore in data-* attribute names.
+* (T401053, CVE-2025-67480) SECURITY: Check read permissions in
+  ApiQueryRevisionsBase.
+* (T409226, CVE-2025-67483) SECURITY: mediawiki.page.preview: Escape
+  'comma-separator' between multiple protection levels.
+* (T251032, CVE-2025-67481) SECURITY: Disallow 'style' attribute in client-side
+  messages (jqueryMsg).
+
+== MediaWiki 1.43.5 ==
+
+This is a security and maintenance release of the MediaWiki 1.43 branch.
+
+=== Changes since MediaWiki 1.43.4 ===
+* Add missing backport for Extension:DiscussionTools.
+* Add missing backport for Extension:Thanks.
+* (T406322, CVE-2025-11261) SECURITY: Escape system messages in
+  mw.language.listToText.
+
+== MediaWiki 1.43.4 ==
+
+This is a security and maintenance release of the MediaWiki 1.43 branch.
+
+=== Changes since MediaWiki 1.43.3 ===
+* Localisation updates.
+* Rest: Move ModuleConfigurationException into correct folder.
+* Cache: Move MessageCache hook interfaces into correct folder.
+* uppercaseTitlesForUnicodeTransition: Add missing return.
+* installer: Always check return of IDatabase::fieldInfo in postgres.
+* autoload: Expand Autoloader::CORE_NAMESPACES.
+* (T378163) mediawiki.page.ready: Fix undefined mw.user during temp user logout.
+* (T375530) Define and store MediaWiki REST API ‘page’ endpoint responses as
+  JSON schemas.
+* (T376603) REST: JSON schema definitions for additional response bodies.
+* (T399672) mime: Add mime types for *.less.
+* (T391180) docs: Add link to CORS setting for REST API.
+* (T388729) Parser: Handle regex failure in extractBody method.
+* (T399064) Parser::extractBody: Use possessive matcher and once-only
+  subpattern.
+* (T399793) PermissionManager: Fix missingPermissionError() not returning early
+  when $short is true.
+* rdbms: Fix GTID style detection for MySQL servers.
+* ParserCacheSerializationTestCases: back port ParserOutput changes from 1.45.
+* ParserCacheSerializationTestCases: distinguish empty ToC from missing ToC.
+* Fix attachLatest --regenerate-all creating invalid SQL command.
+* diff: Avoid Phan warning with some Wikidiff2 versions.
+* (T327439) ParserOutput: Prepare to allow JsonCodec serialization of TOCData.
+* media: Remove pass-by-ref in Exif::exifGPStoNumber.
+* (T386208) Exif: Handle malformed gps tags.
+* i18n: Add Special:MyLanguage to mediawiki.org links.
+* (T380423) Show user a human readable message when $wgLocaltimezone is set to
+  an invalid timezone.
+* maintenance: Fix sql for touched-only option of refreshLinks script.
+* (T393028) ImagePage: Remove PNG previews line for native SVG rendering.
+* (T374042) PostgresUpdater: Fix typo in sites_group index renaming instruction.
+* (T401088) maintenance: Fix paging in findMissingFiles.php.
+* (T401570) rdbms: Fix read-only detection for MariaDB 12.
+* (T400881) filerepo: Improve identification of ForeignAPIRepo requests.
+* (T397900) Don't use RequestContext in CommentParserFactory construction.
+* (T402037) config: Change Reauthenticate Time Default.
+* WebPHandler: Read all of the VP8L canvas height.
+* (T264389, T161647) Make Content JsonCodecable.
+* maintenance: Fix SQL range for moveToExternal.
+* Use JsonCodec to serialize SelserContext.
+* Forward-compat data for SelserContext w/ JSON-encoded Content.
+* (T372444, T404230) DeletedContribsPager: Use the UserIdentity object instead
+  of the raw target string.
+* (T401099, CVE-2025-61638) Upgrading wikimedia/parsoid (v0.20.3 => v0.20.4).
+* (T394968) Metadata: ignore LocationCreated, similar to LocationShown.
+* (T366083) OutputTransform: Fix double IDs on headings.
+* (T381617) Use Remex/HtmlHelper to implement Parser::replaceTableOfContents.
+* Re-apply "Use Remex for DeduplicateStyles transform".
+* (T400505) Regenerate patch-drop-page_restrictions-pr_user.sql for SQLite.
+* (T387478, CVE-2025-61634) SECURITY: REST: Set cache-control value of
+  max-age=60 for redirects.
+* (T394396, CVE-2025-61636) SECURITY: Escape rawElement $content.
+* (T394856, CVE-2025-61637) SECURITY: Escape three system messages used by
+  live preview.
+* (T401099, CVE-2025-61638) SECURITY: Sanitize data- attributes.
+* (T280413, CVE-2025-61639) SECURITY: Use ManualLogEntry::getDeleted in
+  ::getRecentChange.
+* (T402075, CVE-2025-61640) SECURITY: Parse messages instead of inserting
+  them as HTML.
+* (T298690, CVE-2025-61641) SECURITY: api: Disable maxsize in QueryAllPages
+  in miser mode.
+* (T402313, CVE-2025-61642) SECURITY: Escape submit button label for Codex-based
+  HTMLForms.
+* (T403757, CVE-2025-61643) SECURITY: Don't send suppressed recent changes to
+  RCFeeds.
+* (T398706, CVE-2025-61646) SECURITY: Prevent leaking hidden usernames in
+  Watchlist/RecentChanges.
+
+== MediaWiki 1.43.3 ==
+
+This is a maintenance release of the MediaWiki 1.43 branch.
+
+=== Changes since MediaWiki 1.43.2 ===
+* Localisation updates.
+* Fix test failures related to 1.43.2.
+* (T398269) Fixup vendor issues related to symfony/polyfill-php.
+
+== Mediawiki 1.43.2 ==
+
+This is a security and maintenance release of the MediaWiki 1.43 branch.
+
+=== Changes since MediaWiki 1.43.1 ===
+* Localisation updates.
+* (T388708) Diffs: avoid getContentHandler on null error.
+* filebackend: Avoid passing null to FileBackend::normalizeContainerPath.
+* (T390001) UploadBase: makeWarningsSerializable() should accept MessageParam
+  objects.
+* tests: Add test cases for UploadFromChunks.
+* (T382086) swagger-ui: Add licenses of packages used by Swagger UI bundle.
+* (T392086) specials: Fix PHP Warning on Special:PasswordReset for crafted
+  input.
+* (T386175, CVE-2025-32072) SECURITY: Escape newpage message in FeedUtils.
+* (T391179) installer: fix MySQL create user permissions check.
+* (T391169) INSTALL: Document requirement for bcmath/gmp on 32-bit systems.
+* (T389260) language: Avoid warning when 'namespaceGenderAliases' is null.
+* (T391867) http: Handle accept header with incomplete q.
+* Update Pingback address.
+* (T387684) filerepo: No exception on redirect without width in
+  ThumbnailEntryPoint.
+* (T393879) objectcache: Cast explicitly to integer.
+* tests: Use GLOB_BRACE in JsonSchemaAssertionTraitTest.
+* tests: Fix casing of MediaWiki in @covers.
+* (T394989) FormatMetadata::formatFraction: Don't risk passing null to
+  preg_match.
+* (T374314) Link mw.Uri migration guide in docs and log warnings.
+* (T395214) title: Reset cached Title objects between tests.
+* (T395214) phpunit: Remove superfluous Title::clearCaches() calls.
+* (T221560) Remove hyphens from legal search characters for MySQL-based database
+  searches.
+* (T393628) Use anonymous user when creating named account from temp account.
+* (T71997, T382963) Update RfC links to bypass redirect.
+* (T351055) Improve BrokenRedirects display.
+* (T382963) Sync up core repo with Parsoid.
+* (T382963) Update wikimedia/parsoid to 0.20.3.
+* (T395834) Treat File::getShortDesc() as possibly unsafe HTML.
+* tests: Match deprecation message under php8.4 in DeprecationHelperTest.
+* (T379445) debug: Migrate E_USER_ERROR to throw Error in DeprecationHelper.
+* (T221560) Setup: Switch vendor error from echo+E_USER_ERROR to echo+exit.
+* Setup: Update error message for composer dependencies check.
+* (T381341, T379445) widget: Remove outdated try/catch wrapper from
+  SpinnerWidget.
+* (T379445) phpunit: Remove unused trigger_error from TestLogger.
+* (T356451) logger: Make log() methods return void.
+* (T328921, T359868) Drop PHP 7.4/8.0 support from master (forward-port from MW
+  1.42).
+* Drop a few phan PhanImpossibleTypeComparison suppressions now we've dropped
+  PHP 7.4.
+* Clean up resource type and phan suppression in postgres code.
+* structure tests: allow PHP 8.1 syntax and autoload enums.
+* rdbms: fix table prefixing in "FOR UPDATE" clause generation in Postgres.
+* (T388406) RefreshLinksJob: Check hastext before comparing HTML.
+* (T397521) Api: Fix permission checks in action=compare.
+* (T397883, T397643) htmlform: fix min/max validations on empty input in
+  int/float fields.
+* specials: SpecialTalkPage: Use config from request context.
+* (T380456) exception: Avoid service container init in exception handler.
+* (T387408) exception: Skip use of HookRunner when not autoloaded.
+* (T397470) Remove feature flagged Swagger UI based Special:RestSandbox.
+* (T391343, CVE-2025-6589) SECURITY: BlockList: Hide rows containing suppressed
+  users.
+* (T392746, CVE-2025-6590) SECURITY: Escape usernames in HTMLUserTextField
+  validation errors.
+* (T392276, CVE-2025-6591) SECURITY: API: Escape i18n messages in
+  action=feedcontributions.
+* (T396230, T31856, CVE-2025-6593) SECURITY: fix IP leak to unverified email.
+* (T395063, CVE-2025-6594) SECURITY: apisandbox: Fix reflected XSS when invalid
+  'format' is provided.
+* (T389009, CVE-2025-6597) SECURITY: Do not treat autocreation as login for
+  reauthentication.
+* (T389010, CVE-2025-6926) SECURITY: Allow extensions to supress the reauth
+  flag on login.
+* (T397595, CVE-2025-6927) SECURITY: Fix autoblocks visibility when
+  bl_deleted=1.
+* (T397595, CVE-2025-6927) SECURITY: Fix leak of hidden usernames via autoblocks
+  of those users.
 
 == MediaWiki 1.43.1 ==
 
-This is a security and maintenance release of the MediaWiki 1.42 branch.
+This is a security and maintenance release of the MediaWiki 1.43 branch.
 
 === Changes since MediaWiki 1.43.0 ===
 * Localisation updates.

@@ -792,6 +792,18 @@ class MainConfigNames {
 	public const ThumbnailNamespaces = 'ThumbnailNamespaces';
 
 	/**
+	 * Name constant for the ThumbnailSteps setting, for use with Config::get()
+	 * @see MainConfigSchema::ThumbnailSteps
+	 */
+	public const ThumbnailSteps = 'ThumbnailSteps';
+
+	/**
+	 * Name constant for the ThumbnailStepsRatio setting, for use with Config::get()
+	 * @see MainConfigSchema::ThumbnailStepsRatio
+	 */
+	public const ThumbnailStepsRatio = 'ThumbnailStepsRatio';
+
+	/**
 	 * Name constant for the ThumbnailBuckets setting, for use with Config::get()
 	 * @see MainConfigSchema::ThumbnailBuckets
 	 */
@@ -3147,6 +3159,12 @@ class MainConfigNames {
 	public const SessionSecret = 'SessionSecret';
 
 	/**
+	 * Name constant for the EnableUnsafeXsltOption setting, for use with Config::get()
+	 * @see MainConfigSchema::EnableUnsafeXsltOption
+	 */
+	public const EnableUnsafeXsltOption = 'EnableUnsafeXsltOption';
+
+	/**
 	 * Name constant for the CookieExpiration setting, for use with Config::get()
 	 * @see MainConfigSchema::CookieExpiration
 	 */
@@ -4246,12 +4264,6 @@ class MainConfigNames {
 	 * @see MainConfigSchema::RestAPIAdditionalRouteFiles
 	 */
 	public const RestAPIAdditionalRouteFiles = 'RestAPIAdditionalRouteFiles';
-
-	/**
-	 * Name constant for the RestSandboxSpecs setting, for use with Config::get()
-	 * @see MainConfigSchema::RestSandboxSpecs
-	 */
-	public const RestSandboxSpecs = 'RestSandboxSpecs';
 
 	/**
 	 * Name constant for the MaxShellMemory setting, for use with Config::get()

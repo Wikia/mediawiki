@@ -27,6 +27,8 @@ use MediaWiki\Message\Message;
 use RuntimeException;
 use stdClass;
 use UnexpectedValueException;
+use Wikimedia\Message\ListParam;
+use Wikimedia\Message\ScalarParam;
 
 /**
  * This class represents the result of the API operations.
@@ -72,6 +74,13 @@ class ApiResult implements ApiSerializable {
 	 * @since 1.25
 	 */
 	public const NO_VALIDATE = self::NO_SIZE_CHECK | 8;
+
+	/**
+	 * For addValue(), setValue() and similar functions, do allow override
+	 * of conflicting keys.
+	 * @since 1.45 (also backported to 1.43.6, 1.44.3)
+	 */
+	public const IGNORE_CONFLICT_KEYS = 16;
 
 	/**
 	 * Key for the 'indexed tag name' metadata item. Value is string.
@@ -309,7 +318,7 @@ class ApiResult implements ApiSerializable {
 			}
 		} elseif ( is_array( $arr[$name] ) && is_array( $value ) ) {
 			$conflicts = array_intersect_key( $arr[$name], $value );
-			if ( !$conflicts ) {
+			if ( !$conflicts || ( $flags & self::IGNORE_CONFLICT_KEYS ) ) {
 				$arr[$name] += $value;
 			} else {
 				$keys = implode( ', ', array_keys( $conflicts ) );
@@ -355,10 +364,10 @@ class ApiResult implements ApiSerializable {
 						$ex
 					);
 				}
-			} elseif ( $value instanceof \Wikimedia\Message\MessageParam ) {
+			} elseif ( $value instanceof ScalarParam || $value instanceof ListParam ) {
 				// HACK Support code that puts $msg->getParams() directly into API responses
 				// (e.g. ApiErrorFormatter::formatRawMessage()).
-				$value = $value->getType() === 'text' ? $value->getValue() : $value->jsonSerialize();
+				$value = $value->getType() === 'text' ? $value->getValue() : $value->toJsonArray();
 			} elseif ( is_callable( [ $value, '__toString' ] ) ) {
 				$value = (string)$value;
 			} else {
@@ -790,10 +799,7 @@ class ApiResult implements ApiSerializable {
 	 * @return bool
 	 */
 	public static function isMetadataKey( $key ) {
-		// Optimization: This is a very hot and highly optimized code path. Note that ord() only
-		// considers the first character and also works with empty strings and integers.
-		// 95 corresponds to the '_' character.
-		return ord( $key ) === 95;
+		return str_starts_with( $key, '_' );
 	}
 
 	/**

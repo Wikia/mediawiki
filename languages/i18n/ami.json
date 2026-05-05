@@ -8,7 +8,8 @@
 			"Ljying",
 			"Panay Masaw",
 			"Vickylin77s",
-			"嚴美鳳"
+			"嚴美鳳",
+			"NguoiDungKhongDinhDanh"
 		]
 	},
 	"sunday": "pilipayan",
@@ -90,7 +91,7 @@
 	"printableversion": "Manga’ayay a lyi-inen a rorong",
 	"permalink": "tomerepay tongod",
 	"view": "misongila’ a minengneng",
-	"skin-view-view": " miasip",
+	"skin-view-view": "miasip",
 	"skin-view-foreign": "misongila’ a minengneng i $1",
 	"edit": "misinanot",
 	"skin-view-edit": "misinanot",
@@ -241,7 +242,7 @@
 	"currentrevisionlink": "safaelohay a pisalof",
 	"cur": "Aniniay/imatiniay",
 	"last": "ka’ayaway",
-	"histlegend": "O kasasiroma no pasirini’ to nipili’an: ano mipli’ i, pasasirini’en koya misalofan toya masa’apeladay ato pili’en koya i kalaenoay a pipenecan mifhat to dingki a pasasirini’.  <br />  misapinang paini to silosi：<strong>({{int:cur}})</strong> = pasasirini’ toya safaelohay a nisalofan a rorong<strong>({{int:last}})</strong> = pasasirini’ toya sa’ayaway misalofan <strong>{{int:minoreditletter}}</strong> =  sapado^do^ a misalof.",
+	"histlegend": "O kasasiroma no pasirini’ to nipili’an: ano mipli’ i, pasasirini’en koya misalofan toya masa’apeladay ato pili’en koya i kalaenoay a pipenecan mifhat to dingki a pasasirini’.<br />\nmisapinang paini to silosi：<strong>({{int:cur}})</strong> = pasasirini’ toya safaelohay a nisalofan a rorong<strong>({{int:last}})</strong> = pasasirini’ toya sa’ayaway misalofan <strong>{{int:minoreditletter}}</strong> =  sapado^do^ a misalof.",
 	"history-fieldset-title": "Mifitay a misalof",
 	"histfirst": "matelangay",
 	"histlast": "safaelohay",
@@ -657,7 +658,7 @@
 	"watchlisttools-view": "misongila’ a minengneng to pakayniay i falic",
 	"watchlisttools-edit": "misongila’ a minengneng ato misinanot to pirorodan to tatapalen a tilid",
 	"watchlisttools-raw": "misinanot to satapangan no pirorodan to tatapalen a tilid",
-	"signature": "[[{{ns:user}}:$1|$2]] ([[{{ns:user_talk}}:$1| kalalicay]])",
+	"signature": "[[{{ns:user}}:$1|$2]] ([[{{ns:user_talk}}:$1|kalalicay]])",
 	"version-specialpages": "micidekay a felih",
 	"version-ext-colheader-description": "kimad",
 	"version-libraries-description": "kimad",

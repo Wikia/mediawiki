@@ -544,9 +544,11 @@ class ForeignAPIRepo extends FileRepo implements IForeignRepoWithMWApi {
 	public function httpGet(
 		$url, $timeout = 'default', $options = [], &$mtime = false
 	) {
+		$urlUtils = MediaWikiServices::getInstance()->getUrlUtils();
+		$requestFactory = MediaWikiServices::getInstance()->getHttpRequestFactory();
+
 		$options['timeout'] = $timeout;
-		$url = MediaWikiServices::getInstance()->getUrlUtils()
-			->expand( $url, PROTO_HTTP );
+		$url = $urlUtils->expand( $url, PROTO_HTTP );
 		wfDebug( "ForeignAPIRepo: HTTP GET: $url" );
 		if ( !$url ) {
 			return false;
@@ -559,8 +561,8 @@ class ForeignAPIRepo extends FileRepo implements IForeignRepoWithMWApi {
 
 		$options['userAgent'] = $this->getUserAgent();
 
-		$req = MediaWikiServices::getInstance()->getHttpRequestFactory()
-			->create( $url, $options, __METHOD__ );
+		$req = $requestFactory->create( $url, $options, __METHOD__ );
+		$req->setHeader( 'Referer', $urlUtils->getCanonicalServer() );
 		$status = $req->execute();
 
 		if ( $status->isOK() ) {

@@ -37,12 +37,14 @@ use MediaWiki\Request\WebRequest;
 use MediaWiki\Shell\Shell;
 use MediaWiki\Status\Status;
 use MediaWiki\Title\Title;
+use MediaWiki\Upload\SVGCSSChecker;
 use MediaWiki\User\User;
 use MediaWiki\User\UserIdentity;
 use Wikimedia\AtEase\AtEase;
 use Wikimedia\FileBackend\FileBackend;
 use Wikimedia\FileBackend\FSFile\FSFile;
 use Wikimedia\FileBackend\FSFile\TempFSFile;
+use Wikimedia\Message\MessageParam;
 use Wikimedia\Mime\XmlTypeCheck;
 use Wikimedia\ObjectCache\BagOStuff;
 use Wikimedia\Rdbms\IDBAccessObject;
@@ -539,7 +541,7 @@ abstract class UploadBase {
 			}
 		}
 
-		$handler = MediaHandler::getHandler( $mime );
+		$handler = $mime !== null ? MediaHandler::getHandler( $mime ) : null;
 		if ( $handler ) {
 			$handlerStatus = $handler->verifyUpload( $this->mTempPath );
 			if ( !$handlerStatus->isOK() ) {
@@ -752,8 +754,9 @@ abstract class UploadBase {
 
 	/**
 	 * Convert the warnings array returned by checkWarnings() to something that
-	 * can be serialized. File objects will be converted to an associative array
-	 * with the following keys:
+	 * can be serialized, and that is suitable for inclusion directly in action API results.
+	 *
+	 * File objects will be converted to an associative array with the following keys:
 	 *
 	 *   - fileName: The name of the file
 	 *   - timestamp: The upload timestamp
@@ -768,6 +771,8 @@ abstract class UploadBase {
 					'fileName' => $param->getName(),
 					'timestamp' => $param->getTimestamp()
 				];
+			} elseif ( $param instanceof MessageParam ) {
+				// Do nothing (T390001)
 			} elseif ( is_object( $param ) ) {
 				throw new InvalidArgumentException(
 					'UploadBase::makeWarningsSerializable: ' .
@@ -1710,15 +1715,17 @@ abstract class UploadBase {
 
 		// Check <style> css
 		if ( $strippedElement === 'style'
-			&& self::checkCssFragment( Sanitizer::normalizeCss( $data ) )
 		) {
-			wfDebug( __METHOD__ . ": hostile css in style element." );
+			$cssCheck = ( new SVGCSSChecker )->checkStyleTag( $data );
+			if ( $cssCheck !== true ) {
+				wfDebug( __METHOD__ . ": hostile css in style element." );
 
-			return [ 'uploaded-hostile-svg' ];
+				return [ 'uploaded-hostile-svg', $cssCheck[0], $cssCheck[1], $cssCheck[2] ];
+			}
 		}
 
 		static $cssAttrs = [ 'font', 'clip-path', 'fill', 'filter', 'marker',
-			'marker-end', 'marker-mid', 'marker-start', 'mask', 'stroke' ];
+			'marker-end', 'marker-mid', 'marker-start', 'mask', 'stroke', 'cursor' ];
 
 		foreach ( $attribs as $attrib => $value ) {
 			// If attributeNamespace is '', it is relative to its element's namespace
@@ -1821,7 +1828,7 @@ abstract class UploadBase {
 
 			// use CSS styles to bring in remote code.
 			if ( $stripped === 'style'
-				&& self::checkCssFragment( Sanitizer::normalizeCss( $value ) )
+				&& ( new SVGCSSChecker )->checkStyleAttribute( $value ) !== true
 			) {
 				wfDebug( __METHOD__ . ": Found svg setting a style with "
 					. "remote url '$attrib'='$value' in uploaded file." );
@@ -1830,7 +1837,7 @@ abstract class UploadBase {
 
 			// Several attributes can include css, css character escaping isn't allowed.
 			if ( in_array( $stripped, $cssAttrs, true )
-				&& self::checkCssFragment( $value )
+				&& ( new SVGCSSChecker )->checkPresentationalAttribute( $value ) !== true
 			) {
 				wfDebug( __METHOD__ . ": Found svg setting a style with "
 					. "remote url '$attrib'='$value' in uploaded file." );
@@ -1852,52 +1859,6 @@ abstract class UploadBase {
 		}
 
 		return false; // No scripts detected
-	}
-
-	/**
-	 * Check a block of CSS or CSS fragment for anything that looks like
-	 * it is bringing in remote code.
-	 * @param string $value a string of CSS
-	 * @return bool true if the CSS contains an illegal string, false if otherwise
-	 */
-	private static function checkCssFragment( $value ) {
-		# Forbid external stylesheets, for both reliability and to protect viewer's privacy
-		if ( stripos( $value, '@import' ) !== false ) {
-			return true;
-		}
-
-		# We allow @font-face to embed fonts with data: urls, so we snip the string
-		# 'url' out so that this case won't match when we check for urls below
-		$pattern = '!(@font-face\s*{[^}]*src:)url(\("data:;base64,)!im';
-		$value = preg_replace( $pattern, '$1$2', $value );
-
-		# Check for remote and executable CSS. Unlike in Sanitizer::checkCss, the CSS
-		# properties filter and accelerator don't seem to be useful for xss in SVG files.
-		# Expression and -o-link don't seem to work either, but filtering them here in case.
-		# Additionally, we catch remote urls like url("http:..., url('http:..., url(http:...,
-		# but not local ones such as url("#..., url('#..., url(#....
-		if ( preg_match( '!expression
-				| -o-link\s*:
-				| -o-link-source\s*:
-				| -o-replace\s*:!imx', $value ) ) {
-			return true;
-		}
-
-		if ( preg_match_all(
-				"!(\s*(url|image|image-set)\s*\(\s*[\"']?\s*[^#]+.*?\))!sim",
-				$value,
-				$matches
-			) !== 0
-		) {
-			# TODO: redo this in one regex. Until then, url("#whatever") matches the first
-			foreach ( $matches[1] as $match ) {
-				if ( !preg_match( "!\s*(url|image|image-set)\s*\(\s*(#|'#|\"#)!im", $match ) ) {
-					return true;
-				}
-			}
-		}
-
-		return (bool)preg_match( '/[\000-\010\013\016-\037\177]/', $value );
 	}
 
 	/**
