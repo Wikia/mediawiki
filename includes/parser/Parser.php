@@ -6521,7 +6521,13 @@ class Parser {
 		$text = preg_replace( '!^(?>.*?<body)[^>]*+>!s', '', $text, 1 );
 		if ( $text === null ) {
 			// T399064: this should never happen
-			throw new RuntimeException( 'Regex failed: ' . preg_last_error() );
+			// Fandom-change: start
+			// This exception is breaking Visual Editor in some cases, upstream is tracking this in:
+			// * https://phabricator.wikimedia.org/T388729
+			// * https://phabricator.wikimedia.org/T399064
+			// throw new RuntimeException( 'Regex failed: ' . preg_last_error() );
+			return $text;
+			// Fandom-change: stop
 		}
 		$text = preg_replace( '!</body>\s*+</html>\s*+$!', '', $text, 1 );
 		return $text;
