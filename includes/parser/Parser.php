@@ -6518,12 +6518,12 @@ class Parser {
 	 * @unstable
 	 */
 	public static function extractBody( string $text ): string {
-		$text = preg_replace( '!^(?>.*?<body)[^>]*+>!s', '', $text, 1 );
-		if ( $text === null ) {
-			// T399064: this should never happen
-			throw new RuntimeException( 'Regex failed: ' . preg_last_error() );
-		}
-		$text = preg_replace( '!</body>\s*+</html>\s*+$!', '', $text, 1 );
+		// Fandom-change: start
+		// The exception thrown in MW 1.43.8 is breaking Visual Editor in some cases, upstream is tracking this in:
+		// * https://phabricator.wikimedia.org/T388729
+		// * https://phabricator.wikimedia.org/T399064
+		$text = preg_replace( '!^.*?<body[^>]*>!s', '', $text, 1 );
+		$text = preg_replace( '!</body>\s*</html>\s*$!', '', $text, 1 );
 		return $text;
 	}
 
