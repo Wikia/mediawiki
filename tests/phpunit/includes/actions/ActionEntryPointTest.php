@@ -3,6 +3,7 @@
 namespace MediaWiki\Tests\Action;
 
 use BadTitleError;
+use ErrorPageError;
 use MediaWiki\Actions\ActionEntryPoint;
 use MediaWiki\Context\RequestContext;
 use MediaWiki\Deferred\DeferredUpdates;
@@ -407,6 +408,38 @@ class ActionEntryPointTest extends MediaWikiIntegrationTestCase {
 		$this->expectException( BadTitleError::class );
 		$this->expectExceptionMessage( 'The requested page title contains invalid characters: "<".' );
 		$mw->performRequest();
+	}
+
+	/**
+	 * @dataProvider provideRawMypageRedirectCases
+	 */
+	public function testRawMypageDoesNotRedirect( bool $hideIdentifiableRedirects ): void {
+		$this->overrideConfigValue( MainConfigNames::HideIdentifiableRedirects, $hideIdentifiableRedirects );
+
+		$specialTitle = SpecialPage::getTitleFor( 'Mypage', 'common.js' );
+		$request = new FauxRequest( [
+			'title' => $specialTitle->getPrefixedDBkey(),
+			'action' => 'raw',
+		] );
+		$request->setRequestURL( $specialTitle->getLinkURL() );
+
+		$env = new MockEnvironment( $request );
+		$context = $env->makeFauxContext();
+		$context->setTitle( $specialTitle );
+		$entryPoint = TestingAccessWrapper::newFromObject( $this->getEntryPoint( $env, $context ) );
+
+		try {
+			$entryPoint->performRequest();
+			$this->fail( 'Special:Mypage must reject raw requests' );
+		} catch ( ErrorPageError $error ) {
+			$this->assertSame( 'mypage-disallowed-action', $error->msg );
+			$this->assertSame( [ 'raw' ], $error->params );
+		}
+	}
+
+	public static function provideRawMypageRedirectCases(): iterable {
+		yield 'external redirect' => [ false ];
+		yield 'hidden internal redirect' => [ true ];
 	}
 
 	public function testView() {

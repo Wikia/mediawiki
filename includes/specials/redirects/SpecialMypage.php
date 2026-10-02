@@ -21,6 +21,7 @@
 
 namespace MediaWiki\Specials\Redirects;
 
+use ErrorPageError;
 use MediaWiki\SpecialPage\RedirectSpecialArticle;
 use MediaWiki\Title\Title;
 use MediaWiki\User\TempUser\TempUserConfig;
@@ -38,16 +39,6 @@ class SpecialMypage extends RedirectSpecialArticle {
 	 * @param TempUserConfig $tempUserConfig
 	 */
 	public function __construct( TempUserConfig $tempUserConfig ) {
-		// T120386 - disallow raw action
-		$action = $this->getRequest()->getVal( 'action' );
-		$disallowedActions = [ 'raw' ];
-		if ( $action && in_array( $action, $disallowedActions, true ) ) {
-			$this->getOutput()->addHTML(
-				$this->msg( 'mypage-disallowed-action' )->params( $action )->escaped()
-			);
-			return;
-		}
-
 		parent::__construct( 'Mypage' );
 
 		$this->tempUserConfig = $tempUserConfig;
@@ -58,6 +49,11 @@ class SpecialMypage extends RedirectSpecialArticle {
 	 * @return Title
 	 */
 	public function getRedirect( $subpage ) {
+		// Check here so both external and hidden internal redirects deny raw requests (T120386).
+		if ( $this->getRequest()->getVal( 'action' ) === 'raw' ) {
+			throw new ErrorPageError( 'badaccess', 'mypage-disallowed-action', [ 'raw' ] );
+		}
+
 		// Redirect to login for anon users when temp accounts are enabled.
 		if ( $this->tempUserConfig->isEnabled() && $this->getUser()->isAnon() ) {
 			$this->requireLogin();
