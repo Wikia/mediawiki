@@ -45,9 +45,14 @@ class SpecialMypage extends RedirectSpecialArticle {
 
 	/**
 	 * @param string|null $subpage
-	 * @return Title
+	 * @return Title|bool
 	 */
 	public function getRedirect( $subpage ) {
+		// T120386 - disallow raw action
+		if ( $this->getRequest()->getRawVal( 'action' ) === 'raw' ) {
+			return false;
+		}
+
 		// Redirect to login for anon users when temp accounts are enabled.
 		if ( $this->tempUserConfig->isEnabled() && $this->getUser()->isAnon() ) {
 			$this->requireLogin();
@@ -69,6 +74,14 @@ class SpecialMypage extends RedirectSpecialArticle {
 	public function personallyIdentifiableTarget() {
 		return true;
 	}
+
+	protected function showNoRedirectPage() {
+		$action = $this->getRequest()->getRawVal( 'action' ) ?? 'view';
+		$this->getOutput()->addHTML(
+			$this->msg( 'mypage-disallowed-action' )->params( $action )->escaped()
+		);
+	}
+
 }
 
 /**
